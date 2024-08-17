@@ -1,60 +1,50 @@
 import React from "react";
-import { Layer, Rect } from "react-konva";
+import { Layer, Arc } from "react-konva";
 
-interface UssSensorsProps {
+interface SensorConfig {
   x: number;
   y: number;
-  carWidth: number;
-  carLength: number;
+  orientation: number;
+  fov: number;
+}
+
+interface UssSensorsProps {
+  sensors: SensorConfig[]; // 传感器的配置数组
+  sensorSize: number; // 传感器的大小
 }
 
 const UssSensors: React.FC<UssSensorsProps> = ({
-  x,
-  y,
-  carWidth,
-  carLength,
+  sensors = [],
+  sensorSize,
 }) => {
-  const sensorSize = 10; // 传感器矩形的大小
-  const sensorColor = "#ff0000"; // 传感器矩形的颜色
-  const sensorPositions = [
-    // 前方传感器 (假设三个)
-    { x: x + carWidth * 0.2, y: y - sensorSize / 2 },
-    { x: x + carWidth * 0.5 - sensorSize / 2, y: y - sensorSize / 2 },
-    { x: x + carWidth * 0.8, y: y - sensorSize / 2 },
-
-    // 后方传感器 (假设三个)
-    { x: x + carWidth * 0.2, y: y + carLength - sensorSize / 2 },
-    {
-      x: x + carWidth * 0.5 - sensorSize / 2,
-      y: y + carLength - sensorSize / 2,
-    },
-    { x: x + carWidth * 0.8, y: y + carLength - sensorSize / 2 },
-
-    // 左侧传感器 (假设三个)
-    { x: x - sensorSize / 2, y: y + carLength * 0.2 },
-    { x: x - sensorSize / 2, y: y + carLength * 0.5 - sensorSize / 2 },
-    { x: x - sensorSize / 2, y: y + carLength * 0.8 },
-
-    // 右侧传感器 (假设三个)
-    { x: x + carWidth - sensorSize / 2, y: y + carLength * 0.2 },
-    {
-      x: x + carWidth - sensorSize / 2,
-      y: y + carLength * 0.5 - sensorSize / 2,
-    },
-    { x: x + carWidth - sensorSize / 2, y: y + carLength * 0.8 },
-  ];
-
+  // 默认传感器配置为空数组，以防止未定义时的错误
   return (
     <Layer>
-      {sensorPositions.map((pos, index) => (
-        <Rect
-          key={index}
-          x={pos.x}
-          y={pos.y}
-          width={sensorSize}
-          height={sensorSize}
-          fill={sensorColor}
-        />
+      {sensors.map((sensor, index) => (
+        <React.Fragment key={index}>
+          {/* 绘制传感器的FOV扇形区域 */}
+          <Arc
+            x={sensor.x}
+            y={sensor.y}
+            innerRadius={0}
+            outerRadius={sensorSize * 3} // 视场的可见范围大小，通常根据需求进行调整
+            angle={sensor.fov}
+            rotation={sensor.orientation - sensor.fov / 2}
+            fill="rgba(255, 0, 0, 0.3)" // 半透明的红色表示FOV
+            stroke="red"
+            strokeWidth={1}
+          />
+          {/* 绘制传感器的主体 */}
+          <Arc
+            x={sensor.x}
+            y={sensor.y}
+            innerRadius={0}
+            outerRadius={sensorSize}
+            angle={360}
+            fill="red"
+            rotation={0}
+          />
+        </React.Fragment>
       ))}
     </Layer>
   );

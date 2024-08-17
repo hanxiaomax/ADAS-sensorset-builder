@@ -8,6 +8,13 @@ import ControlPanel from "../components/ControlPanel";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useImage from "use-image";
 
+interface SensorConfig {
+  x: number;
+  y: number;
+  orientation: number;
+  fov: number;
+}
+
 const SensorSetBuilderMain: React.FC = () => {
   const [frontZones, setFrontZones] = useState<number>(6);
   const [rearZones, setRearZones] = useState<number>(4);
@@ -16,6 +23,18 @@ const SensorSetBuilderMain: React.FC = () => {
   const [showUssZones, setShowUssZones] = useState<boolean>(true);
   const [showCarImage, setShowCarImage] = useState<boolean>(true);
   const [showUssSensors, setShowUssSensors] = useState<boolean>(true);
+
+  const [sensorSize, setSensorSize] = useState<number>(10); // 传感器大小
+
+  // 传感器配置数组
+  const [sensors, setSensors] = useState<SensorConfig[]>([
+    { x: 150, y: 50, orientation: 270, fov: 120 },
+    { x: 250, y: 50, orientation: 270, fov: 120 },
+    { x: 350, y: 50, orientation: 270, fov: 120 },
+    { x: 150, y: 350, orientation: 90, fov: 120 },
+    { x: 250, y: 350, orientation: 90, fov: 120 },
+    { x: 350, y: 350, orientation: 90, fov: 120 },
+  ]);
 
   const [panelVisible, setPanelVisible] = useState<boolean>(false);
 
@@ -75,13 +94,26 @@ const SensorSetBuilderMain: React.FC = () => {
       name: "车辆图像",
       visible: showCarImage,
       toggleVisibility: () => setShowCarImage(!showCarImage),
-      controls: null, // 当前没有需要设置的参数
+      controls: null,
     },
     {
       name: "超声波传感器",
       visible: showUssSensors,
       toggleVisibility: () => setShowUssSensors(!showUssSensors),
-      controls: null, // 当前没有需要设置的参数
+      controls: (
+        <Box>
+          <TextField
+            label="传感器大小"
+            type="number"
+            variant="outlined"
+            value={sensorSize}
+            onChange={(e) => setSensorSize(parseInt(e.target.value))}
+            margin="normal"
+            fullWidth
+          />
+          {/* 可以添加更多传感器的控制，比如配置每个传感器的位置和角度 */}
+        </Box>
+      ),
     },
   ];
 
@@ -131,10 +163,8 @@ const SensorSetBuilderMain: React.FC = () => {
             )}
             {showUssSensors && (
               <UssSensors
-                x={origin.x}
-                y={origin.y}
-                carWidth={carWidth}
-                carLength={carLength}
+                sensors={sensors || []} // 确保传递的数组已初始化
+                sensorSize={sensorSize}
               />
             )}
           </Stage>
@@ -142,10 +172,7 @@ const SensorSetBuilderMain: React.FC = () => {
       </Grid>
 
       {panelVisible && (
-        <ControlPanel
-          layers={layers} // 传递图层控制项
-          onClose={() => setPanelVisible(false)}
-        />
+        <ControlPanel layers={layers} onClose={() => setPanelVisible(false)} />
       )}
 
       {!panelVisible && (
