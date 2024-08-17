@@ -1,14 +1,20 @@
 import React, { useState } from "react";
-import { Grid, TextField, Box } from "@mui/material";
+import { Grid, TextField, Box, Button, Typography } from "@mui/material";
 import { Stage } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
+import UssSensors from "../components/UssSensors";
 import useImage from "use-image";
 
 const SensorSetBuilderMain: React.FC = () => {
   const [frontZones, setFrontZones] = useState<number>(6);
   const [rearZones, setRearZones] = useState<number>(4);
   const [sideZones, setSideZones] = useState<number>(6);
+
+  // 控制图层可见性的状态
+  const [showUssZones, setShowUssZones] = useState<boolean>(true);
+  const [showCarImage, setShowCarImage] = useState<boolean>(true);
+  const [showUssSensors, setShowUssSensors] = useState<boolean>(true);
 
   const [image] = useImage("/vehicle.png");
   const image_margin = 20;
@@ -47,27 +53,36 @@ const SensorSetBuilderMain: React.FC = () => {
           }}
         >
           <Stage width={stage_size.width} height={stage_size.height}>
-            {/* USS 传感器图层 */}
-            <UssZones
-              x={origin.x}
-              y={origin.y}
-              carWidth={carWidth}
-              carLength={carLength}
-              frontOverhang={frontOverhang}
-              rearOverhang={rearOverhang}
-              frontZones={frontZones}
-              rearZones={rearZones}
-              sideZones={sideZones}
-            />
-            {/* 车辆图层 */}
-            <CarImage
-              x={origin.x}
-              y={origin.y}
-              width={carWidth}
-              height={carLength}
-              imageSrc="/vehicle.png"
-            />
-            {/* 后续可以添加其他传感器图层 */}
+            {showUssZones && (
+              <UssZones
+                x={origin.x}
+                y={origin.y}
+                carWidth={carWidth}
+                carLength={carLength}
+                frontOverhang={frontOverhang}
+                rearOverhang={rearOverhang}
+                frontZones={frontZones}
+                rearZones={rearZones}
+                sideZones={sideZones}
+              />
+            )}
+            {showCarImage && (
+              <CarImage
+                x={origin.x}
+                y={origin.y}
+                width={carWidth}
+                height={carLength}
+                imageSrc="/vehicle.png"
+              />
+            )}
+            {showUssSensors && (
+              <UssSensors
+                x={origin.x}
+                y={origin.y}
+                carWidth={carWidth}
+                carLength={carLength}
+              />
+            )}
           </Stage>
         </Box>
       </Grid>
@@ -108,6 +123,44 @@ const SensorSetBuilderMain: React.FC = () => {
             margin="normal"
             style={{ maxWidth: "300px" }}
           />
+
+          {/* 图层控制区 */}
+          <Box
+            position="absolute"
+            top={16}
+            right={16}
+            display="flex"
+            flexDirection="column"
+            bgcolor="white"
+            padding={2}
+            borderRadius={4}
+            boxShadow={3}
+          >
+            <Typography variant="h6">图层控制</Typography>
+            <Button
+              variant="contained"
+              color={showUssZones ? "primary" : "inherit"}
+              onClick={() => setShowUssZones(!showUssZones)}
+              style={{ marginBottom: "8px" }}
+            >
+              {showUssZones ? "隐藏" : "显示"} USS 区域
+            </Button>
+            <Button
+              variant="contained"
+              color={showCarImage ? "primary" : "inherit"}
+              onClick={() => setShowCarImage(!showCarImage)}
+              style={{ marginBottom: "8px" }}
+            >
+              {showCarImage ? "隐藏" : "显示"} 车辆图像
+            </Button>
+            <Button
+              variant="contained"
+              color={showUssSensors ? "primary" : "inherit"}
+              onClick={() => setShowUssSensors(!showUssSensors)}
+            >
+              {showUssSensors ? "隐藏" : "显示"} 超声波传感器
+            </Button>
+          </Box>
         </Box>
       </Grid>
     </Grid>
