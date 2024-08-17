@@ -1,17 +1,27 @@
 import React, { useState } from "react";
 import { Grid, TextField, Box } from "@mui/material";
+import { Stage } from "react-konva";
+import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
+import useImage from "use-image";
 
 const SensorSetBuilderMain: React.FC = () => {
-  const [frontZones, setFrontZones] = useState<number[]>([0, 1, 2, 3, 4, 5, 6]);
-  const [rearZones, setRearZones] = useState<number[]>([1, 2, 3, 4]);
-  const [sideZones, setsideZones] = useState<number[]>([0, 1, 2, 3, 4, 5, 6]);
+  const [frontZones, setFrontZones] = useState<number>(6);
+  const [rearZones, setRearZones] = useState<number>(4);
+  const [sideZones, setSideZones] = useState<number>(6);
 
-  const handleZoneChange = (
-    setter: React.Dispatch<React.SetStateAction<number[]>>,
-    count: number
-  ) => {
-    setter(Array.from({ length: count }, (_, index) => index));
+  const [image] = useImage("/vehicle.png");
+  const image_margin = 20;
+  const overhang = 60 + image_margin; // assuming equal front real overhang
+  const frontOverhang = overhang / 2;
+  const rearOverhang = overhang / 2;
+  const carWidth = image?.width!;
+  const carLength = image?.height!;
+
+  const stage_size = { width: 400, height: 800 };
+  const origin = {
+    x: (stage_size.width - carLength) / 2,
+    y: (stage_size.height - carLength) / 2,
   };
 
   return (
@@ -21,7 +31,6 @@ const SensorSetBuilderMain: React.FC = () => {
       style={{ height: "100vh", alignItems: "center" }}
     >
       <Grid item xs={2}></Grid>
-      {/* 左侧车辆显示区域 */}
       <Grid item xs={6}>
         <Box
           display="flex"
@@ -34,26 +43,40 @@ const SensorSetBuilderMain: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            transform: "rotate(270deg)", // 旋转容器90度
+            transform: "rotate(270deg)",
           }}
         >
-          <UssZones
-            width={400}
-            height={800}
-            frontZones={frontZones}
-            rearZones={rearZones}
-            sideZones={sideZones}
-            carImageSrc="/vehicle.png"
-          />
+          <Stage width={stage_size.width} height={stage_size.height}>
+            {/* USS 传感器图层 */}
+            <UssZones
+              x={origin.x}
+              y={origin.y}
+              carWidth={carWidth}
+              carLength={carLength}
+              frontOverhang={frontOverhang}
+              rearOverhang={rearOverhang}
+              frontZones={frontZones}
+              rearZones={rearZones}
+              sideZones={sideZones}
+            />
+            {/* 车辆图层 */}
+            <CarImage
+              x={origin.x}
+              y={origin.y}
+              width={carWidth}
+              height={carLength}
+              imageSrc="/vehicle.png"
+            />
+            {/* 后续可以添加其他传感器图层 */}
+          </Stage>
         </Box>
       </Grid>
 
-      {/* 右侧控制输入框 */}
       <Grid item xs={4}>
         <Box
           display="flex"
           flexDirection="column"
-          justifyContent="flex-start" // 让输入框靠近顶部
+          justifyContent="flex-start"
           alignItems="center"
           height="100%"
           padding={2}
@@ -62,34 +85,28 @@ const SensorSetBuilderMain: React.FC = () => {
             label="Front Zones Numbers"
             type="number"
             variant="outlined"
-            value={frontZones.length}
-            onChange={(e) =>
-              handleZoneChange(setFrontZones, parseInt(e.target.value))
-            }
+            value={frontZones}
+            onChange={(e) => setFrontZones(parseInt(e.target.value))}
             margin="normal"
-            style={{ maxWidth: "300px" }} // 控制输入框长度
+            style={{ maxWidth: "300px" }}
           />
           <TextField
             label="Side Zone Numbers"
             type="number"
             variant="outlined"
-            value={sideZones.length}
-            onChange={(e) =>
-              handleZoneChange(setsideZones, parseInt(e.target.value))
-            }
+            value={sideZones}
+            onChange={(e) => setSideZones(parseInt(e.target.value))}
             margin="normal"
-            style={{ maxWidth: "300px" }} // 控制输入框长度
+            style={{ maxWidth: "300px" }}
           />
           <TextField
             label="Rear Zones Numbers"
             type="number"
             variant="outlined"
-            value={rearZones.length}
-            onChange={(e) =>
-              handleZoneChange(setRearZones, parseInt(e.target.value))
-            }
+            value={rearZones}
+            onChange={(e) => setRearZones(parseInt(e.target.value))}
             margin="normal"
-            style={{ maxWidth: "300px" }} // 控制输入框长度
+            style={{ maxWidth: "300px" }}
           />
         </Box>
       </Grid>
