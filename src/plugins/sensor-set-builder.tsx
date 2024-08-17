@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, Box, IconButton } from "@mui/material";
+import { Grid, Box, IconButton, TextField } from "@mui/material";
 import { Stage } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
@@ -17,7 +17,7 @@ const SensorSetBuilderMain: React.FC = () => {
   const [showCarImage, setShowCarImage] = useState<boolean>(true);
   const [showUssSensors, setShowUssSensors] = useState<boolean>(true);
 
-  const [panelVisible, setPanelVisible] = useState<boolean>(false); // 初始状态为隐藏控制面板
+  const [panelVisible, setPanelVisible] = useState<boolean>(false);
 
   const [image] = useImage("/vehicle.png");
   const image_margin = 20;
@@ -32,6 +32,58 @@ const SensorSetBuilderMain: React.FC = () => {
     x: (stage_size.width - carLength) / 2,
     y: (stage_size.height - carLength) / 2,
   };
+
+  // 构建图层控制项数组
+  const layers = [
+    {
+      name: "USS 区域",
+      visible: showUssZones,
+      toggleVisibility: () => setShowUssZones(!showUssZones),
+      controls: (
+        <Box>
+          <TextField
+            label="Front Zones Numbers"
+            type="number"
+            variant="outlined"
+            value={frontZones}
+            onChange={(e) => setFrontZones(parseInt(e.target.value))}
+            margin="normal"
+            fullWidth
+          />
+          <TextField
+            label="Side Zone Numbers"
+            type="number"
+            variant="outlined"
+            value={sideZones}
+            onChange={(e) => setSideZones(parseInt(e.target.value))}
+            margin="normal"
+            fullWidth
+          />
+          <TextField
+            label="Rear Zones Numbers"
+            type="number"
+            variant="outlined"
+            value={rearZones}
+            onChange={(e) => setRearZones(parseInt(e.target.value))}
+            margin="normal"
+            fullWidth
+          />
+        </Box>
+      ),
+    },
+    {
+      name: "车辆图像",
+      visible: showCarImage,
+      toggleVisibility: () => setShowCarImage(!showCarImage),
+      controls: null, // 当前没有需要设置的参数
+    },
+    {
+      name: "超声波传感器",
+      visible: showUssSensors,
+      toggleVisibility: () => setShowUssSensors(!showUssSensors),
+      controls: null, // 当前没有需要设置的参数
+    },
+  ];
 
   return (
     <Grid
@@ -91,19 +143,8 @@ const SensorSetBuilderMain: React.FC = () => {
 
       {panelVisible && (
         <ControlPanel
-          showUssZones={showUssZones}
-          showCarImage={showCarImage}
-          showUssSensors={showUssSensors}
-          setShowUssZones={setShowUssZones}
-          setShowCarImage={setShowCarImage}
-          setShowUssSensors={setShowUssSensors}
-          frontZones={frontZones}
-          sideZones={sideZones}
-          rearZones={rearZones}
-          setFrontZones={setFrontZones}
-          setSideZones={setSideZones}
-          setRearZones={setRearZones}
-          onClose={() => setPanelVisible(false)} // 传递关闭回调函数
+          layers={layers} // 传递图层控制项
+          onClose={() => setPanelVisible(false)}
         />
       )}
 
