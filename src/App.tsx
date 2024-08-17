@@ -4,7 +4,7 @@ import ToolInterface from "./components/ToolInterface";
 const App: React.FC = () => {
   return (
     <div>
-      <h1>Desktop Application</h1>
+      {/* <h1>Aday Plugin</h1> */}
       <ToolInterface />
     </div>
   );

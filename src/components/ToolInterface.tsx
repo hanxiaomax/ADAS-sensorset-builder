@@ -6,7 +6,7 @@ const ToolInterface: React.FC = () => {
   return (
     <Router>
       <div>
-        <nav>
+        {/* <nav>
           <ul>
             {plugins.map((plugin) => (
               <li key={plugin.id}>
@@ -14,7 +14,7 @@ const ToolInterface: React.FC = () => {
               </li>
             ))}
           </ul>
-        </nav>
+        </nav> */}
         <div>
           <Routes>
             {plugins.map((plugin) => (
