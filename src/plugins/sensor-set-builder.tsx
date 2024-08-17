@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Grid, TextField, Box, Button, Typography } from "@mui/material";
+import { Grid, Box, IconButton } from "@mui/material";
 import { Stage } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
 import UssSensors from "../components/UssSensors";
+import ControlPanel from "../components/ControlPanel";
+import SettingsIcon from "@mui/icons-material/Settings";
 import useImage from "use-image";
 
 const SensorSetBuilderMain: React.FC = () => {
@@ -11,14 +13,15 @@ const SensorSetBuilderMain: React.FC = () => {
   const [rearZones, setRearZones] = useState<number>(4);
   const [sideZones, setSideZones] = useState<number>(6);
 
-  // 控制图层可见性的状态
   const [showUssZones, setShowUssZones] = useState<boolean>(true);
   const [showCarImage, setShowCarImage] = useState<boolean>(true);
   const [showUssSensors, setShowUssSensors] = useState<boolean>(true);
 
+  const [panelVisible, setPanelVisible] = useState<boolean>(false); // 初始状态为隐藏控制面板
+
   const [image] = useImage("/vehicle.png");
   const image_margin = 20;
-  const overhang = 60 + image_margin; // assuming equal front real overhang
+  const overhang = 60 + image_margin;
   const frontOverhang = overhang / 2;
   const rearOverhang = overhang / 2;
   const carWidth = image?.width!;
@@ -36,8 +39,7 @@ const SensorSetBuilderMain: React.FC = () => {
       spacing={2}
       style={{ height: "100vh", alignItems: "center" }}
     >
-      <Grid item xs={2}></Grid>
-      <Grid item xs={6}>
+      <Grid item xs={10}>
         <Box
           display="flex"
           justifyContent="center"
@@ -87,82 +89,36 @@ const SensorSetBuilderMain: React.FC = () => {
         </Box>
       </Grid>
 
-      <Grid item xs={4}>
-        <Box
-          display="flex"
-          flexDirection="column"
-          justifyContent="flex-start"
-          alignItems="center"
-          height="100%"
-          padding={2}
-        >
-          <TextField
-            label="Front Zones Numbers"
-            type="number"
-            variant="outlined"
-            value={frontZones}
-            onChange={(e) => setFrontZones(parseInt(e.target.value))}
-            margin="normal"
-            style={{ maxWidth: "300px" }}
-          />
-          <TextField
-            label="Side Zone Numbers"
-            type="number"
-            variant="outlined"
-            value={sideZones}
-            onChange={(e) => setSideZones(parseInt(e.target.value))}
-            margin="normal"
-            style={{ maxWidth: "300px" }}
-          />
-          <TextField
-            label="Rear Zones Numbers"
-            type="number"
-            variant="outlined"
-            value={rearZones}
-            onChange={(e) => setRearZones(parseInt(e.target.value))}
-            margin="normal"
-            style={{ maxWidth: "300px" }}
-          />
+      {panelVisible && (
+        <ControlPanel
+          showUssZones={showUssZones}
+          showCarImage={showCarImage}
+          showUssSensors={showUssSensors}
+          setShowUssZones={setShowUssZones}
+          setShowCarImage={setShowCarImage}
+          setShowUssSensors={setShowUssSensors}
+          frontZones={frontZones}
+          sideZones={sideZones}
+          rearZones={rearZones}
+          setFrontZones={setFrontZones}
+          setSideZones={setSideZones}
+          setRearZones={setRearZones}
+          onClose={() => setPanelVisible(false)} // 传递关闭回调函数
+        />
+      )}
 
-          {/* 图层控制区 */}
-          <Box
-            position="absolute"
-            top={16}
-            right={16}
-            display="flex"
-            flexDirection="column"
-            bgcolor="white"
-            padding={2}
-            borderRadius={4}
-            boxShadow={3}
-          >
-            <Typography variant="h6">图层控制</Typography>
-            <Button
-              variant="contained"
-              color={showUssZones ? "primary" : "inherit"}
-              onClick={() => setShowUssZones(!showUssZones)}
-              style={{ marginBottom: "8px" }}
-            >
-              {showUssZones ? "隐藏" : "显示"} USS 区域
-            </Button>
-            <Button
-              variant="contained"
-              color={showCarImage ? "primary" : "inherit"}
-              onClick={() => setShowCarImage(!showCarImage)}
-              style={{ marginBottom: "8px" }}
-            >
-              {showCarImage ? "隐藏" : "显示"} 车辆图像
-            </Button>
-            <Button
-              variant="contained"
-              color={showUssSensors ? "primary" : "inherit"}
-              onClick={() => setShowUssSensors(!showUssSensors)}
-            >
-              {showUssSensors ? "隐藏" : "显示"} 超声波传感器
-            </Button>
-          </Box>
-        </Box>
-      </Grid>
+      {!panelVisible && (
+        <IconButton
+          onClick={() => setPanelVisible(true)}
+          style={{
+            position: "absolute",
+            top: 16,
+            right: 16,
+          }}
+        >
+          <SettingsIcon />
+        </IconButton>
+      )}
     </Grid>
   );
 };
