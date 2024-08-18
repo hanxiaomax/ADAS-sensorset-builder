@@ -3,13 +3,7 @@ import { Grid, Box, IconButton, TextField } from "@mui/material";
 import { Stage, Layer, Rect, Arc } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
-import {
-  UssSensor,
-  LidarSensor,
-  RadarSensor,
-  CameraSensor,
-  TeleCameraSensor,
-} from "../components/Sensors";
+import { Sensor } from "../components/Sensors";
 import ControlPanel from "../components/ControlPanel";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useImage from "use-image";
@@ -92,140 +86,141 @@ const SensorSetBuilderMain: React.FC = () => {
     y: stage_size.height / 2,
   };
 
-  const sensor_configuration: {
-    uss: SensorConfig[];
-    lidar: SensorConfig[];
-    radar: SensorConfig[];
-    camera: SensorConfig[];
-  } = {
-    uss: [
-      {
-        name: "Front Right Side",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.front_right_side,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "Front Middle Right 1",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.front_middle_right1,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "Front Middle Right 2",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.front_middle_right2,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "Front Middle Left 1",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.front_middle_left1,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "Front Middle Left 2",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.front_middle_left2,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "rear Right Side",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.rear_right_side,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "Rear Middle Right 1",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.rear_middle_right1,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "Rear Middle Right 2",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.rear_middle_right2,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "Rear Middle Left 1",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.rear_middle_left1,
-        fov: 120,
-        range: 50,
-      },
-      {
-        name: "Rear Middle Left 2",
-        type: "uss",
-        mountPosition: vehicle.mountingPoints.rear_middle_left2,
-        fov: 120,
-        range: 50,
-      },
-    ],
-    lidar: [
-      {
-        name: "Lidar Top",
-        type: "lidar",
-        mountPosition: vehicle.mountingPoints.roof_top,
-        fov: 360,
-        range: 400,
-      },
-    ],
-    radar: [
-      {
-        name: "Rear Left Corner Radar",
-        type: "radar",
-        mountPosition: vehicle.mountingPoints.rear_left_corner,
-        fov: 90,
-        range: 300,
-      },
-      {
-        name: "Rear Right Corner Radar",
-        type: "radar",
-        mountPosition: vehicle.mountingPoints.rear_right_corner,
-        fov: 90,
-        range: 300,
-      },
-    ],
-    camera: [
-      {
-        name: "Tele Camera",
-        type: "camera",
-        mountPosition: vehicle.mountingPoints.front_windshield,
-        fov: 60,
-        range: 450,
-      },
-      {
-        name: "Wide Camera",
-        type: "camera",
-        mountPosition: vehicle.mountingPoints.front_windshield,
-        fov: 120,
-        range: 200,
-      },
-      {
-        name: "AVM Camera",
-        type: "camera",
-        mountPosition: vehicle.mountingPoints.b_pillar_left,
-        fov: 180,
-        range: 120,
-      },
-      {
-        name: "AVM Camera",
-        type: "camera",
-        mountPosition: vehicle.mountingPoints.b_pillar_right,
-        fov: 180,
-        range: 120,
-      },
-    ],
-  };
+  const sensor_configuration: SensorConfig[] = [
+    {
+      name: "Front Right Side",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.front_right_side,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Front Middle Right 1",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.front_middle_right1,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Front Middle Right 2",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.front_middle_right2,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Front Middle Left 1",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.front_middle_left1,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Front Middle Left 2",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.front_middle_left2,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Front Left Side",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.front_left_side,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Rear Right Side",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.rear_right_side,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Rear Middle Right 1",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.rear_middle_right1,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Rear Middle Right 2",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.rear_middle_right2,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Rear Middle Left 1",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.rear_middle_left1,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Rear Middle Left 2",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.rear_middle_left2,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Rear Left Side",
+      type: "uss",
+      mountPosition: vehicle.mountingPoints.rear_left_side,
+      fov: 120,
+      range: 50,
+    },
+    {
+      name: "Lidar Top",
+      type: "lidar",
+      mountPosition: vehicle.mountingPoints.roof_top,
+      fov: 360,
+      range: 400,
+    },
+    {
+      name: "Rear Left Corner Radar",
+      type: "radar",
+      mountPosition: vehicle.mountingPoints.rear_left_corner,
+      fov: 90,
+      range: 300,
+    },
+    {
+      name: "Rear Right Corner Radar",
+      type: "radar",
+      mountPosition: vehicle.mountingPoints.rear_right_corner,
+      fov: 90,
+      range: 300,
+    },
+    {
+      name: "Tele Camera",
+      type: "tele_camera",
+      mountPosition: vehicle.mountingPoints.front_windshield,
+      fov: 60,
+      range: 450,
+    },
+    {
+      name: "Wide Camera",
+      type: "camera",
+      mountPosition: vehicle.mountingPoints.front_windshield,
+      fov: 120,
+      range: 200,
+    },
+    {
+      name: "AVM Camera",
+      type: "camera",
+      mountPosition: vehicle.mountingPoints.b_pillar_left,
+      fov: 180,
+      range: 120,
+    },
+    {
+      name: "AVM Camera",
+      type: "camera",
+      mountPosition: vehicle.mountingPoints.b_pillar_right,
+      fov: 180,
+      range: 120,
+    },
+  ];
 
   return (
     <Grid
@@ -250,6 +245,15 @@ const SensorSetBuilderMain: React.FC = () => {
           }}
         >
           <Stage width={stage_size.width} height={stage_size.height}>
+            {uiConfig.showCarImage && (
+              <CarImage
+                x={origin.x}
+                y={origin.y}
+                width={vehicle.width}
+                height={vehicle.length}
+                imageSrc={imageSrc}
+              />
+            )}
             <Layer>
               {/* 绘制Stage的边框 */}
               {/* <Rect
@@ -284,44 +288,9 @@ const SensorSetBuilderMain: React.FC = () => {
                 ))}
 
               {uiConfig.showUssSensors &&
-                sensor_configuration.uss.length > 0 &&
-                sensor_configuration.uss.map((sensorConfig, index) => (
-                  <UssSensor
-                    key={index}
-                    type={sensorConfig.type}
-                    mountPosition={sensorConfig.mountPosition}
-                    fov={sensorConfig.fov}
-                    range={sensorConfig.range}
-                  />
-                ))}
-
-              {uiConfig.showLidarSensors &&
-                sensor_configuration.lidar.length > 0 &&
-                sensor_configuration.lidar.map((sensorConfig, index) => (
-                  <LidarSensor
-                    key={index}
-                    type={sensorConfig.type}
-                    mountPosition={sensorConfig.mountPosition}
-                    fov={sensorConfig.fov}
-                    range={sensorConfig.range}
-                  />
-                ))}
-
-              {uiConfig.showRadarSensors &&
-                sensor_configuration.radar.length > 0 &&
-                sensor_configuration.radar.map((sensorConfig, index) => (
-                  <RadarSensor
-                    key={index}
-                    type={sensorConfig.type}
-                    mountPosition={sensorConfig.mountPosition}
-                    fov={sensorConfig.fov}
-                    range={sensorConfig.range}
-                  />
-                ))}
-              {uiConfig.showCameraSensors &&
-                sensor_configuration.camera.length > 0 &&
-                sensor_configuration.camera.map((sensorConfig, index) => (
-                  <CameraSensor
+                sensor_configuration.length > 0 &&
+                sensor_configuration.map((sensorConfig, index) => (
+                  <Sensor
                     key={index}
                     type={sensorConfig.type}
                     mountPosition={sensorConfig.mountPosition}
@@ -330,15 +299,6 @@ const SensorSetBuilderMain: React.FC = () => {
                   />
                 ))}
             </Layer>
-            {uiConfig.showCarImage && (
-              <CarImage
-                x={origin.x}
-                y={origin.y}
-                width={vehicle.width}
-                height={vehicle.length}
-                imageSrc={imageSrc}
-              />
-            )}
           </Stage>
         </Box>
       </Grid>

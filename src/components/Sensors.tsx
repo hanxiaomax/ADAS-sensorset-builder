@@ -2,20 +2,28 @@ import React from "react";
 import { Layer, Arc, Rect } from "react-konva";
 import { Position, SensorConfig } from "../types/Common";
 
-interface SensorProps extends SensorConfig {
-  range: number;
-  color: string; // 使用hex格式的颜色值
-  opacity: number;
-}
+const sensorStyles: { [key: string]: { color: string; opacity: number } } = {
+  uss: { color: "#3a3895", opacity: 0.4 },
+  lidar: { color: "#fa973d", opacity: 0.2 },
+  radar: { color: "#00973d", opacity: 0.3 },
+  camera: { color: "#57b1b9", opacity: 0.2 },
+  tele_camera: { color: "#f1dae0", opacity: 0.5 },
+};
 
-export const Sensor: React.FC<SensorProps> = ({
+export const Sensor: React.FC<SensorConfig> = ({
   mountPosition,
   fov,
   range,
-  color,
-  opacity,
+  type,
 }) => {
   const offset = 5;
+
+  // 根据传感器类型动态设置颜色和透明度
+  const { color, opacity } = sensorStyles[type] || {
+    color: "#000",
+    opacity: 1,
+  };
+
   return (
     <React.Fragment>
       {/* 绘制传感器的FOV扇形区域 */}
@@ -42,23 +50,3 @@ export const Sensor: React.FC<SensorProps> = ({
     </React.Fragment>
   );
 };
-
-export const UssSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} color="#3a3895" opacity={0.4} />
-);
-
-export const LidarSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} color="#fa973d" opacity={0.2} />
-);
-
-export const RadarSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} color="#00973d" opacity={0.3} />
-);
-
-export const CameraSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} color="#57b1b9" opacity={0.2} />
-);
-
-export const TeleCameraSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} color="#f1dae0" opacity={0.5} />
-);
