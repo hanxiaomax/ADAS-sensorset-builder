@@ -76,7 +76,7 @@ const SensorSetBuilderMain: React.FC = () => {
   const carWidth = image?.width!;
   const carLength = image?.height!;
 
-  const stage_size = { width: 800, height: 800 };
+  const stage_size = { width: 800, height: 1000 };
   const origin = {
     x: (stage_size.width - carWidth) / 2,
     y: (stage_size.height - carLength) / 2,
@@ -332,7 +332,7 @@ const SensorSetBuilderMain: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            // transform: "rotate(270deg)",
+            // transform: "scale(0.5) rotate(270deg)", // 0.5表示缩小为原始大小的50%
           }}
         >
           <Stage width={stage_size.width} height={stage_size.height}>

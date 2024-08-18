@@ -56,7 +56,7 @@ export const RadarSensor: React.FC<SensorConfig> = (props) => (
 );
 
 export const CameraSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} range={100} color="#b9455e" opacity={0.5} />
+  <Sensor {...props} range={100} color="#57b1b9" opacity={0.5} />
 );
 
 export const TeleCameraSensor: React.FC<SensorConfig> = (props) => (
