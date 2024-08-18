@@ -64,6 +64,7 @@ const SensorSetBuilderMain: React.FC = () => {
     rearZones: 4,
     sideZones: 6,
     panelVisible: false,
+    background: "white",
   });
 
   const imageSrc = "/vehicle.png";
@@ -242,6 +243,7 @@ const SensorSetBuilderMain: React.FC = () => {
       container
       spacing={2}
       style={{ height: "100vh", alignItems: "center" }}
+      sx={{ backgroundColor: uiConfig.background }}
     >
       <Grid item xs={10}>
         <Box
@@ -283,15 +285,6 @@ const SensorSetBuilderMain: React.FC = () => {
                 frontZones={uiConfig.frontZones}
                 rearZones={uiConfig.rearZones}
                 sideZones={uiConfig.sideZones}
-              />
-            )}
-            {uiConfig.showCarImage && (
-              <CarImage
-                x={origin.x}
-                y={origin.y}
-                width={carWidth}
-                height={carLength}
-                imageSrc={imageSrc}
               />
             )}
 
@@ -357,6 +350,15 @@ const SensorSetBuilderMain: React.FC = () => {
                   )
                 )}
             </Layer>
+            {uiConfig.showCarImage && (
+              <CarImage
+                x={origin.x}
+                y={origin.y}
+                width={carWidth}
+                height={carLength}
+                imageSrc={imageSrc}
+              />
+            )}
           </Stage>
         </Box>
       </Grid>

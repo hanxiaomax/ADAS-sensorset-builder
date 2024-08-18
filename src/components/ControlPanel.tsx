@@ -135,7 +135,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   return (
     <Box
       width="250px"
-      bgcolor="white"
+      bgcolor="#efefef"
       padding={2}
       borderRadius={4}
       boxShadow={3}

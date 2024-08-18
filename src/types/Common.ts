@@ -27,4 +27,5 @@ export interface UiConfig {
   rearZones: number;
   sideZones: number;
   panelVisible: boolean;
+  background: string;
 }
