@@ -3,11 +3,17 @@ import { Grid, Box, IconButton, TextField } from "@mui/material";
 import { Stage, Layer, Rect, Arc } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
-import UssSensor from "../components/UssSensor";
+import {
+  UssSensor,
+  LidarSensor,
+  RadarSensor,
+  CameraSensor,
+  TeleCameraSensor,
+} from "../components/Sensors";
 import ControlPanel from "../components/ControlPanel";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useImage from "use-image";
-import { Position, MountingPoint } from "../types/Common";
+import { Position, MountPosition } from "../types/Common";
 
 interface MarkerProps {
   position: Position;
@@ -21,13 +27,13 @@ function setPosition(x: number, y: number): Position {
   };
 }
 
-function setMountingPoint(
+function setMountingPosition(
   x: number,
   y: number,
   orientation: number
-): MountingPoint {
+): MountPosition {
   return {
-    position: { x: x, y: y },
+    position: setPosition(x, y),
     orientation: orientation,
   };
 }
@@ -50,9 +56,15 @@ const SensorSetBuilderMain: React.FC = () => {
   const [rearZones, setRearZones] = useState<number>(4);
   const [sideZones, setSideZones] = useState<number>(6);
 
-  const [showUssZones, setShowUssZones] = useState<boolean>(true);
+  const [showUssZones, setShowUssZones] = useState<boolean>(false);
   const [showCarImage, setShowCarImage] = useState<boolean>(true);
   const [showUssSensors, setShowUssSensors] = useState<boolean>(true);
+  const [showLidarSensors, setShowLidarSensors] = useState<boolean>(true);
+  const [showCameraSensors, setShowCameraSensors] = useState<boolean>(true);
+  const [showRadarSensors, setShowRadarSensors] = useState<boolean>(true);
+
+  const [showVehicleRefPoint, setShowVehicleRefPoint] =
+    useState<boolean>(false);
 
   const [panelVisible, setPanelVisible] = useState<boolean>(false);
   const imageSrc = "/vehicle.png";
@@ -64,7 +76,7 @@ const SensorSetBuilderMain: React.FC = () => {
   const carWidth = image?.width!;
   const carLength = image?.height!;
 
-  const stage_size = { width: 400, height: 800 };
+  const stage_size = { width: 800, height: 800 };
   const origin = {
     x: (stage_size.width - carWidth) / 2,
     y: (stage_size.height - carLength) / 2,
@@ -84,79 +96,157 @@ const SensorSetBuilderMain: React.FC = () => {
       origin.y + carLength - 30
     ),
     rear_bumper_left: setPosition(origin.x + 15, origin.y + carLength - 30),
+    wingside_right: setPosition(origin.x + carWidth - 15, origin.y + 100),
+    wingside_left: setPosition(origin.x + 15, origin.y + 100),
+    sidemirror_right: setPosition(origin.x + carWidth - 8, origin.y + 120),
+    sidemirror_left: setPosition(origin.x + 8, origin.y + 120),
+    front_roof: setPosition(origin.x + 15, origin.y + carLength - 30),
+    front_windsheild: setPosition(origin.x + carWidth / 2, origin.y + 130),
+    rear_windsheild: setPosition(
+      origin.x + carWidth / 2,
+      origin.y + carLength - 70
+    ),
+    b_pillar_right: setPosition(origin.x + carWidth - 15, origin.y + 180),
+    b_pillar_left: setPosition(origin.x + 15, origin.y + 180),
+    roof_top: setPosition(origin.x + carWidth / 2, origin.y + carLength / 2),
   };
 
   const orientation_front = -90;
   const orientation_rear = 90;
-  const sensor_mounting_point = {
+
+  const sensor_configuration = {
     uss: {
-      front_middle_right1: setMountingPoint(
+      front_middle_right1: setMountingPosition(
         vehicle_keypoint.front_center.x + 20,
         vehicle_keypoint.front_center.y + 5,
         orientation_front
       ),
-      front_middle_right2: setMountingPoint(
+      front_middle_right2: setMountingPosition(
         vehicle_keypoint.front_center.x + 45,
         vehicle_keypoint.front_center.y + 13,
         orientation_front
       ),
 
-      front_middle_left1: setMountingPoint(
+      front_middle_left1: setMountingPosition(
         vehicle_keypoint.front_center.x - 20,
         vehicle_keypoint.front_center.y + 5,
         orientation_front
       ),
-      front_middle_left2: setMountingPoint(
+      front_middle_left2: setMountingPosition(
         vehicle_keypoint.front_center.x - 45,
         vehicle_keypoint.front_center.y + 13,
         orientation_front
       ),
-      front_right_side: setMountingPoint(
+      front_right_side: setMountingPosition(
         vehicle_keypoint.front_bumper_right.x - 5,
         vehicle_keypoint.front_bumper_right.y,
         orientation_front
       ),
-      front_left_side: setMountingPoint(
+      front_left_side: setMountingPosition(
         vehicle_keypoint.front_bumper_left.x + 5,
         vehicle_keypoint.front_bumper_left.y,
         orientation_front
       ),
-      rear_middle_right1: setMountingPoint(
+      rear_middle_right1: setMountingPosition(
         vehicle_keypoint.rear_center.x + 20,
         vehicle_keypoint.rear_center.y - 5,
         orientation_rear
       ),
-      rear_middle_right2: setMountingPoint(
+      rear_middle_right2: setMountingPosition(
         vehicle_keypoint.rear_center.x + 45,
         vehicle_keypoint.rear_center.y - 13,
         orientation_rear
       ),
-      rear_middle_left1: setMountingPoint(
+      rear_middle_left1: setMountingPosition(
         vehicle_keypoint.rear_center.x - 20,
         vehicle_keypoint.rear_center.y - 5,
         orientation_rear
       ),
-      rear_middle_left2: setMountingPoint(
+      rear_middle_left2: setMountingPosition(
         vehicle_keypoint.rear_center.x - 45,
         vehicle_keypoint.rear_center.y - 13,
         orientation_rear
       ),
-      rear_right_side: setMountingPoint(
+      rear_right_side: setMountingPosition(
         vehicle_keypoint.rear_bumper_right.x - 5,
         vehicle_keypoint.rear_bumper_right.y,
         orientation_rear
       ),
-      rear_left_side: setMountingPoint(
+      rear_left_side: setMountingPosition(
         vehicle_keypoint.rear_bumper_left.x + 5,
         vehicle_keypoint.rear_bumper_left.y,
         orientation_rear
+      ),
+    },
+    lidar: {
+      roof_top: setMountingPosition(
+        vehicle_keypoint.roof_top.x,
+        vehicle_keypoint.roof_top.y,
+        orientation_front
+      ),
+    },
+    radar: {
+      front_left_corner: setMountingPosition(
+        vehicle_keypoint.front_bumper_left.x,
+        vehicle_keypoint.front_bumper_left.y,
+        -120
+      ),
+      front_right_corner: setMountingPosition(
+        vehicle_keypoint.front_bumper_right.x,
+        vehicle_keypoint.front_bumper_right.y,
+        -60
+      ),
+      rear_left_corner: setMountingPosition(
+        vehicle_keypoint.rear_bumper_left.x,
+        vehicle_keypoint.rear_bumper_left.y,
+        120
+      ),
+      rear_right_corner: setMountingPosition(
+        vehicle_keypoint.rear_bumper_right.x,
+        vehicle_keypoint.rear_bumper_right.y,
+        60
+      ),
+    },
+    tele_camera: {
+      front: setMountingPosition(
+        vehicle_keypoint.front_windsheild.x,
+        vehicle_keypoint.front_windsheild.y,
+        -90
+      ),
+    },
+    avm_camera: {
+      wingside_left: setMountingPosition(
+        vehicle_keypoint.wingside_left.x,
+        vehicle_keypoint.wingside_left.y,
+        -180
+      ),
+      wingside_right: setMountingPosition(
+        vehicle_keypoint.wingside_right.x,
+        vehicle_keypoint.wingside_right.y,
+        0
+      ),
+      b_pillar_left: setMountingPosition(
+        vehicle_keypoint.b_pillar_left.x,
+        vehicle_keypoint.b_pillar_left.y,
+        -180
+      ),
+      b_pillar_right: setMountingPosition(
+        vehicle_keypoint.b_pillar_right.x,
+        vehicle_keypoint.b_pillar_right.y,
+        0
       ),
     },
   };
 
   const layers = [
     {
-      name: "USS 区域",
+      name: "Vehicle",
+      visible: showCarImage,
+      toggleVisibility: () => setShowCarImage(!showCarImage),
+      controls: null,
+    },
+    {
+      name: "USS Zone",
       visible: showUssZones,
       toggleVisibility: () => setShowUssZones(!showUssZones),
       controls: (
@@ -191,16 +281,35 @@ const SensorSetBuilderMain: React.FC = () => {
         </Box>
       ),
     },
+
     {
-      name: "车辆图像",
-      visible: showCarImage,
-      toggleVisibility: () => setShowCarImage(!showCarImage),
+      name: "USS",
+      visible: showUssSensors,
+      toggleVisibility: () => setShowUssSensors(!showUssSensors),
       controls: null,
     },
     {
-      name: "超声波传感器",
-      visible: showUssSensors,
-      toggleVisibility: () => setShowUssSensors(!showUssSensors),
+      name: "Lidar",
+      visible: showLidarSensors,
+      toggleVisibility: () => setShowLidarSensors(!showLidarSensors),
+      controls: null,
+    },
+    {
+      name: "Radar",
+      visible: showRadarSensors,
+      toggleVisibility: () => setShowRadarSensors(!showRadarSensors),
+      controls: null,
+    },
+    {
+      name: "Camera",
+      visible: showCameraSensors,
+      toggleVisibility: () => setShowCameraSensors(!showCameraSensors),
+      controls: null,
+    },
+    {
+      name: "Vehicle Ref Point",
+      visible: showVehicleRefPoint,
+      toggleVisibility: () => setShowVehicleRefPoint(!showVehicleRefPoint),
       controls: null,
     },
   ];
@@ -229,14 +338,14 @@ const SensorSetBuilderMain: React.FC = () => {
           <Stage width={stage_size.width} height={stage_size.height}>
             <Layer>
               {/* 绘制Stage的边框 */}
-              <Rect
+              {/* <Rect
                 x={0}
                 y={0}
                 width={stage_size.width}
                 height={stage_size.height}
                 stroke="black" // 边框颜色
                 strokeWidth={2} // 边框宽度
-              />
+              /> */}
 
               <Marker position={stage_center}></Marker>
             </Layer>
@@ -264,23 +373,63 @@ const SensorSetBuilderMain: React.FC = () => {
             )}
 
             <Layer>
-              {/* <Marker position={vehicle_keypoint.front_center}></Marker> */}
-              {/* <Marker position={vehicle_keypoint.rear_center}></Marker> */}
-              {/* <Marker position={origin} fill="red"></Marker> */}
-              {/* {Object.values(sensor_mounting_point.uss).map(
-                (position, index) => (
-                  <Marker key={index} position={position} fill="blue" />
-                )
-              )} */}
+              {showVehicleRefPoint &&
+                Object.values(vehicle_keypoint).map((position, index) => (
+                  <Marker key={index} position={position} fill="red" />
+                ))}
 
               {showUssSensors &&
-                Object.values(sensor_mounting_point.uss).map(
+                Object.values(sensor_configuration.uss).map(
                   (mountingPoint, index) => (
                     <UssSensor
                       key={index}
-                      position={mountingPoint.position}
-                      orientation={mountingPoint.orientation}
+                      type="uss"
+                      mountPosition={mountingPoint}
                       fov={120}
+                    />
+                  )
+                )}
+              {showLidarSensors &&
+                Object.values(sensor_configuration.lidar).map(
+                  (mountingPoint, index) => (
+                    <LidarSensor
+                      key={index}
+                      type="lidar"
+                      mountPosition={mountingPoint}
+                      fov={360}
+                    />
+                  )
+                )}
+              {showRadarSensors &&
+                Object.values(sensor_configuration.radar).map(
+                  (mountingPoint, index) => (
+                    <RadarSensor
+                      key={index}
+                      type="corner radar"
+                      mountPosition={mountingPoint}
+                      fov={60}
+                    />
+                  )
+                )}
+              {showCameraSensors &&
+                Object.values(sensor_configuration.tele_camera).map(
+                  (mountingPoint, index) => (
+                    <TeleCameraSensor
+                      key={index}
+                      type="camera"
+                      mountPosition={mountingPoint}
+                      fov={30}
+                    />
+                  )
+                )}
+              {showCameraSensors &&
+                Object.values(sensor_configuration.avm_camera).map(
+                  (mountingPoint, index) => (
+                    <CameraSensor
+                      key={index}
+                      type="camera"
+                      mountPosition={mountingPoint}
+                      fov={180}
                     />
                   )
                 )}

@@ -2,13 +2,14 @@ export interface Position {
   x: number;
   y: number;
 }
-export interface MountingPoint {
+export interface MountPosition {
   position: Position;
   orientation: number;
 }
 
 export interface SensorConfig {
-  position: Position;
-  orientation: number;
+  name?: string;
+  type: string;
+  mountPosition: MountPosition;
   fov: number;
 }
