@@ -14,6 +14,7 @@ import ControlPanel from "../components/ControlPanel";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useImage from "use-image";
 import { Position, MountPosition } from "../types/Common";
+import { Vehicle } from "../types/Vehicle";
 
 interface MarkerProps {
   position: Position;
@@ -52,6 +53,7 @@ const Marker: React.FC<MarkerProps> = ({ position, fill = "black" }) => {
 };
 
 const SensorSetBuilderMain: React.FC = () => {
+  const stage_size = { width: 800, height: 1000 };
   const [uiConfig, setUiconfig] = useState({
     showCarImage: true,
     showUssZones: false,
@@ -71,44 +73,23 @@ const SensorSetBuilderMain: React.FC = () => {
   const [image] = useImage(imageSrc);
   const image_margin = 20;
   const overhang = 60 + image_margin;
-  const frontOverhang = overhang / 2;
-  const rearOverhang = overhang / 2;
-  const carWidth = image?.width!;
-  const carLength = image?.height!;
-
-  const stage_size = { width: 800, height: 1000 };
-  const origin = {
-    x: (stage_size.width - carWidth) / 2,
-    y: (stage_size.height - carLength) / 2,
+  const origin: Position = {
+    x: (stage_size.width - image?.width!) / 2,
+    y: (stage_size.height - image?.height!) / 2,
   };
+
+  let vehicle = new Vehicle(
+    image?.width!,
+    image?.height!,
+    overhang / 2,
+    overhang / 2,
+    origin
+  );
+
+  let vehicle_keypoint = vehicle.refPoints;
   const stage_center = {
     x: stage_size.width / 2,
     y: stage_size.height / 2,
-  };
-
-  const vehicle_keypoint = {
-    front_center: setPosition(origin.x + carWidth / 2, origin.y),
-    rear_center: setPosition(origin.x + carWidth / 2, origin.y + carLength),
-    front_bumper_right: setPosition(origin.x + carWidth - 15, origin.y + 30),
-    front_bumper_left: setPosition(origin.x + 15, origin.y + 30),
-    rear_bumper_right: setPosition(
-      origin.x + carWidth - 15,
-      origin.y + carLength - 30
-    ),
-    rear_bumper_left: setPosition(origin.x + 15, origin.y + carLength - 30),
-    wingside_right: setPosition(origin.x + carWidth - 15, origin.y + 100),
-    wingside_left: setPosition(origin.x + 15, origin.y + 100),
-    sidemirror_right: setPosition(origin.x + carWidth - 8, origin.y + 120),
-    sidemirror_left: setPosition(origin.x + 8, origin.y + 120),
-    front_roof: setPosition(origin.x + 15, origin.y + carLength - 30),
-    front_windsheild: setPosition(origin.x + carWidth / 2, origin.y + 130),
-    rear_windsheild: setPosition(
-      origin.x + carWidth / 2,
-      origin.y + carLength - 70
-    ),
-    b_pillar_right: setPosition(origin.x + carWidth - 15, origin.y + 180),
-    b_pillar_left: setPosition(origin.x + 15, origin.y + 180),
-    roof_top: setPosition(origin.x + carWidth / 2, origin.y + carLength / 2),
   };
 
   const orientation_front = -90;
@@ -278,10 +259,10 @@ const SensorSetBuilderMain: React.FC = () => {
               <UssZones
                 x={origin.x}
                 y={origin.y}
-                carWidth={carWidth}
-                carLength={carLength}
-                frontOverhang={frontOverhang}
-                rearOverhang={rearOverhang}
+                carWidth={vehicle.width}
+                carLength={vehicle.length}
+                frontOverhang={vehicle.frontOverhang}
+                rearOverhang={vehicle.rearOverhang}
                 frontZones={uiConfig.frontZones}
                 rearZones={uiConfig.rearZones}
                 sideZones={uiConfig.sideZones}
@@ -354,8 +335,8 @@ const SensorSetBuilderMain: React.FC = () => {
               <CarImage
                 x={origin.x}
                 y={origin.y}
-                width={carWidth}
-                height={carLength}
+                width={vehicle.width}
+                height={vehicle.length}
                 imageSrc={imageSrc}
               />
             )}
