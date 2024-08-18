@@ -1,5 +1,5 @@
 import React from "react";
-import { Layer, Image } from "react-konva";
+import { Layer, Image, Rect } from "react-konva";
 import useImage from "use-image";
 
 interface CarImageProps {

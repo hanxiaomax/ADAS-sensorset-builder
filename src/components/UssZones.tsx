@@ -31,25 +31,27 @@ const UssZones: React.FC<UssZonesProps> = ({
   const areaColor = "#2199d6";
   const lineColor = "#c0e2f7";
   const lineWidth = 2;
-
+  const sideZoneWidth = 80;
+  const sideoffset = 20;
+  console.log(x, y);
   return (
     <Layer>
       {/* 绘制左右两侧分区 */}
       {Array.from({ length: sideZones }).map((_, index) => (
         <React.Fragment key={index}>
           <Rect
-            x={x + 40}
+            x={x - sideZoneWidth + sideoffset}
             y={y + index * zoneHeight + overhang / 2}
-            width={80}
+            width={sideZoneWidth}
             height={zoneHeight}
             fill={areaColor}
             stroke={lineColor}
             strokeWidth={lineWidth}
           />
           <Rect
-            x={x + carWidth - 120}
+            x={x + sideZoneWidth * 2 - sideoffset}
             y={y + index * zoneHeight + overhang / 2}
-            width={80}
+            width={sideZoneWidth}
             height={zoneHeight}
             fill={areaColor}
             stroke={lineColor}
@@ -57,7 +59,6 @@ const UssZones: React.FC<UssZonesProps> = ({
           />
         </React.Fragment>
       ))}
-
       {/* 绘制前方分区 */}
       {Array.from({ length: frontZones }).map((_, index) => {
         const startAngle = 180 + (index * 180) / frontZones;
@@ -77,7 +78,6 @@ const UssZones: React.FC<UssZonesProps> = ({
           />
         );
       })}
-
       {/* 绘制后方分区 */}
       {Array.from({ length: rearZones }).map((_, index) => {
         const startAngle = (index * 180) / rearZones;

@@ -1,19 +1,49 @@
 import React, { useState } from "react";
 import { Grid, Box, IconButton, TextField } from "@mui/material";
-import { Stage } from "react-konva";
+import { Stage, Layer, Rect, Arc } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
-import UssSensors from "../components/UssSensors";
+import UssSensor from "../components/UssSensor";
 import ControlPanel from "../components/ControlPanel";
 import SettingsIcon from "@mui/icons-material/Settings";
 import useImage from "use-image";
+import { Position, MountingPoint } from "../types/Common";
 
-interface SensorConfig {
-  x: number;
-  y: number;
-  orientation: number;
-  fov: number;
+interface MarkerProps {
+  position: Position;
+  fill?: string;
 }
+
+function setPosition(x: number, y: number): Position {
+  return {
+    x: x,
+    y: y,
+  };
+}
+
+function setMountingPoint(
+  x: number,
+  y: number,
+  orientation: number
+): MountingPoint {
+  return {
+    position: { x: x, y: y },
+    orientation: orientation,
+  };
+}
+
+const Marker: React.FC<MarkerProps> = ({ position, fill = "black" }) => {
+  const offset = 5;
+  return (
+    <Rect
+      x={position.x - offset}
+      y={position.y - offset}
+      width={10}
+      height={10}
+      fill={fill}
+    />
+  );
+};
 
 const SensorSetBuilderMain: React.FC = () => {
   const [frontZones, setFrontZones] = useState<number>(6);
@@ -24,21 +54,9 @@ const SensorSetBuilderMain: React.FC = () => {
   const [showCarImage, setShowCarImage] = useState<boolean>(true);
   const [showUssSensors, setShowUssSensors] = useState<boolean>(true);
 
-  const [sensorSize, setSensorSize] = useState<number>(10); // 传感器大小
-
-  // 传感器配置数组
-  const [sensors, setSensors] = useState<SensorConfig[]>([
-    { x: 150, y: 50, orientation: 270, fov: 120 },
-    { x: 250, y: 50, orientation: 270, fov: 120 },
-    { x: 350, y: 50, orientation: 270, fov: 120 },
-    { x: 150, y: 350, orientation: 90, fov: 120 },
-    { x: 250, y: 350, orientation: 90, fov: 120 },
-    { x: 350, y: 350, orientation: 90, fov: 120 },
-  ]);
-
   const [panelVisible, setPanelVisible] = useState<boolean>(false);
-
-  const [image] = useImage("/vehicle.png");
+  const imageSrc = "/vehicle.png";
+  const [image] = useImage(imageSrc);
   const image_margin = 20;
   const overhang = 60 + image_margin;
   const frontOverhang = overhang / 2;
@@ -48,11 +66,94 @@ const SensorSetBuilderMain: React.FC = () => {
 
   const stage_size = { width: 400, height: 800 };
   const origin = {
-    x: (stage_size.width - carLength) / 2,
+    x: (stage_size.width - carWidth) / 2,
     y: (stage_size.height - carLength) / 2,
   };
+  const stage_center = {
+    x: stage_size.width / 2,
+    y: stage_size.height / 2,
+  };
 
-  // 构建图层控制项数组
+  const vehicle_keypoint = {
+    front_center: setPosition(origin.x + carWidth / 2, origin.y),
+    rear_center: setPosition(origin.x + carWidth / 2, origin.y + carLength),
+    front_bumper_right: setPosition(origin.x + carWidth - 15, origin.y + 30),
+    front_bumper_left: setPosition(origin.x + 15, origin.y + 30),
+    rear_bumper_right: setPosition(
+      origin.x + carWidth - 15,
+      origin.y + carLength - 30
+    ),
+    rear_bumper_left: setPosition(origin.x + 15, origin.y + carLength - 30),
+  };
+
+  const orientation_front = -90;
+  const orientation_rear = 90;
+  const sensor_mounting_point = {
+    uss: {
+      front_middle_right1: setMountingPoint(
+        vehicle_keypoint.front_center.x + 20,
+        vehicle_keypoint.front_center.y + 5,
+        orientation_front
+      ),
+      front_middle_right2: setMountingPoint(
+        vehicle_keypoint.front_center.x + 45,
+        vehicle_keypoint.front_center.y + 13,
+        orientation_front
+      ),
+
+      front_middle_left1: setMountingPoint(
+        vehicle_keypoint.front_center.x - 20,
+        vehicle_keypoint.front_center.y + 5,
+        orientation_front
+      ),
+      front_middle_left2: setMountingPoint(
+        vehicle_keypoint.front_center.x - 45,
+        vehicle_keypoint.front_center.y + 13,
+        orientation_front
+      ),
+      front_right_side: setMountingPoint(
+        vehicle_keypoint.front_bumper_right.x - 5,
+        vehicle_keypoint.front_bumper_right.y,
+        orientation_front
+      ),
+      front_left_side: setMountingPoint(
+        vehicle_keypoint.front_bumper_left.x + 5,
+        vehicle_keypoint.front_bumper_left.y,
+        orientation_front
+      ),
+      rear_middle_right1: setMountingPoint(
+        vehicle_keypoint.rear_center.x + 20,
+        vehicle_keypoint.rear_center.y - 5,
+        orientation_rear
+      ),
+      rear_middle_right2: setMountingPoint(
+        vehicle_keypoint.rear_center.x + 45,
+        vehicle_keypoint.rear_center.y - 13,
+        orientation_rear
+      ),
+      rear_middle_left1: setMountingPoint(
+        vehicle_keypoint.rear_center.x - 20,
+        vehicle_keypoint.rear_center.y - 5,
+        orientation_rear
+      ),
+      rear_middle_left2: setMountingPoint(
+        vehicle_keypoint.rear_center.x - 45,
+        vehicle_keypoint.rear_center.y - 13,
+        orientation_rear
+      ),
+      rear_right_side: setMountingPoint(
+        vehicle_keypoint.rear_bumper_right.x - 5,
+        vehicle_keypoint.rear_bumper_right.y,
+        orientation_rear
+      ),
+      rear_left_side: setMountingPoint(
+        vehicle_keypoint.rear_bumper_left.x + 5,
+        vehicle_keypoint.rear_bumper_left.y,
+        orientation_rear
+      ),
+    },
+  };
+
   const layers = [
     {
       name: "USS 区域",
@@ -100,20 +201,7 @@ const SensorSetBuilderMain: React.FC = () => {
       name: "超声波传感器",
       visible: showUssSensors,
       toggleVisibility: () => setShowUssSensors(!showUssSensors),
-      controls: (
-        <Box>
-          <TextField
-            label="传感器大小"
-            type="number"
-            variant="outlined"
-            value={sensorSize}
-            onChange={(e) => setSensorSize(parseInt(e.target.value))}
-            margin="normal"
-            fullWidth
-          />
-          {/* 可以添加更多传感器的控制，比如配置每个传感器的位置和角度 */}
-        </Box>
-      ),
+      controls: null,
     },
   ];
 
@@ -135,10 +223,23 @@ const SensorSetBuilderMain: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            transform: "rotate(270deg)",
+            // transform: "rotate(270deg)",
           }}
         >
           <Stage width={stage_size.width} height={stage_size.height}>
+            <Layer>
+              {/* 绘制Stage的边框 */}
+              <Rect
+                x={0}
+                y={0}
+                width={stage_size.width}
+                height={stage_size.height}
+                stroke="black" // 边框颜色
+                strokeWidth={2} // 边框宽度
+              />
+
+              <Marker position={stage_center}></Marker>
+            </Layer>
             {showUssZones && (
               <UssZones
                 x={origin.x}
@@ -158,15 +259,32 @@ const SensorSetBuilderMain: React.FC = () => {
                 y={origin.y}
                 width={carWidth}
                 height={carLength}
-                imageSrc="/vehicle.png"
+                imageSrc={imageSrc}
               />
             )}
-            {showUssSensors && (
-              <UssSensors
-                sensors={sensors || []} // 确保传递的数组已初始化
-                sensorSize={sensorSize}
-              />
-            )}
+
+            <Layer>
+              {/* <Marker position={vehicle_keypoint.front_center}></Marker> */}
+              {/* <Marker position={vehicle_keypoint.rear_center}></Marker> */}
+              {/* <Marker position={origin} fill="red"></Marker> */}
+              {/* {Object.values(sensor_mounting_point.uss).map(
+                (position, index) => (
+                  <Marker key={index} position={position} fill="blue" />
+                )
+              )} */}
+
+              {showUssSensors &&
+                Object.values(sensor_mounting_point.uss).map(
+                  (mountingPoint, index) => (
+                    <UssSensor
+                      key={index}
+                      position={mountingPoint.position}
+                      orientation={mountingPoint.orientation}
+                      fov={120}
+                    />
+                  )
+                )}
+            </Layer>
           </Stage>
         </Box>
       </Grid>
