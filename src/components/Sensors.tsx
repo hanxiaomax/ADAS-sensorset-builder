@@ -1,8 +1,11 @@
 import React from "react";
 import { Layer, Arc, Rect } from "react-konva";
 import { Position, SensorConfig } from "../types/Common";
+import { UiConfig } from "../types/Common";
 
-const sensorStyles: { [key: string]: { color: string; opacity: number } } = {
+const sensorStyles: {
+  [key: string]: { color: string; opacity: number };
+} = {
   uss: { color: "#3a3895", opacity: 0.4 },
   lidar: { color: "#fa973d", opacity: 0.2 },
   radar: { color: "#00973d", opacity: 0.3 },
@@ -10,11 +13,15 @@ const sensorStyles: { [key: string]: { color: string; opacity: number } } = {
   tele_camera: { color: "#f1dae0", opacity: 0.5 },
 };
 
-export const Sensor: React.FC<SensorConfig> = ({
+interface SensorProp extends SensorConfig {
+  uiConfig: UiConfig;
+}
+export const Sensor: React.FC<SensorProp> = ({
   mountPosition,
   fov,
   range,
   type,
+  uiConfig,
 }) => {
   const offset = 5;
 
@@ -23,6 +30,25 @@ export const Sensor: React.FC<SensorConfig> = ({
     color: "#000",
     opacity: 1,
   };
+
+  // 根据传感器类型选择 visibility 条件
+  const visibility = (() => {
+    if (type.includes("uss")) {
+      return uiConfig.showUssSensors;
+    } else if (type.includes("lidar")) {
+      return uiConfig.showLidarSensors;
+    } else if (type.includes("radar")) {
+      return uiConfig.showRadarSensors;
+    } else if (type.includes("camera")) {
+      return uiConfig.showCameraSensors;
+    } else {
+      return false;
+    }
+  })();
+
+  if (!visibility) {
+    return null; // 如果 visibility 为 false，则返回 null，不渲染任何内容
+  }
 
   return (
     <React.Fragment>

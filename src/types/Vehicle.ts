@@ -36,7 +36,7 @@ export interface VehicleRefPoints {
   roof_top: Position;
 }
 
-export interface MountingPorints {
+export interface MountingPoints {
   front_middle_right1: MountPosition;
   front_middle_right2: MountPosition;
   front_middle_left1: MountPosition;
@@ -69,7 +69,7 @@ export class Vehicle {
   rearOverhang: number;
   origin: Position;
   refPoints: VehicleRefPoints;
-  mountingPoints: MountingPorints;
+  mountingPoints: MountingPoints;
   orientation_front: number = -90;
   orientation_rear: number = 90;
   image: HTMLImageElement | undefined;

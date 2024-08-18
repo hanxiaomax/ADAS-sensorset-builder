@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -7,19 +6,55 @@ import {
   Switch,
   IconButton,
   TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { UiConfig } from "../types/Common";
+import { UiConfig, SensorConfig, MountPosition } from "../types/Common";
+import { MountingPoints } from "../types/Vehicle";
 
 interface ControlPanelProps {
   uiConfig: UiConfig;
   setUiConfig: React.Dispatch<React.SetStateAction<UiConfig>>;
+  sensorConfiguration: SensorConfig[]; // 主插件的 sensor_configuration 数组
+  setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
+  mountingPoints: MountingPoints; // 车辆的安装点集合
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
   uiConfig,
   setUiConfig,
+  sensorConfiguration,
+  setSensorConfiguration,
+  mountingPoints,
 }) => {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newSensor, setNewSensor] = useState<SensorConfig>({
+    name: "",
+    type: "",
+    mountPosition: { position: { x: 0, y: 0 }, orientation: 0 },
+    fov: 0,
+    range: 0,
+  });
+
+  const handleDialogOpen = () => setIsDialogOpen(true);
+  const handleDialogClose = () => setIsDialogOpen(false);
+
+  const handleAddSensor = () => {
+    setSensorConfiguration([...sensorConfiguration, newSensor]);
+    handleDialogClose();
+  };
+
+  const handleSensorChange = (field: keyof SensorConfig, value: any) => {
+    console.log(value);
+    setNewSensor((prev) => ({ ...prev, [field]: value }));
+  };
+
   const layers = [
     {
       name: "Vehicle",
@@ -132,6 +167,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       controls: null,
     },
   ];
+
   return (
     <Box
       width="250px"
@@ -170,6 +206,93 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           {layer.visible && layer.controls}
         </div>
       ))}
+
+      {/* 添加传感器按钮 */}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleDialogOpen}
+        fullWidth
+      >
+        添加传感器
+      </Button>
+
+      {/* 添加传感器对话框 */}
+      <Dialog open={isDialogOpen} onClose={handleDialogClose}>
+        <DialogTitle>添加新的传感器</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="名称"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={newSensor.name}
+            onChange={(e) => handleSensorChange("name", e.target.value)}
+          />
+          <TextField
+            label="类型"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={newSensor.type}
+            onChange={(e) => handleSensorChange("type", e.target.value)}
+          />
+          <TextField
+            label="视场角 (FOV)"
+            variant="outlined"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={newSensor.fov}
+            onChange={(e) =>
+              handleSensorChange("fov", parseInt(e.target.value))
+            }
+          />
+          <TextField
+            label="范围 (Range)"
+            variant="outlined"
+            type="number"
+            fullWidth
+            margin="normal"
+            value={newSensor.range}
+            onChange={(e) =>
+              handleSensorChange("range", parseInt(e.target.value))
+            }
+          />
+          <Select
+            label="安装位置"
+            variant="outlined"
+            fullWidth
+            value={
+              Object.keys(mountingPoints).find(
+                (key) =>
+                  mountingPoints[key as keyof MountingPoints] ===
+                  newSensor.mountPosition
+              ) || ""
+            }
+            onChange={(e) =>
+              handleSensorChange(
+                "mountPosition",
+                mountingPoints[e.target.value as keyof MountingPoints]
+              )
+            }
+          >
+            {Object.keys(mountingPoints).map((key) => (
+              <MenuItem key={key} value={key}>
+                {key}
+              </MenuItem>
+            ))}
+          </Select>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="secondary">
+            取消
+          </Button>
+          <Button onClick={handleAddSensor} color="primary">
+            添加
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

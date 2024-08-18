@@ -53,6 +53,9 @@ const SensorSetBuilderMain: React.FC = () => {
   });
 
   let vehicle_keypoint = vehicle.refPoints;
+  const [sensorConfiguration, setSensorConfiguration] = useState<
+    SensorConfig[]
+  >([]);
 
   const sensor_configuration: SensorConfig[] = [
     {
@@ -245,8 +248,7 @@ const SensorSetBuilderMain: React.FC = () => {
                   <Marker key={index} position={position} fill="red" />
                 ))}
 
-              {uiConfig.showUssSensors &&
-                sensor_configuration.length > 0 &&
+              {sensor_configuration.length > 0 &&
                 sensor_configuration.map((sensorConfig, index) => (
                   <Sensor
                     key={index}
@@ -254,6 +256,7 @@ const SensorSetBuilderMain: React.FC = () => {
                     mountPosition={sensorConfig.mountPosition}
                     fov={sensorConfig.fov}
                     range={sensorConfig.range}
+                    uiConfig={uiConfig}
                   />
                 ))}
             </Layer>
@@ -262,7 +265,13 @@ const SensorSetBuilderMain: React.FC = () => {
       </Grid>
 
       {uiConfig.panelVisible && (
-        <ControlPanel uiConfig={uiConfig} setUiConfig={setUiconfig} />
+        <ControlPanel
+          uiConfig={uiConfig}
+          setUiConfig={setUiconfig}
+          sensorConfiguration={sensorConfiguration}
+          setSensorConfiguration={setSensorConfiguration}
+          mountingPoints={vehicle.mountingPoints}
+        />
       )}
 
       {!uiConfig.panelVisible && (
