@@ -52,21 +52,20 @@ const Marker: React.FC<MarkerProps> = ({ position, fill = "black" }) => {
 };
 
 const SensorSetBuilderMain: React.FC = () => {
-  const [frontZones, setFrontZones] = useState<number>(6);
-  const [rearZones, setRearZones] = useState<number>(4);
-  const [sideZones, setSideZones] = useState<number>(6);
+  const [uiConfig, setUiconfig] = useState({
+    showCarImage: true,
+    showUssZones: false,
+    showUssSensors: true,
+    showLidarSensors: true,
+    showRadarSensors: true,
+    showCameraSensors: true,
+    showVehicleRefPoint: false,
+    frontZones: 6,
+    rearZones: 4,
+    sideZones: 6,
+    panelVisible: false,
+  });
 
-  const [showUssZones, setShowUssZones] = useState<boolean>(false);
-  const [showCarImage, setShowCarImage] = useState<boolean>(true);
-  const [showUssSensors, setShowUssSensors] = useState<boolean>(true);
-  const [showLidarSensors, setShowLidarSensors] = useState<boolean>(true);
-  const [showCameraSensors, setShowCameraSensors] = useState<boolean>(true);
-  const [showRadarSensors, setShowRadarSensors] = useState<boolean>(true);
-
-  const [showVehicleRefPoint, setShowVehicleRefPoint] =
-    useState<boolean>(false);
-
-  const [panelVisible, setPanelVisible] = useState<boolean>(false);
   const imageSrc = "/vehicle.png";
   const [image] = useImage(imageSrc);
   const image_margin = 20;
@@ -238,82 +237,6 @@ const SensorSetBuilderMain: React.FC = () => {
     },
   };
 
-  const layers = [
-    {
-      name: "Vehicle",
-      visible: showCarImage,
-      toggleVisibility: () => setShowCarImage(!showCarImage),
-      controls: null,
-    },
-    {
-      name: "USS Zone",
-      visible: showUssZones,
-      toggleVisibility: () => setShowUssZones(!showUssZones),
-      controls: (
-        <Box>
-          <TextField
-            label="Front Zones Numbers"
-            type="number"
-            variant="outlined"
-            value={frontZones}
-            onChange={(e) => setFrontZones(parseInt(e.target.value))}
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            label="Side Zone Numbers"
-            type="number"
-            variant="outlined"
-            value={sideZones}
-            onChange={(e) => setSideZones(parseInt(e.target.value))}
-            margin="normal"
-            fullWidth
-          />
-          <TextField
-            label="Rear Zones Numbers"
-            type="number"
-            variant="outlined"
-            value={rearZones}
-            onChange={(e) => setRearZones(parseInt(e.target.value))}
-            margin="normal"
-            fullWidth
-          />
-        </Box>
-      ),
-    },
-
-    {
-      name: "USS",
-      visible: showUssSensors,
-      toggleVisibility: () => setShowUssSensors(!showUssSensors),
-      controls: null,
-    },
-    {
-      name: "Lidar",
-      visible: showLidarSensors,
-      toggleVisibility: () => setShowLidarSensors(!showLidarSensors),
-      controls: null,
-    },
-    {
-      name: "Radar",
-      visible: showRadarSensors,
-      toggleVisibility: () => setShowRadarSensors(!showRadarSensors),
-      controls: null,
-    },
-    {
-      name: "Camera",
-      visible: showCameraSensors,
-      toggleVisibility: () => setShowCameraSensors(!showCameraSensors),
-      controls: null,
-    },
-    {
-      name: "Vehicle Ref Point",
-      visible: showVehicleRefPoint,
-      toggleVisibility: () => setShowVehicleRefPoint(!showVehicleRefPoint),
-      controls: null,
-    },
-  ];
-
   return (
     <Grid
       container
@@ -349,7 +272,7 @@ const SensorSetBuilderMain: React.FC = () => {
 
               <Marker position={stage_center}></Marker>
             </Layer>
-            {showUssZones && (
+            {uiConfig.showUssZones && (
               <UssZones
                 x={origin.x}
                 y={origin.y}
@@ -357,12 +280,12 @@ const SensorSetBuilderMain: React.FC = () => {
                 carLength={carLength}
                 frontOverhang={frontOverhang}
                 rearOverhang={rearOverhang}
-                frontZones={frontZones}
-                rearZones={rearZones}
-                sideZones={sideZones}
+                frontZones={uiConfig.frontZones}
+                rearZones={uiConfig.rearZones}
+                sideZones={uiConfig.sideZones}
               />
             )}
-            {showCarImage && (
+            {uiConfig.showCarImage && (
               <CarImage
                 x={origin.x}
                 y={origin.y}
@@ -373,12 +296,12 @@ const SensorSetBuilderMain: React.FC = () => {
             )}
 
             <Layer>
-              {showVehicleRefPoint &&
+              {uiConfig.showVehicleRefPoint &&
                 Object.values(vehicle_keypoint).map((position, index) => (
                   <Marker key={index} position={position} fill="red" />
                 ))}
 
-              {showUssSensors &&
+              {uiConfig.showUssSensors &&
                 Object.values(sensor_configuration.uss).map(
                   (mountingPoint, index) => (
                     <UssSensor
@@ -389,7 +312,7 @@ const SensorSetBuilderMain: React.FC = () => {
                     />
                   )
                 )}
-              {showLidarSensors &&
+              {uiConfig.showLidarSensors &&
                 Object.values(sensor_configuration.lidar).map(
                   (mountingPoint, index) => (
                     <LidarSensor
@@ -400,7 +323,7 @@ const SensorSetBuilderMain: React.FC = () => {
                     />
                   )
                 )}
-              {showRadarSensors &&
+              {uiConfig.showRadarSensors &&
                 Object.values(sensor_configuration.radar).map(
                   (mountingPoint, index) => (
                     <RadarSensor
@@ -411,7 +334,7 @@ const SensorSetBuilderMain: React.FC = () => {
                     />
                   )
                 )}
-              {showCameraSensors &&
+              {uiConfig.showCameraSensors &&
                 Object.values(sensor_configuration.tele_camera).map(
                   (mountingPoint, index) => (
                     <TeleCameraSensor
@@ -422,7 +345,7 @@ const SensorSetBuilderMain: React.FC = () => {
                     />
                   )
                 )}
-              {showCameraSensors &&
+              {uiConfig.showCameraSensors &&
                 Object.values(sensor_configuration.avm_camera).map(
                   (mountingPoint, index) => (
                     <CameraSensor
@@ -438,17 +361,25 @@ const SensorSetBuilderMain: React.FC = () => {
         </Box>
       </Grid>
 
-      {panelVisible && (
-        <ControlPanel layers={layers} onClose={() => setPanelVisible(false)} />
+      {uiConfig.panelVisible && (
+        <ControlPanel uiConfig={uiConfig} setUiConfig={setUiconfig} />
       )}
 
-      {!panelVisible && (
+      {!uiConfig.panelVisible && (
         <IconButton
-          onClick={() => setPanelVisible(true)}
+          onClick={() =>
+            setUiconfig((prev) => ({ ...prev, panelVisible: true }))
+          }
           style={{
             position: "absolute",
-            top: 16,
-            right: 16,
+            top: 20,
+            right: 100,
+            padding: "16px", // 增加内部填充
+            fontSize: "64px", // 增加文本大小
+            width: "64px", // 设置宽度
+            height: "64px", // 设置高度
+            borderRadius: "8px", // 可选：让按钮更圆滑
+            backgroundColor: "#f1f0ee",
           }}
         >
           <SettingsIcon />

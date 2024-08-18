@@ -13,3 +13,18 @@ export interface SensorConfig {
   mountPosition: MountPosition;
   fov: number;
 }
+
+// ui configuration interface used in control panel
+export interface UiConfig {
+  showCarImage: boolean;
+  showUssZones: boolean;
+  showUssSensors: boolean;
+  showLidarSensors: boolean;
+  showRadarSensors: boolean;
+  showCameraSensors: boolean;
+  showVehicleRefPoint: boolean;
+  frontZones: number;
+  rearZones: number;
+  sideZones: number;
+  panelVisible: boolean;
+}
