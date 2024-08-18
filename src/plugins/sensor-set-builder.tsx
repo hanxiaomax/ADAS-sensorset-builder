@@ -15,24 +15,6 @@ interface MarkerProps {
   fill?: string;
 }
 
-function setPosition(x: number, y: number): Position {
-  return {
-    x: x,
-    y: y,
-  };
-}
-
-function setMountingPosition(
-  x: number,
-  y: number,
-  orientation: number
-): MountPosition {
-  return {
-    position: setPosition(x, y),
-    orientation: orientation,
-  };
-}
-
 const Marker: React.FC<MarkerProps> = ({ position, fill = "black" }) => {
   const offset = 5;
   return (
@@ -48,6 +30,13 @@ const Marker: React.FC<MarkerProps> = ({ position, fill = "black" }) => {
 
 const SensorSetBuilderMain: React.FC = () => {
   const stage_size = { width: 800, height: 1000 };
+  const stage_center = {
+    x: stage_size.width / 2,
+    y: stage_size.height / 2,
+  };
+  const [image] = useImage("/vehicle.png");
+  const vehicle = new Vehicle(stage_size, image);
+
   const [uiConfig, setUiconfig] = useState({
     showCarImage: true,
     showUssZones: false,
@@ -63,28 +52,7 @@ const SensorSetBuilderMain: React.FC = () => {
     background: "white",
   });
 
-  const imageSrc = "/vehicle.png";
-  const [image] = useImage(imageSrc);
-  const image_margin = 20;
-  const overhang = 60 + image_margin;
-  const origin: Position = {
-    x: (stage_size.width - image?.width!) / 2,
-    y: (stage_size.height - image?.height!) / 2,
-  };
-
-  let vehicle = new Vehicle(
-    image?.width!,
-    image?.height!,
-    overhang / 2,
-    overhang / 2,
-    origin
-  );
-
   let vehicle_keypoint = vehicle.refPoints;
-  const stage_center = {
-    x: stage_size.width / 2,
-    y: stage_size.height / 2,
-  };
 
   const sensor_configuration: SensorConfig[] = [
     {
@@ -247,30 +215,20 @@ const SensorSetBuilderMain: React.FC = () => {
           <Stage width={stage_size.width} height={stage_size.height}>
             {uiConfig.showCarImage && (
               <CarImage
-                x={origin.x}
-                y={origin.y}
+                x={vehicle.origin.x}
+                y={vehicle.origin.y}
                 width={vehicle.width}
                 height={vehicle.length}
-                imageSrc={imageSrc}
+                image={vehicle.image}
               />
             )}
-            <Layer>
-              {/* 绘制Stage的边框 */}
-              {/* <Rect
-                x={0}
-                y={0}
-                width={stage_size.width}
-                height={stage_size.height}
-                stroke="black" // 边框颜色
-                strokeWidth={2} // 边框宽度
-              /> */}
-
+            {/* <Layer>
               <Marker position={stage_center}></Marker>
-            </Layer>
+            </Layer> */}
             {uiConfig.showUssZones && (
               <UssZones
-                x={origin.x}
-                y={origin.y}
+                x={vehicle.origin.x}
+                y={vehicle.origin.y}
                 carWidth={vehicle.width}
                 carLength={vehicle.length}
                 frontOverhang={vehicle.frontOverhang}
@@ -315,7 +273,7 @@ const SensorSetBuilderMain: React.FC = () => {
           style={{
             position: "absolute",
             top: 20,
-            right: 100,
+            right: 20,
             padding: "16px", // 增加内部填充
             fontSize: "64px", // 增加文本大小
             width: "64px", // 设置宽度

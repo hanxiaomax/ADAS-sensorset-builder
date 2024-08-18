@@ -1,5 +1,4 @@
 import { Position, MountPosition } from "./Common";
-
 function setPosition(x: number, y: number): Position {
   return {
     x: x,
@@ -73,18 +72,25 @@ export class Vehicle {
   mountingPoints: MountingPorints;
   orientation_front: number = -90;
   orientation_rear: number = 90;
+  image: HTMLImageElement | undefined;
 
   constructor(
-    width: number,
-    length: number,
-    frontOverhang: number,
-    rearOverhang: number,
-    origin: Position
+    stageSize: { width: number; height: number },
+    image: HTMLImageElement | undefined
   ) {
-    this.width = width;
-    this.length = length;
-    this.frontOverhang = frontOverhang;
-    this.rearOverhang = rearOverhang;
+    this.image = image;
+    const image_margin = 20;
+    const overhang = 60 + image_margin;
+    const origin: Position = {
+      x: (stageSize.width - image?.width!) / 2,
+      y: (stageSize.height - image?.height!) / 2,
+    };
+
+    this.image = image;
+    this.width = image?.width!;
+    this.length = image?.height!;
+    this.frontOverhang = overhang / 2;
+    this.rearOverhang = overhang / 2;
     this.origin = origin;
     this.refPoints = {
       front_center: setPosition(this.origin.x + this.width / 2, this.origin.y),

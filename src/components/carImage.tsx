@@ -7,17 +7,10 @@ interface CarImageProps {
   y: number;
   width: number;
   height: number;
-  imageSrc: string;
+  image: HTMLImageElement | undefined;
 }
 
-const CarImage: React.FC<CarImageProps> = ({
-  x,
-  y,
-  width,
-  height,
-  imageSrc,
-}) => {
-  const [image] = useImage(imageSrc);
+const CarImage: React.FC<CarImageProps> = ({ x, y, width, height, image }) => {
   return (
     <Layer>
       {image && (
