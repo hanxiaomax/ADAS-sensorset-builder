@@ -44,21 +44,21 @@ export const Sensor: React.FC<SensorProps> = ({
 };
 
 export const UssSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} range={100} color="#3a3895" opacity={0.4} />
+  <Sensor {...props} color="#3a3895" opacity={0.4} />
 );
 
 export const LidarSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} range={400} color="#fa973d" opacity={0.2} />
+  <Sensor {...props} color="#fa973d" opacity={0.2} />
 );
 
 export const RadarSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} range={400} color="#00973d" opacity={0.3} />
+  <Sensor {...props} color="#00973d" opacity={0.3} />
 );
 
 export const CameraSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} range={100} color="#57b1b9" opacity={0.2} />
+  <Sensor {...props} color="#57b1b9" opacity={0.2} />
 );
 
 export const TeleCameraSensor: React.FC<SensorConfig> = (props) => (
-  <Sensor {...props} range={600} color="#f1dae0" opacity={0.5} />
+  <Sensor {...props} color="#f1dae0" opacity={0.5} />
 );

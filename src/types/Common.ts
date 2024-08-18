@@ -12,6 +12,7 @@ export interface SensorConfig {
   type: string;
   mountPosition: MountPosition;
   fov: number;
+  range: number;
 }
 
 // ui configuration interface used in control panel
