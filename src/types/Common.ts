@@ -9,7 +9,10 @@ export interface MountPosition {
 
 export interface SensorConfig {
   name?: string;
+  brand?: string;
+  desc?: string;
   type: string;
+  img?: string;
   mountPosition: MountPosition;
   fov: number;
   range: number;
