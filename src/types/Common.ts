@@ -13,7 +13,7 @@ export interface SensorConfig {
   desc?: string;
   type: string;
   img?: string;
-  mountPosition: MountPosition;
+  mountPosition: string | MountPosition;
   fov: number;
   range: number;
 }

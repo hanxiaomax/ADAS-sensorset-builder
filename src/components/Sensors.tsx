@@ -1,6 +1,6 @@
 import React from "react";
 import { Layer, Arc, Rect } from "react-konva";
-import { Position, SensorConfig } from "../types/Common";
+import { MountPosition, Position, SensorConfig } from "../types/Common";
 import { UiConfig } from "../types/Common";
 
 const sensorStyles: {
@@ -30,6 +30,7 @@ export const Sensor: React.FC<SensorProp> = ({
     color: "#000",
     opacity: 1,
   };
+  const mt = mountPosition as MountPosition;
 
   // 根据传感器类型选择 visibility 条件
   const visibility = (() => {
@@ -54,12 +55,12 @@ export const Sensor: React.FC<SensorProp> = ({
     <React.Fragment>
       {/* 绘制传感器的FOV扇形区域 */}
       <Arc
-        x={mountPosition.position.x}
-        y={mountPosition.position.y}
+        x={mt.position.x}
+        y={mt.position.y}
         innerRadius={0}
         outerRadius={range} // 视场的可见范围大小，通常根据需求进行调整
         angle={fov}
-        rotation={mountPosition.orientation - fov / 2}
+        rotation={mt.orientation - fov / 2}
         fill={`${color}${Math.floor(opacity * 255)
           .toString(16)
           .padStart(2, "0")}`} // 计算透明度的hex值
@@ -67,8 +68,8 @@ export const Sensor: React.FC<SensorProp> = ({
       />
       {/* 绘制传感器的主体 */}
       <Rect
-        x={mountPosition.position.x - offset}
-        y={mountPosition.position.y - offset}
+        x={mt.position.x - offset}
+        y={mt.position.y - offset}
         width={2 * offset}
         height={2 * offset}
         fill={color} // 使用传入的hex颜色值

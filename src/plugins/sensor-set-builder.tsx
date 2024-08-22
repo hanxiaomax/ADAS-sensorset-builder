@@ -59,151 +59,151 @@ const SensorSetBuilderMain: React.FC = () => {
     SensorConfig[]
   >([]);
 
-  const sensors = transformJsonArray(
+  const sensor_configuration = transformJsonArray(
     _sensor_configuration,
     vehicle._mountingPoints
   );
 
   console.log("Printing each object in the array:");
-  sensors.forEach((item) => {
+  sensor_configuration.forEach((item) => {
     console.log(JSON.stringify(item, null, 2));
   });
 
-  const sensor_configuration: SensorConfig[] = [
-    {
-      name: "Front Right Side",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.front_right_side,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Front Middle Right 1",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.front_middle_right1,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Front Middle Right 2",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.front_middle_right2,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Front Middle Left 1",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.front_middle_left1,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Front Middle Left 2",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.front_middle_left2,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Front Left Side",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.front_left_side,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Rear Right Side",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.rear_right_side,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Rear Middle Right 1",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.rear_middle_right1,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Rear Middle Right 2",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.rear_middle_right2,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Rear Middle Left 1",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.rear_middle_left1,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Rear Middle Left 2",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.rear_middle_left2,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Rear Left Side",
-      type: "uss",
-      mountPosition: vehicle.mountingPoints.rear_left_side,
-      fov: 120,
-      range: 50,
-    },
-    {
-      name: "Lidar Top",
-      type: "lidar",
-      mountPosition: vehicle.mountingPoints.roof_top,
-      fov: 360,
-      range: 400,
-    },
-    {
-      name: "Rear Left Corner Radar",
-      type: "radar",
-      mountPosition: vehicle.mountingPoints.rear_left_corner,
-      fov: 90,
-      range: 300,
-    },
-    {
-      name: "Rear Right Corner Radar",
-      type: "radar",
-      mountPosition: vehicle.mountingPoints.rear_right_corner,
-      fov: 90,
-      range: 300,
-    },
-    {
-      name: "Tele Camera",
-      type: "tele_camera",
-      mountPosition: vehicle.mountingPoints.front_windshield,
-      fov: 60,
-      range: 450,
-    },
-    {
-      name: "Wide Camera",
-      type: "camera",
-      mountPosition: vehicle.mountingPoints.front_windshield,
-      fov: 120,
-      range: 200,
-    },
-    {
-      name: "AVM Camera",
-      type: "camera",
-      mountPosition: vehicle.mountingPoints.b_pillar_left,
-      fov: 180,
-      range: 120,
-    },
-    {
-      name: "AVM Camera",
-      type: "camera",
-      mountPosition: vehicle.mountingPoints.b_pillar_right,
-      fov: 180,
-      range: 120,
-    },
-  ];
+  // const sensor_configuration: SensorConfig[] = [
+  //   {
+  //     name: "Front Right Side",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.front_right_side,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Front Middle Right 1",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.front_middle_right1,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Front Middle Right 2",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.front_middle_right2,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Front Middle Left 1",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.front_middle_left1,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Front Middle Left 2",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.front_middle_left2,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Front Left Side",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.front_left_side,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Rear Right Side",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.rear_right_side,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Rear Middle Right 1",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.rear_middle_right1,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Rear Middle Right 2",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.rear_middle_right2,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Rear Middle Left 1",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.rear_middle_left1,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Rear Middle Left 2",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.rear_middle_left2,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Rear Left Side",
+  //     type: "uss",
+  //     mountPosition: vehicle.mountingPoints.rear_left_side,
+  //     fov: 120,
+  //     range: 50,
+  //   },
+  //   {
+  //     name: "Lidar Top",
+  //     type: "lidar",
+  //     mountPosition: vehicle.mountingPoints.roof_top,
+  //     fov: 360,
+  //     range: 400,
+  //   },
+  //   {
+  //     name: "Rear Left Corner Radar",
+  //     type: "radar",
+  //     mountPosition: vehicle.mountingPoints.rear_left_corner,
+  //     fov: 90,
+  //     range: 300,
+  //   },
+  //   {
+  //     name: "Rear Right Corner Radar",
+  //     type: "radar",
+  //     mountPosition: vehicle.mountingPoints.rear_right_corner,
+  //     fov: 90,
+  //     range: 300,
+  //   },
+  //   {
+  //     name: "Tele Camera",
+  //     type: "tele_camera",
+  //     mountPosition: vehicle.mountingPoints.front_windshield,
+  //     fov: 60,
+  //     range: 450,
+  //   },
+  //   {
+  //     name: "Wide Camera",
+  //     type: "camera",
+  //     mountPosition: vehicle.mountingPoints.front_windshield,
+  //     fov: 120,
+  //     range: 200,
+  //   },
+  //   {
+  //     name: "AVM Camera",
+  //     type: "camera",
+  //     mountPosition: vehicle.mountingPoints.b_pillar_left,
+  //     fov: 180,
+  //     range: 120,
+  //   },
+  //   {
+  //     name: "AVM Camera",
+  //     type: "camera",
+  //     mountPosition: vehicle.mountingPoints.b_pillar_right,
+  //     fov: 180,
+  //     range: 120,
+  //   },
+  // ];
 
   return (
     <Grid

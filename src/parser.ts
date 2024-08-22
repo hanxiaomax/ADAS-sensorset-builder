@@ -1,21 +1,21 @@
-import { MountPosition } from "./types/Common";
+import { MountPosition, SensorConfig } from "./types/Common";
 
-interface SensorConfigurationData {
-  name: string;
-  type: string;
-  fov: number;
-  range: number;
-  mountPosition: string | MountPosition;
-}
+// interface SensorConfigurationData {
+//   name: string;
+//   type: string;
+//   fov: number;
+//   range: number;
+//   mountPosition: string | MountPosition;
+// }
 
 interface MountingPoints {
   [key: string]: MountPosition;
 }
 
 export function transformJsonArray(
-  dataArray: SensorConfigurationData[],
+  dataArray: SensorConfig[],
   mountingPoints: MountingPoints
-): SensorConfigurationData[] {
+): SensorConfig[] {
   return dataArray.map((item) => {
     const _key = item.mountPosition as string;
     const pos = mountingPoints[_key] as MountPosition;
