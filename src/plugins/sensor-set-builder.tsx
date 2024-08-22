@@ -9,6 +9,8 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import useImage from "use-image";
 import { Position, MountPosition, SensorConfig } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
+import _sensor_configuration from "../sensorConfiguration.json";
+import { transformJsonArray } from "../parser";
 
 interface MarkerProps {
   position: Position;
@@ -56,6 +58,16 @@ const SensorSetBuilderMain: React.FC = () => {
   const [sensorConfiguration, setSensorConfiguration] = useState<
     SensorConfig[]
   >([]);
+
+  const sensors = transformJsonArray(
+    _sensor_configuration,
+    vehicle._mountingPoints
+  );
+
+  console.log("Printing each object in the array:");
+  sensors.forEach((item) => {
+    console.log(JSON.stringify(item, null, 2));
+  });
 
   const sensor_configuration: SensorConfig[] = [
     {
