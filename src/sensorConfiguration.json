@@ -109,7 +109,7 @@
     "type": "tele_camera",
     "mountPosition": "front_windshield",
     "fov": 60,
-    "range": 450
+    "range": 500
   },
   {
     "name": "Wide Camera",
