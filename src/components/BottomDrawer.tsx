@@ -6,9 +6,17 @@ import {
   Button,
   Box,
   IconButton,
-  Tooltip,
   Badge,
   Chip,
+  Popover,
+  Typography,
+  Card,
+  CardContent,
+  CardMedia,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
 } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import AddIcon from "@mui/icons-material/Add";
@@ -49,11 +57,35 @@ interface SensorProps {
   icon: React.ReactElement;
   name: string;
   isNew?: boolean;
+  description: string;
+  specs?: { [key: string]: string };
+  image?: string; // 添加 image 字段，用于传递图片链接
 }
 
-const Sensor: React.FC<SensorProps> = ({ icon, name, isNew }) => {
+const Sensor: React.FC<SensorProps> = ({
+  icon,
+  name,
+  isNew,
+  description,
+  specs,
+  image,
+}) => {
+  const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+
+  const handlePopoverOpen = (
+    event: React.MouseEvent<HTMLElement, MouseEvent>
+  ) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+
   return (
-    <Tooltip title={name} arrow>
+    <>
       <Badge
         badgeContent={
           isNew ? <Chip label="New" color="primary" size="small" /> : null
@@ -84,11 +116,80 @@ const Sensor: React.FC<SensorProps> = ({ icon, name, isNew }) => {
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
             },
           }}
+          onMouseEnter={handlePopoverOpen}
+          onMouseLeave={handlePopoverClose}
         >
           {icon}
         </Box>
       </Badge>
-    </Tooltip>
+
+      {/* Popover 显示详细信息卡片 */}
+      <Popover
+        sx={{
+          pointerEvents: "none",
+        }}
+        open={open}
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        onClose={handlePopoverClose}
+        disableRestoreFocus
+      >
+        <Card sx={{ maxWidth: 300 }}>
+          <CardContent>
+            <Typography variant="h6" component="div">
+              {name}
+            </Typography>
+          </CardContent>
+          {image ? (
+            <CardMedia
+              component="img"
+              height="140"
+              image={image} // 使用 JSON 中的 image 字段
+              alt={name}
+              sx={{ objectFit: "contain" }}
+            />
+          ) : (
+            <Box
+              sx={{
+                height: "140px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#f0f0f0",
+              }}
+            >
+              {icon}
+            </Box>
+          )}
+          <CardContent>
+            <Typography variant="body2" color="text.secondary">
+              {description}
+            </Typography>
+            {specs && (
+              <Table size="small" aria-label="sensor specs">
+                <TableBody>
+                  {Object.entries(specs).map(([key, value]) => (
+                    <TableRow key={key}>
+                      <TableCell component="th" scope="row">
+                        {key}
+                      </TableCell>
+                      <TableCell>{value}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </CardContent>
+        </Card>
+      </Popover>
+    </>
   );
 };
 
@@ -100,7 +201,6 @@ const BottomDrawer: React.FC = () => {
     setSelectedTab(newValue);
   };
 
-  // 定义 renderSensors 函数
   const renderSensors = (sensorType: keyof typeof sensorData) => {
     return sensorData[sensorType].sensors.map((sensor) => {
       let icon;
@@ -126,6 +226,9 @@ const BottomDrawer: React.FC = () => {
           icon={icon}
           name={sensor.name}
           isNew={sensor.isNew}
+          description={sensor.description}
+          specs={sensor.specs}
+          image={sensor.image} // 传递 image 字段
         />
       );
     });
@@ -133,15 +236,14 @@ const BottomDrawer: React.FC = () => {
 
   return (
     <>
-      {/* 扁平按钮，鼠标悬浮时打开面板 */}
       <Button
-        onMouseEnter={() => setDrawerOpen(true)} // 悬浮时打开面板
+        onMouseEnter={() => setDrawerOpen(true)}
         sx={{
           position: "fixed",
           bottom: 0,
           left: "50%",
           transform: "translateX(-50%)",
-          width: "100vw",
+          width: "80vw",
           height: "40px",
           backgroundColor: "rgba(253,245,230,0.3)",
           borderRadius: "10px 10px 0 0",
@@ -149,30 +251,28 @@ const BottomDrawer: React.FC = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          zIndex: 1300, // 确保按钮在其他元素上方
+          zIndex: 1300,
         }}
       >
         <ExpandLessIcon sx={{ fontSize: "24px" }} />
       </Button>
 
-      {/* 抽屉面板，保持在底部，背景不灰掉 */}
       <Drawer
-        anchor="bottom" // 确保面板从底部弹出
+        anchor="bottom"
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        hideBackdrop // 隐藏Backdrop，以免阻挡顶部按钮的点击
+        hideBackdrop
         sx={{
           ".MuiDrawer-paper": {
             borderRadius: "16px 16px 0 0",
-            width: "80%", // 设置宽度为屏幕宽度的80%
-            margin: "0 auto", // 居中显示
-            position: "fixed", // 保证面板在屏幕底部固定
-            bottom: 0, // 让面板固定在底部
-            zIndex: 1200, // 确保面板在按钮之下
+            width: "80%",
+            margin: "0 auto",
+            position: "fixed",
+            bottom: 0,
+            zIndex: 1200,
           },
         }}
       >
-        {/* 关闭按钮，位于面板右上角 */}
         <IconButton
           onClick={() => setDrawerOpen(false)}
           sx={{
@@ -203,7 +303,6 @@ const BottomDrawer: React.FC = () => {
           <TabPanel key={index} value={selectedTab} index={index}>
             <Box display="flex" flexWrap="wrap">
               {renderSensors(key as keyof typeof sensorData)}
-              {/* 添加传感器按钮 */}
               <Box
                 sx={{
                   width: "80px",
