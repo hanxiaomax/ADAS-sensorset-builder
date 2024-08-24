@@ -1,31 +1,31 @@
 {
   "uss_sensors": {
-    "title": "USS Sensors",
+    "title": "USS",
     "sensors": [
-      { "id": 1, "name": "USS Sensor 1", "type": "uss" },
-      { "id": 2, "name": "USS Sensor 2", "type": "uss" },
-      { "id": 3, "name": "USS Sensor 3", "type": "uss" }
+      { "id": 1, "name": "USS Sensor 1", "type": "uss", "isNew": false },
+      { "id": 2, "name": "USS Sensor 2", "type": "uss", "isNew": true },
+      { "id": 3, "name": "USS Sensor 3", "type": "uss", "isNew": true }
     ]
   },
   "lidar_sensors": {
-    "title": "Lidar Sensors",
+    "title": "Lidar",
     "sensors": [
-      { "id": 1, "name": "Lidar Sensor 1", "type": "lidar" },
-      { "id": 2, "name": "Lidar Sensor 2", "type": "lidar" }
+      { "id": 1, "name": "Lidar Sensor 1", "type": "lidar", "isNew": false },
+      { "id": 2, "name": "Lidar Sensor 2", "type": "lidar", "isNew": true }
     ]
   },
   "radar_sensors": {
-    "title": "Radar Sensors",
+    "title": "Radar",
     "sensors": [
-      { "id": 1, "name": "Radar Sensor 1", "type": "radar" },
-      { "id": 2, "name": "Radar Sensor 2", "type": "radar" }
+      { "id": 1, "name": "Radar Sensor 1", "type": "radar", "isNew": false },
+      { "id": 2, "name": "Radar Sensor 2", "type": "radar", "isNew": true }
     ]
   },
   "camera_sensors": {
-    "title": "Camera Sensors",
+    "title": "Camera",
     "sensors": [
-      { "id": 1, "name": "Camera Sensor 1", "type": "camera" },
-      { "id": 2, "name": "Camera Sensor 2", "type": "camera" }
+      { "id": 1, "name": "Camera Sensor 1", "type": "camera", "isNew": false },
+      { "id": 2, "name": "Camera Sensor 2", "type": "camera", "isNew": true }
     ]
   }
 }

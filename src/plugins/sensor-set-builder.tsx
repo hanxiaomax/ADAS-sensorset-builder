@@ -143,13 +143,15 @@ const SensorSetBuilderMain: React.FC = () => {
       </Grid>
 
       {uiConfig.panelVisible && (
-        <ControlPanel
-          uiConfig={uiConfig}
-          setUiConfig={setUiConfig}
-          sensorConfiguration={sensorConfiguration}
-          setSensorConfiguration={setSensorConfiguration}
-          mountingPoints={vehicle.mountingPoints}
-        />
+        <Box sx={{ zIndex: 1400 }}>
+          <ControlPanel
+            uiConfig={uiConfig}
+            setUiConfig={setUiConfig}
+            sensorConfiguration={sensorConfiguration}
+            setSensorConfiguration={setSensorConfiguration}
+            mountingPoints={vehicle.mountingPoints}
+          />
+        </Box>
       )}
 
       {!uiConfig.panelVisible && (
@@ -167,6 +169,7 @@ const SensorSetBuilderMain: React.FC = () => {
             height: "64px",
             borderRadius: "8px",
             backgroundColor: "#f1f0ee",
+            zIndex: 1500, // 确保设置按钮在 Drawer 之上
           }}
         >
           <SettingsIcon />
