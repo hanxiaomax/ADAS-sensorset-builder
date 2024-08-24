@@ -13,20 +13,21 @@ import {
   Card,
   CardContent,
   CardMedia,
-  Table,
   TableBody,
+  Table,
   TableRow,
   TableCell,
 } from "@mui/material";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import RadarIcon from "@mui/icons-material/Radar";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import ToysIcon from "@mui/icons-material/Toys";
-import CloseIcon from "@mui/icons-material/Close";
 
 import sensorData from "../sensor_stocks.json"; // 引入 JSON 文件
+import { ExpandMore } from "@mui/icons-material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -195,6 +196,11 @@ const Sensor: React.FC<SensorProps> = ({
 
 const BottomDrawer: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
   const [selectedTab, setSelectedTab] = useState(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -228,7 +234,7 @@ const BottomDrawer: React.FC = () => {
           isNew={sensor.isNew}
           description={sensor.description}
           specs={sensor.specs}
-          image={sensor.image} // 传递 image 字段
+          image={sensor.image}
         />
       );
     });
@@ -237,16 +243,14 @@ const BottomDrawer: React.FC = () => {
   return (
     <>
       <Button
-        onMouseEnter={() => setDrawerOpen(true)}
+        onClick={toggleDrawer}
         sx={{
           position: "fixed",
           bottom: 0,
           left: "50%",
           transform: "translateX(-50%)",
           width: "80vw",
-          height: "40px",
-          backgroundColor: "rgba(253,245,230,0.3)",
-          borderRadius: "10px 10px 0 0",
+          height: "30px",
           textAlign: "center",
           display: "flex",
           justifyContent: "center",
@@ -254,13 +258,17 @@ const BottomDrawer: React.FC = () => {
           zIndex: 1300,
         }}
       >
-        <ExpandLessIcon sx={{ fontSize: "24px" }} />
+        {drawerOpen ? (
+          <ExpandMore sx={{ fontSize: "35px" }} />
+        ) : (
+          <ExpandLessIcon sx={{ fontSize: "35px" }} />
+        )}
       </Button>
 
       <Drawer
         anchor="bottom"
         open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
+        onClose={toggleDrawer}
         hideBackdrop
         sx={{
           ".MuiDrawer-paper": {
@@ -273,18 +281,6 @@ const BottomDrawer: React.FC = () => {
           },
         }}
       >
-        <IconButton
-          onClick={() => setDrawerOpen(false)}
-          sx={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            zIndex: 10,
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-
         <Tabs
           value={selectedTab}
           onChange={handleTabChange}
