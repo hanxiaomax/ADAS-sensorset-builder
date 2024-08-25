@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, AppBar, Toolbar, ButtonGroup } from "@mui/material";
 import { Stage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
@@ -12,6 +12,7 @@ import _sensor_configuration from "../sensorConfiguration.json";
 import { transformJsonArray } from "../parser";
 import BottomDrawer from "../components/BottomDrawer"; // 引入新的BottomDrawer组件
 import ViewMenu from "../components/ViewMenu"; // 引入ViewMenu组件
+import ProfileMenu from "../components/ProfileMenu"; // 引入ProfileMenu组件
 
 interface MarkerProps {
   position: Position;
@@ -73,36 +74,59 @@ const SensorSetBuilderMain: React.FC = () => {
     vehicle._mountingPoints
   );
 
+  const handleImport = () => {
+    console.log("Import clicked");
+    // 实现导入功能的逻辑
+  };
+
+  const handleExport = () => {
+    console.log("Export clicked");
+    // 实现导出功能的逻辑
+  };
+
   return (
     <Grid
       container
-      spacing={2}
+      alignItems="center"
       sx={{
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
         backgroundColor: uiConfig.background,
-        alignItems: "center",
       }}
     >
       {/* 工具栏 */}
-      <Grid item xs={12}>
-        <Box
+      <AppBar
+        position="static"
+        elevation={1} // 移除 AppBar 的阴影
+        sx={{
+          backgroundColor: "#f8f8f8",
+          color: "black",
+        }}
+      >
+        {/* Profile 和 View 菜单按钮 */}
+        <ButtonGroup
+          disableElevation
+          variant="outlined"
+          size="small"
           sx={{
-            height: "50px",
-            width: "100%",
-            backgroundColor: "#f8f8f8",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            padding: "0 20px",
-            boxShadow: "0px 1px 4px rgba(0, 0, 0, 0.1)",
-            zIndex: 1400,
+            "& .MuiButtonBase-root": {
+              backgroundColor: "#ebebeb", // 设置按钮的背景色为灰色
+              borderColor: "#f6f6f6",
+              borderRightColor: "#d1d1d1",
+              borderLeftColor: "#d1d1d1",
+              color: "black", // 设置按钮文字颜色为白色
+              borderRadius: 0, // 移除按钮的圆角
+              "&:hover": {
+                backgroundColor: "#f6f6f6", // 设置悬停时的背景色
+              },
+            },
           }}
         >
+          <ProfileMenu onImport={handleImport} onExport={handleExport} />
           <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
-        </Box>
-      </Grid>
+        </ButtonGroup>
+      </AppBar>
 
       <Grid item xs={12}>
         <Box
@@ -112,7 +136,7 @@ const SensorSetBuilderMain: React.FC = () => {
           sx={{
             width: "100%",
             height: "100%",
-            transform: "scale(0.7)",
+            transform: "scale(0.8)",
           }}
         >
           <Stage width={stageSize.width} height={stageSize.height}>
