@@ -1,0 +1,59 @@
+/* BottomDrawer.module.css */
+.sensorBox {
+  width: 80px;
+  height: 80px;
+  background-color: #f0f0f0;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sensorBox:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.addSensorBox {
+  width: 80px;
+  height: 80px;
+  background-color: #e0e0e0;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.addSensorBox:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.drawerButton {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 30px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1300;
+}
+
+.drawerPaper {
+  border-radius: 16px 16px 0 0;
+  width: 80%;
+  margin: 0 auto;
+  position: fixed;
+  bottom: 0;
+  z-index: 1200;
+}

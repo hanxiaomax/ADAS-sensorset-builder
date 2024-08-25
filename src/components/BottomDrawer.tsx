@@ -25,9 +25,9 @@ import SensorsIcon from "@mui/icons-material/Sensors";
 import RadarIcon from "@mui/icons-material/Radar";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import ToysIcon from "@mui/icons-material/Toys";
-
 import sensorData from "../sensor_stocks.json"; // 引入 JSON 文件
 import { ExpandMore } from "@mui/icons-material";
+import styles from "./BottomDrawer.module.css"; // 引入样式模块
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -101,22 +101,7 @@ const Sensor: React.FC<SensorProps> = ({
         }}
       >
         <Box
-          sx={{
-            width: "80px",
-            height: "80px",
-            backgroundColor: "#f0f0f0",
-            borderRadius: "16px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            margin: "8px",
-            position: "relative",
-            transition: "transform 0.2s, box-shadow 0.2s",
-            "&:hover": {
-              transform: "translateY(-5px)",
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-            },
-          }}
+          className={styles.sensorBox} // 使用外部样式
           onMouseEnter={handlePopoverOpen}
           onMouseLeave={handlePopoverClose}
         >
@@ -242,22 +227,7 @@ const BottomDrawer: React.FC = () => {
 
   return (
     <>
-      <Button
-        onClick={toggleDrawer}
-        sx={{
-          position: "fixed",
-          bottom: 0,
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "80vw",
-          height: "30px",
-          textAlign: "center",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 1300,
-        }}
-      >
+      <Button onClick={toggleDrawer} className={styles.drawerButton}>
         {drawerOpen ? (
           <ExpandMore sx={{ fontSize: "35px" }} />
         ) : (
@@ -272,12 +242,7 @@ const BottomDrawer: React.FC = () => {
         hideBackdrop
         sx={{
           ".MuiDrawer-paper": {
-            borderRadius: "16px 16px 0 0",
-            width: "80%",
-            margin: "0 auto",
-            position: "fixed",
-            bottom: 0,
-            zIndex: 1200,
+            className: styles.drawerPaper, // 使用外部样式
           },
         }}
       >
@@ -299,24 +264,7 @@ const BottomDrawer: React.FC = () => {
           <TabPanel key={index} value={selectedTab} index={index}>
             <Box display="flex" flexWrap="wrap">
               {renderSensors(key as keyof typeof sensorData)}
-              <Box
-                sx={{
-                  width: "80px",
-                  height: "80px",
-                  backgroundColor: "#e0e0e0",
-                  borderRadius: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "8px",
-                  cursor: "pointer",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                  "&:hover": {
-                    transform: "translateY(-5px)",
-                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-                  },
-                }}
-              >
+              <Box className={styles.addSensorBox}>
                 <IconButton>
                   <AddIcon sx={{ fontSize: "40px" }} />
                 </IconButton>
