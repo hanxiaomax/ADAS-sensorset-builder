@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Box, IconButton } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Button,
+  Menu,
+  MenuItem,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
 import { Stage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
 import { Sensor } from "../components/Sensors";
 import ControlPanel from "../components/ControlPanel";
-import SettingsIcon from "@mui/icons-material/Settings";
 import useImage from "use-image";
 import { Position, SensorConfig } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
@@ -36,10 +43,7 @@ const SensorSetBuilderMain: React.FC = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const stageCenter = { x: stageSize.width / 2, y: stageSize.height / 2 };
-  const [image] = useImage("/vehicle.png");
-  const vehicle = new Vehicle(stageSize, image);
-
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [uiConfig, setUiConfig] = useState({
     showCarImage: true,
     showUssZones: false,
@@ -54,6 +58,10 @@ const SensorSetBuilderMain: React.FC = () => {
     panelVisible: false,
     background: "white",
   });
+
+  const stageCenter = { x: stageSize.width / 2, y: stageSize.height / 2 };
+  const [image] = useImage("/vehicle.png");
+  const vehicle = new Vehicle(stageSize, image);
 
   useEffect(() => {
     const handleResize = () => {
@@ -73,6 +81,14 @@ const SensorSetBuilderMain: React.FC = () => {
     vehicle._mountingPoints
   );
 
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <Grid
       container
@@ -85,6 +101,136 @@ const SensorSetBuilderMain: React.FC = () => {
         alignItems: "center",
       }}
     >
+      {/* 工具栏 */}
+      <Grid item xs={12}>
+        <Box
+          sx={{
+            height: "50px",
+            width: "100%",
+            backgroundColor: "#f8f8f8",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: "0 20px",
+            boxShadow: "0px 1px 4px rgba(0, 0, 0, 0.1)",
+            zIndex: 1400,
+          }}
+        >
+          <Box>
+            <Button
+              aria-controls="view-menu"
+              aria-haspopup="true"
+              onClick={handleMenuClick}
+            >
+              View
+            </Button>
+            <Menu
+              id="view-menu"
+              anchorEl={anchorEl}
+              open={Boolean(anchorEl)}
+              onClose={handleMenuClose}
+            >
+              <MenuItem>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={uiConfig.showCarImage}
+                      onChange={() =>
+                        setUiConfig((prev) => ({
+                          ...prev,
+                          showCarImage: !prev.showCarImage,
+                        }))
+                      }
+                    />
+                  }
+                  label="Car Image"
+                />
+              </MenuItem>
+              <MenuItem>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={uiConfig.showUssZones}
+                      onChange={() =>
+                        setUiConfig((prev) => ({
+                          ...prev,
+                          showUssZones: !prev.showUssZones,
+                        }))
+                      }
+                    />
+                  }
+                  label="USS Zones"
+                />
+              </MenuItem>
+              <MenuItem>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={uiConfig.showUssSensors}
+                      onChange={() =>
+                        setUiConfig((prev) => ({
+                          ...prev,
+                          showUssSensors: !prev.showUssSensors,
+                        }))
+                      }
+                    />
+                  }
+                  label="USS Sensors"
+                />
+              </MenuItem>
+              <MenuItem>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={uiConfig.showLidarSensors}
+                      onChange={() =>
+                        setUiConfig((prev) => ({
+                          ...prev,
+                          showLidarSensors: !prev.showLidarSensors,
+                        }))
+                      }
+                    />
+                  }
+                  label="Lidar Sensors"
+                />
+              </MenuItem>
+              <MenuItem>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={uiConfig.showRadarSensors}
+                      onChange={() =>
+                        setUiConfig((prev) => ({
+                          ...prev,
+                          showRadarSensors: !prev.showRadarSensors,
+                        }))
+                      }
+                    />
+                  }
+                  label="Radar Sensors"
+                />
+              </MenuItem>
+              <MenuItem>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={uiConfig.showCameraSensors}
+                      onChange={() =>
+                        setUiConfig((prev) => ({
+                          ...prev,
+                          showCameraSensors: !prev.showCameraSensors,
+                        }))
+                      }
+                    />
+                  }
+                  label="Camera Sensors"
+                />
+              </MenuItem>
+            </Menu>
+          </Box>
+        </Box>
+      </Grid>
+
       <Grid item xs={12}>
         <Box
           display="flex"
@@ -126,17 +272,58 @@ const SensorSetBuilderMain: React.FC = () => {
                   <Marker key={index} position={position} fill="red" />
                 ))}
 
-              {sensor_configuration.length > 0 &&
-                sensor_configuration.map((sensorConfig, index) => (
-                  <Sensor
-                    key={index}
-                    type={sensorConfig.type}
-                    mountPosition={sensorConfig.mountPosition}
-                    fov={sensorConfig.fov}
-                    range={sensorConfig.range}
-                    uiConfig={uiConfig}
-                  />
-                ))}
+              {uiConfig.showUssSensors &&
+                sensor_configuration
+                  .filter((sensor) => sensor.type === "uss")
+                  .map((sensorConfig, index) => (
+                    <Sensor
+                      key={index}
+                      type={sensorConfig.type}
+                      mountPosition={sensorConfig.mountPosition}
+                      fov={sensorConfig.fov}
+                      range={sensorConfig.range}
+                      uiConfig={uiConfig}
+                    />
+                  ))}
+              {uiConfig.showLidarSensors &&
+                sensor_configuration
+                  .filter((sensor) => sensor.type === "lidar")
+                  .map((sensorConfig, index) => (
+                    <Sensor
+                      key={index}
+                      type={sensorConfig.type}
+                      mountPosition={sensorConfig.mountPosition}
+                      fov={sensorConfig.fov}
+                      range={sensorConfig.range}
+                      uiConfig={uiConfig}
+                    />
+                  ))}
+              {uiConfig.showRadarSensors &&
+                sensor_configuration
+                  .filter((sensor) => sensor.type === "radar")
+                  .map((sensorConfig, index) => (
+                    <Sensor
+                      key={index}
+                      type={sensorConfig.type}
+                      mountPosition={sensorConfig.mountPosition}
+                      fov={sensorConfig.fov}
+                      range={sensorConfig.range}
+                      uiConfig={uiConfig}
+                    />
+                  ))}
+              {uiConfig.showCameraSensors &&
+                sensor_configuration
+                  .filter((sensor) => sensor.type === "camera")
+                  .map((sensorConfig, index) => (
+                    <Sensor
+                      key={index}
+                      type={sensorConfig.type}
+                      mountPosition={sensorConfig.mountPosition}
+                      fov={sensorConfig.fov}
+                      range={sensorConfig.range}
+                      uiConfig={uiConfig}
+                    />
+                  ))}
             </Layer>
           </Stage>
         </Box>
@@ -152,28 +339,6 @@ const SensorSetBuilderMain: React.FC = () => {
             mountingPoints={vehicle.mountingPoints}
           />
         </Box>
-      )}
-
-      {!uiConfig.panelVisible && (
-        <IconButton
-          onClick={() =>
-            setUiConfig((prev) => ({ ...prev, panelVisible: true }))
-          }
-          style={{
-            position: "absolute",
-            right: 20,
-            top: 20,
-            padding: "16px",
-            fontSize: "64px",
-            width: "64px",
-            height: "64px",
-            borderRadius: "8px",
-            backgroundColor: "#f1f0ee",
-            zIndex: 1500, // 确保设置按钮在 Drawer 之上
-          }}
-        >
-          <SettingsIcon />
-        </IconButton>
       )}
 
       {/* 引入 BottomDrawer 组件 */}
