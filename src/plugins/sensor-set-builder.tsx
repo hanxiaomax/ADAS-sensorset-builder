@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  Box,
-  Button,
-  Menu,
-  MenuItem,
-  FormControlLabel,
-  Switch,
-} from "@mui/material";
+import { Grid, Box } from "@mui/material";
 import { Stage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
@@ -19,6 +11,7 @@ import { Vehicle } from "../types/Vehicle";
 import _sensor_configuration from "../sensorConfiguration.json";
 import { transformJsonArray } from "../parser";
 import BottomDrawer from "../components/BottomDrawer"; // 引入新的BottomDrawer组件
+import ViewMenu from "../components/ViewMenu"; // 引入ViewMenu组件
 
 interface MarkerProps {
   position: Position;
@@ -43,7 +36,6 @@ const SensorSetBuilderMain: React.FC = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [uiConfig, setUiConfig] = useState({
     showCarImage: true,
     showUssZones: false,
@@ -81,14 +73,6 @@ const SensorSetBuilderMain: React.FC = () => {
     vehicle._mountingPoints
   );
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
   return (
     <Grid
       container
@@ -116,118 +100,7 @@ const SensorSetBuilderMain: React.FC = () => {
             zIndex: 1400,
           }}
         >
-          <Box>
-            <Button
-              aria-controls="view-menu"
-              aria-haspopup="true"
-              onClick={handleMenuClick}
-            >
-              View
-            </Button>
-            <Menu
-              id="view-menu"
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={uiConfig.showCarImage}
-                      onChange={() =>
-                        setUiConfig((prev) => ({
-                          ...prev,
-                          showCarImage: !prev.showCarImage,
-                        }))
-                      }
-                    />
-                  }
-                  label="Car Image"
-                />
-              </MenuItem>
-              <MenuItem>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={uiConfig.showUssZones}
-                      onChange={() =>
-                        setUiConfig((prev) => ({
-                          ...prev,
-                          showUssZones: !prev.showUssZones,
-                        }))
-                      }
-                    />
-                  }
-                  label="USS Zones"
-                />
-              </MenuItem>
-              <MenuItem>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={uiConfig.showUssSensors}
-                      onChange={() =>
-                        setUiConfig((prev) => ({
-                          ...prev,
-                          showUssSensors: !prev.showUssSensors,
-                        }))
-                      }
-                    />
-                  }
-                  label="USS Sensors"
-                />
-              </MenuItem>
-              <MenuItem>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={uiConfig.showLidarSensors}
-                      onChange={() =>
-                        setUiConfig((prev) => ({
-                          ...prev,
-                          showLidarSensors: !prev.showLidarSensors,
-                        }))
-                      }
-                    />
-                  }
-                  label="Lidar Sensors"
-                />
-              </MenuItem>
-              <MenuItem>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={uiConfig.showRadarSensors}
-                      onChange={() =>
-                        setUiConfig((prev) => ({
-                          ...prev,
-                          showRadarSensors: !prev.showRadarSensors,
-                        }))
-                      }
-                    />
-                  }
-                  label="Radar Sensors"
-                />
-              </MenuItem>
-              <MenuItem>
-                <FormControlLabel
-                  control={
-                    <Switch
-                      checked={uiConfig.showCameraSensors}
-                      onChange={() =>
-                        setUiConfig((prev) => ({
-                          ...prev,
-                          showCameraSensors: !prev.showCameraSensors,
-                        }))
-                      }
-                    />
-                  }
-                  label="Camera Sensors"
-                />
-              </MenuItem>
-            </Menu>
-          </Box>
+          <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
         </Box>
       </Grid>
 
