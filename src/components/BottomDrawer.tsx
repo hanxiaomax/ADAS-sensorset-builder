@@ -116,8 +116,9 @@ const Sensor: React.FC<SensorProps> = ({
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
             },
           }}
-          onMouseEnter={handlePopoverOpen}
-          onMouseLeave={handlePopoverClose}
+          onClick={handlePopoverClose} // 点击时关闭 Popover
+          onMouseEnter={handlePopoverOpen} // 鼠标移入时打开 Popover
+          onMouseLeave={handlePopoverClose} // 鼠标移出时关闭 Popover
         >
           {icon}
         </Box>

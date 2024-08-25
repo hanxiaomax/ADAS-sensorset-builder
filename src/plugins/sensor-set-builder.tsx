@@ -115,7 +115,7 @@ const SensorSetBuilderMain: React.FC = () => {
               borderColor: "#f6f6f6",
               borderRightColor: "#d1d1d1",
               borderLeftColor: "#d1d1d1",
-              color: "black", // 设置按钮文字颜色为白色
+              color: "black", // 设置按钮文字颜色为黑色
               borderRadius: 0, // 移除按钮的圆角
               "&:hover": {
                 backgroundColor: "#f6f6f6", // 设置悬停时的背景色
@@ -225,18 +225,6 @@ const SensorSetBuilderMain: React.FC = () => {
           </Stage>
         </Box>
       </Grid>
-
-      {uiConfig.panelVisible && (
-        <Box sx={{ zIndex: 1400 }}>
-          <ControlPanel
-            uiConfig={uiConfig}
-            setUiConfig={setUiConfig}
-            sensorConfiguration={sensorConfiguration}
-            setSensorConfiguration={setSensorConfiguration}
-            mountingPoints={vehicle.mountingPoints}
-          />
-        </Box>
-      )}
 
       {/* 引入 BottomDrawer 组件 */}
       <BottomDrawer />
