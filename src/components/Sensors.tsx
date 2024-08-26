@@ -7,7 +7,7 @@ const sensorStyles: {
   [key: string]: { color: string; opacity: number };
 } = {
   uss: { color: "#3a3895", opacity: 0.4 },
-  lidar: { color: "#fa973d", opacity: 0.2 },
+  lidar: { color: "#4e4e7f", opacity: 0.2 },
   radar: { color: "#00973d", opacity: 0.3 },
   camera: { color: "#57b1b9", opacity: 0.2 },
   tele_camera: { color: "#f1dae0", opacity: 0.5 },

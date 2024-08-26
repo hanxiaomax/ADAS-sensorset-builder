@@ -17,9 +17,8 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  ButtonGroup,
 } from "@mui/material";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import RadarIcon from "@mui/icons-material/Radar";
@@ -27,6 +26,11 @@ import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import ToysIcon from "@mui/icons-material/Toys";
 
 import sensorData from "../sensor_stocks.json"; // 引入 JSON 文件
+import {
+  AddReactionTwoTone,
+  ExpandLessOutlined,
+  ExpandMoreOutlined,
+} from "@mui/icons-material";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -71,6 +75,7 @@ const Sensor: React.FC<SensorProps> = ({
   image,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [hover, setHover] = useState(false);
 
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>
@@ -85,7 +90,15 @@ const Sensor: React.FC<SensorProps> = ({
   const open = Boolean(anchorEl);
 
   return (
-    <>
+    <Box
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
       <Badge
         badgeContent={
           isNew ? <Chip label="New" color="primary" size="small" /> : null
@@ -101,7 +114,7 @@ const Sensor: React.FC<SensorProps> = ({
       >
         <Box
           sx={{
-            width: "80px",
+            width: "180px",
             height: "80px",
             backgroundColor: "#f0f0f0",
             borderRadius: "16px",
@@ -123,6 +136,32 @@ const Sensor: React.FC<SensorProps> = ({
           {icon}
         </Box>
       </Badge>
+
+      {/* Use 按钮，仅在悬停时显示 */}
+      <ButtonGroup
+        disableElevation
+        variant="outlined"
+        size="small"
+        sx={{
+          "& .MuiButtonBase-root": {
+            backgroundColor: hover ? "#f6f6f6" : "transparent", // 背景颜色在悬停时改变
+            width: "60px",
+            height: "30px",
+            color: "#111111", // 文字颜色
+            border: 0, // 移除边框
+            boxShadow: "none", // 移除阴影
+            textTransform: "none", // 保持文本的原始格式（不大写）
+            display: hover ? "block" : "none", // 根据 hover 状态显示或隐藏按钮
+            "&:hover": {
+              backgroundColor: "#e0e0e0", // 悬停时的背景色
+            },
+          },
+        }}
+      >
+        <Button>Install</Button>
+        <Button>Edit</Button>
+        <Button>Details</Button>
+      </ButtonGroup>
 
       {/* Popover 显示详细信息卡片 */}
       <Popover
@@ -190,7 +229,7 @@ const Sensor: React.FC<SensorProps> = ({
           </CardContent>
         </Card>
       </Popover>
-    </>
+    </Box>
   );
 };
 
@@ -246,24 +285,27 @@ const BottomDrawer: React.FC = () => {
         onClick={toggleDrawer}
         sx={{
           position: "fixed",
+          color: "black",
           bottom: 0,
           left: "50%",
           transform: "translateX(-50%)",
           width: "80vw",
           height: "30px",
-          backgroundColor: "rgba(253,245,230,0.1)",
-          borderRadius: "10px 10px 0 0",
+          backgroundColor: "#ece2dc",
           textAlign: "center",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           zIndex: 1300,
+          "&:hover": {
+            backgroundColor: "#d2b29f", // 悬停时的背景色
+          },
         }}
       >
         {drawerOpen ? (
-          <CloseIcon sx={{ fontSize: "24px" }} />
+          <ExpandMoreOutlined sx={{ fontSize: "24px" }} />
         ) : (
-          <ExpandLessIcon sx={{ fontSize: "24px" }} />
+          <ExpandLessOutlined sx={{ fontSize: "24px" }} />
         )}
       </Button>
 
@@ -276,6 +318,7 @@ const BottomDrawer: React.FC = () => {
           ".MuiDrawer-paper": {
             borderRadius: "16px 16px 0 0",
             width: "80%",
+            height: "230px",
             margin: "0 auto",
             position: "fixed",
             bottom: 0,
@@ -303,7 +346,7 @@ const BottomDrawer: React.FC = () => {
               {renderSensors(key as keyof typeof sensorData)}
               <Box
                 sx={{
-                  width: "80px",
+                  width: "180px",
                   height: "80px",
                   backgroundColor: "#e0e0e0",
                   borderRadius: "16px",

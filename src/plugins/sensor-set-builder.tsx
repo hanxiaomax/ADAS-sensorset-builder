@@ -98,27 +98,26 @@ const SensorSetBuilderMain: React.FC = () => {
       {/* 工具栏 */}
       <AppBar
         position="static"
-        elevation={1} // 移除 AppBar 的阴影
+        elevation={1}
         sx={{
           backgroundColor: "#f8f8f8",
           color: "black",
         }}
       >
-        {/* Profile 和 View 菜单按钮 */}
         <ButtonGroup
           disableElevation
           variant="outlined"
           size="small"
           sx={{
             "& .MuiButtonBase-root": {
-              backgroundColor: "#ebebeb", // 设置按钮的背景色为灰色
+              backgroundColor: "#ebebeb",
               borderColor: "#f6f6f6",
               borderRightColor: "#d1d1d1",
               borderLeftColor: "#d1d1d1",
-              color: "black", // 设置按钮文字颜色为黑色
-              borderRadius: 0, // 移除按钮的圆角
+              color: "black",
+              borderRadius: 0,
               "&:hover": {
-                backgroundColor: "#f6f6f6", // 设置悬停时的背景色
+                backgroundColor: "#f6f6f6",
               },
             },
           }}
@@ -137,6 +136,7 @@ const SensorSetBuilderMain: React.FC = () => {
             width: "100%",
             height: "100%",
             transform: "scale(0.8)",
+            zIndex: 1000,
           }}
         >
           <Stage width={stageSize.width} height={stageSize.height}>
