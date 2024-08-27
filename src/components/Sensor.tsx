@@ -6,17 +6,18 @@ import {
   ButtonGroup,
   Button,
   Popover,
-  Typography,
   Card,
   CardContent,
-  CardMedia,
   Table,
   TableBody,
   TableRow,
   TableCell,
+  Typography,
+  CardMedia,
 } from "@mui/material";
 import InstallConfigDialog from "./InstallConfigDialog"; // 引入 InstallConfigDialog 组件
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import SensorInfoDialog from "./SensorInfoDialog"; // 引入新的 SensorInfoDialog 组件
 
 interface SensorProps {
   icon: React.ReactElement;
@@ -41,6 +42,15 @@ const Sensor: React.FC<SensorProps> = ({
   const [hover, setHover] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 删除确认弹窗状态
+  const [sensorInfoOpen, setSensorInfoOpen] = useState(false);
+
+  const handleSensorClick = () => {
+    setSensorInfoOpen(true);
+  };
+
+  const handleSensorInfoClose = () => {
+    setSensorInfoOpen(false);
+  };
 
   const handlePopoverOpen = (
     event: React.MouseEvent<HTMLElement, MouseEvent>
@@ -122,14 +132,13 @@ const Sensor: React.FC<SensorProps> = ({
               boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
             },
           }}
-          onClick={handlePopoverClose} // 点击时关闭 Popover
+          onClick={handleSensorClick} // 点击时关闭 Popover
           onMouseEnter={handlePopoverOpen} // 鼠标移入时打开 Popover
           onMouseLeave={handlePopoverClose} // 鼠标移出时关闭 Popover
         >
           {icon}
         </Box>
       </Badge>
-
       {/* Use 按钮，仅在悬停时显示 */}
       <ButtonGroup
         disableElevation
@@ -152,9 +161,8 @@ const Sensor: React.FC<SensorProps> = ({
         }}
       >
         <Button onClick={handleInstallClick}>Install</Button>
-        <Button onClick={handleDeleteClick}>remove</Button>
+        <Button onClick={handleDeleteClick}>Remove</Button>
       </ButtonGroup>
-
       {/* Popover 显示详细信息卡片 */}
       <Popover
         sx={{
@@ -221,20 +229,29 @@ const Sensor: React.FC<SensorProps> = ({
           </CardContent>
         </Card>
       </Popover>
-
       {/* Install Config Dialog */}
       <InstallConfigDialog
         open={dialogOpen}
         onClose={handleDialogClose}
         onSave={handleSave}
       />
-
       <DeleteConfirmationDialog
         open={deleteDialogOpen}
         onClose={handleDeleteDialogClose}
         onConfirm={handleDeleteConfirm}
         sensorName={name}
       />
+      <SensorInfoDialog
+        open={sensorInfoOpen}
+        onClose={handleSensorInfoClose}
+        onInstall={handleInstallClick}
+        onRemove={handleDeleteClick}
+        name={name}
+        description={description}
+        specs={specs}
+        image={image}
+        icon={icon}
+      />{" "}
     </Box>
   );
 };
