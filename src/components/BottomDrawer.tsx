@@ -119,12 +119,13 @@ const BottomDrawer: React.FC = () => {
         sx={{
           ".MuiDrawer-paper": {
             borderRadius: "16px 16px 0 0",
-            width: "80%",
+            width: "80vw",
             height: "230px",
             margin: "0 auto",
             position: "fixed",
             bottom: 0,
             zIndex: 1200,
+            boxShadow: "0px 1px 1px 1px #fefe",
           },
         }}
       >

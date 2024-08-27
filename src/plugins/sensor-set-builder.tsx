@@ -100,6 +100,9 @@ const SensorSetBuilderMain: React.FC = () => {
         position="static"
         elevation={1}
         sx={{
+          // width: "80vw",
+          // height: "50px",
+          // transform: "translateX(10%)",
           backgroundColor: "#f8f8f8",
           color: "black",
         }}
