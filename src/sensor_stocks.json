@@ -10,7 +10,8 @@
         "description": "This is USS Sensor 1. It is used for obstacle detection.",
         "specs": {
           "Range": "200m",
-          "Frequency": "77GHz"
+          "HFov": "120°",
+          "VFov": "30°"
         },"image":""
       },
       {
@@ -21,7 +22,8 @@
         "description": "This is the new USS Sensor 2 with improved accuracy.",
         "specs": {
           "Range": "200m",
-          "Frequency": "77GHz"
+          "HFov": "120°",
+          "VFov": "30°"
         },"image":""
       },
       {
@@ -32,7 +34,8 @@
         "description": "This is USS Sensor 3, suitable for close-range detection.",
         "specs": {
           "Range": "200m",
-          "Frequency": "77GHz"
+          "HFov": "120°",
+          "VFov": "30°"
         },"image":""
       }
     ]
@@ -74,7 +77,8 @@
         "description": "Radar Sensor 1 is designed for long-range object detection.",
         "specs": {
           "Range": "200m",
-          "Frequency": "77GHz"
+          "HFov": "120°",
+          "VFov": "30°"
         },"image":""
       },
       {
@@ -85,7 +89,8 @@
         "description": "This new Radar Sensor 2 offers better resolution at long range.",
         "specs": {
           "Range": "200m",
-          "Frequency": "77GHz"
+          "HFov": "120°",
+          "VFov": "30°"
         },"image":""
       }
     ]
@@ -101,7 +106,8 @@
         "description": "Camera Sensor 1 for high-resolution imaging.",
         "specs": {
           "Range": "200m",
-          "Frequency": "77GHz"
+          "HFov": "120°",
+          "VFov": "30°"
         },"image":""
       },
       {
@@ -112,7 +118,8 @@
         "description": "New Camera Sensor 2 with enhanced low-light performance.",
         "specs": {
           "Range": "200m",
-          "Frequency": "77GHz"
+          "HFov": "120°",
+          "VFov": "30°"
         },"image":""
       }
     ]

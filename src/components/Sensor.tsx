@@ -147,7 +147,7 @@ const Sensor: React.FC<SensorProps> = ({
         sx={{
           "& .MuiButtonBase-root": {
             backgroundColor: hover ? "#f6f6f6" : "transparent",
-            width: "90px",
+            width: "180px",
             height: "30px",
             color: "#111111",
             border: 0,
@@ -161,7 +161,7 @@ const Sensor: React.FC<SensorProps> = ({
         }}
       >
         <Button onClick={handleInstallClick}>Install</Button>
-        <Button onClick={handleDeleteClick}>Remove</Button>
+        {/* <Button onClick={handleDeleteClick}>Remove</Button> */}
       </ButtonGroup>
       {/* Popover 显示详细信息卡片 */}
       <Popover
@@ -183,7 +183,7 @@ const Sensor: React.FC<SensorProps> = ({
       >
         <Card sx={{ maxWidth: 300 }}>
           <CardContent>
-            <Typography variant="h6" component="div">
+            <Typography variant="subtitle1" component="span">
               {name}
             </Typography>
           </CardContent>
@@ -209,9 +209,6 @@ const Sensor: React.FC<SensorProps> = ({
             </Box>
           )}
           <CardContent>
-            <Typography variant="body2" color="text.secondary">
-              {description}
-            </Typography>
             {specs && (
               <Table size="small" aria-label="sensor specs">
                 <TableBody>
