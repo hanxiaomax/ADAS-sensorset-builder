@@ -313,6 +313,7 @@ const BottomDrawer: React.FC = () => {
         anchor="bottom"
         open={drawerOpen}
         onClose={toggleDrawer}
+        variant="persistent"
         hideBackdrop
         sx={{
           ".MuiDrawer-paper": {
