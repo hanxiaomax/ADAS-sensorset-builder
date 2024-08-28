@@ -4,7 +4,6 @@ import { Stage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
 import { Sensor } from "../components/Sensors";
-import ControlPanel from "../components/ControlPanel";
 import useImage from "use-image";
 import { Position, SensorConfig } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";

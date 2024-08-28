@@ -1,12 +1,11 @@
 import React from "react";
-import { Layer, Image, Rect } from "react-konva";
-import useImage from "use-image";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Box, Typography } from "@mui/material";
 import { SensorConfig, SensorData } from "../types/Common";
+
 interface NerdModeProps {
   show: boolean;
   sensor_configuration: SensorConfig[];
@@ -21,6 +20,7 @@ const NerdMode: React.FC<NerdModeProps> = ({
   if (!show) {
     return null;
   }
+
   return (
     <Box
       sx={{
@@ -45,17 +45,28 @@ const NerdMode: React.FC<NerdModeProps> = ({
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography
-            gutterBottom
-            sx={{
-              fontSize: "0.7rem",
-              color: "black",
-            }}
-          >
-            <pre style={{ whiteSpace: "pre-wrap" }}>
-              {JSON.stringify(sensor_configuration, null, 2)}
-            </pre>
-          </Typography>
+          {sensor_configuration && sensor_configuration.length > 0 ? (
+            <Typography
+              gutterBottom
+              sx={{
+                fontSize: "0.7rem",
+                color: "black",
+              }}
+            >
+              <pre style={{ whiteSpace: "pre-wrap" }}>
+                {JSON.stringify(sensor_configuration, null, 2)}
+              </pre>
+            </Typography>
+          ) : (
+            <Typography
+              sx={{
+                fontSize: "0.75rem",
+                color: "gray",
+              }}
+            >
+              Please import sensor configuration data
+            </Typography>
+          )}
         </AccordionDetails>
       </Accordion>
       <Accordion>
@@ -67,17 +78,28 @@ const NerdMode: React.FC<NerdModeProps> = ({
           <Typography sx={{ fontSize: "0.875rem" }}>Sensor Stocks</Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Typography
-            gutterBottom
-            sx={{
-              fontSize: "0.7rem",
-              color: "black",
-            }}
-          >
-            <pre style={{ whiteSpace: "pre-wrap" }}>
-              {JSON.stringify(sensor_stocks, null, 2)}
-            </pre>
-          </Typography>
+          {sensor_stocks && Object.keys(sensor_stocks).length > 0 ? (
+            <Typography
+              gutterBottom
+              sx={{
+                fontSize: "0.7rem",
+                color: "black",
+              }}
+            >
+              <pre style={{ whiteSpace: "pre-wrap" }}>
+                {JSON.stringify(sensor_stocks, null, 2)}
+              </pre>
+            </Typography>
+          ) : (
+            <Typography
+              sx={{
+                fontSize: "0.75rem",
+                color: "gray",
+              }}
+            >
+              Please import sensor stock data
+            </Typography>
+          )}
         </AccordionDetails>
       </Accordion>
     </Box>
