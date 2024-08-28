@@ -17,9 +17,14 @@ import { Position, SensorConfig } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import _sensor_configuration from "../sensorConfiguration.json";
 import { transformJsonArray } from "../parser";
-import BottomDrawer from "../components/BottomDrawer"; // 引入新的BottomDrawer组件
-import ViewMenu from "../components/ViewMenu"; // 引入ViewMenu组件
-import ProfileMenu from "../components/ProfileMenu"; // 引入ProfileMenu组件
+import BottomDrawer from "../components/BottomDrawer";
+import ViewMenu from "../components/ViewMenu";
+import ProfileMenu from "../components/ProfileMenu";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import sensorData from "../sensor_stocks.json"; // 引入 JSON 文件
 
 interface MarkerProps {
   position: Position;
@@ -103,14 +108,10 @@ const SensorSetBuilderMain: React.FC = () => {
         backgroundColor: uiConfig.background,
       }}
     >
-      {/* 工具栏 */}
       <AppBar
         position="static"
         elevation={1}
         sx={{
-          // width: "80vw",
-          // height: "50px",
-          // transform: "translateX(10%)",
           backgroundColor: "#f8f8f8",
           color: "black",
         }}
@@ -237,28 +238,69 @@ const SensorSetBuilderMain: React.FC = () => {
         </Box>
       </Grid>
 
-      {/* 引入 BottomDrawer 组件 */}
       <BottomDrawer />
+
       {uiConfig.showNerdMode && (
         <Box
           sx={{
             position: "fixed",
-            top: 0,
+            top: 40,
             right: 0,
-            width: "25%",
-            height: "100%",
-            backgroundColor: "#f4f4f4",
-            padding: "16px",
+            width: "20vw",
+            height: "95vh",
+            padding: "5px",
             overflowY: "auto",
             zIndex: 1500,
           }}
         >
-          <Typography variant="h6" gutterBottom>
-            Sensor Configuration (Nerd Mode)
-          </Typography>
-          <pre style={{ whiteSpace: "pre-wrap" }}>
-            {JSON.stringify(_sensor_configuration, null, 2)}
-          </pre>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+            >
+              <Typography sx={{ fontSize: "0.875rem" }}>
+                Sensor Configuration
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography
+                gutterBottom
+                sx={{
+                  fontSize: "0.7rem",
+                  color: "black",
+                }}
+              >
+                <pre style={{ whiteSpace: "pre-wrap" }}>
+                  {JSON.stringify(_sensor_configuration, null, 2)}
+                </pre>
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel2-content"
+              id="panel2-header"
+            >
+              <Typography sx={{ fontSize: "0.875rem" }}>
+                Sensor Stocks
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Typography
+                gutterBottom
+                sx={{
+                  fontSize: "0.7rem",
+                  color: "black",
+                }}
+              >
+                <pre style={{ whiteSpace: "pre-wrap" }}>
+                  {JSON.stringify(sensorData, null, 2)}
+                </pre>
+              </Typography>
+            </AccordionDetails>
+          </Accordion>
         </Box>
       )}
     </Grid>
