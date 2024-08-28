@@ -37,11 +37,17 @@ const SensorSetBuilderMain: React.FC = () => {
     height: window.innerHeight,
   });
 
-  // 添加用于存储导入的 JSON 文件内容的状态
   const [sensorConfiguration, setSensorConfiguration] = useState<
     SensorConfig[]
-  >([]);
-  const [sensorData, setSensorData] = useState<any>(null);
+  >(() => {
+    const savedConfig = localStorage.getItem("sensorConfig");
+    return savedConfig ? JSON.parse(savedConfig) : [];
+  });
+
+  const [sensorData, setSensorData] = useState<any>(() => {
+    const savedData = localStorage.getItem("sensorData");
+    return savedData ? JSON.parse(savedData) : null;
+  });
 
   const [uiConfig, setUiConfig] = useState({
     showCarImage: true,
@@ -74,8 +80,10 @@ const SensorSetBuilderMain: React.FC = () => {
     if (type === "sensorConfig") {
       const transformedData = transformJsonArray(data, vehicle._mountingPoints);
       setSensorConfiguration(transformedData);
+      localStorage.setItem("sensorConfig", JSON.stringify(transformedData));
     } else if (type === "sensorData") {
       setSensorData(data);
+      localStorage.setItem("sensorData", JSON.stringify(data));
     }
   };
 
@@ -224,7 +232,7 @@ const SensorSetBuilderMain: React.FC = () => {
         </Box>
       </Grid>
 
-      <BottomDrawer />
+      {/* <BottomDrawer sensorData={sensorData} /> */}
 
       <NerdMode
         show={uiConfig.showNerdMode}
