@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Grid,
-  Box,
-  AppBar,
-  Toolbar,
-  ButtonGroup,
-  Typography,
-} from "@mui/material";
+import { Grid, Box, AppBar, ButtonGroup, Typography } from "@mui/material";
 import { Stage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
@@ -15,7 +8,6 @@ import ControlPanel from "../components/ControlPanel";
 import useImage from "use-image";
 import { Position, SensorConfig } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
-import _sensor_configuration from "../sensorConfiguration.json";
 import { transformJsonArray } from "../parser";
 import BottomDrawer from "../components/BottomDrawer";
 import ViewMenu from "../components/ViewMenu";
@@ -24,7 +16,6 @@ import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import sensorData from "../sensor_stocks.json"; // 引入 JSON 文件
 
 interface MarkerProps {
   position: Position;
@@ -49,6 +40,13 @@ const SensorSetBuilderMain: React.FC = () => {
     width: window.innerWidth,
     height: window.innerHeight,
   });
+
+  // 添加用于存储导入的 JSON 文件内容的状态
+  const [sensorConfiguration, setSensorConfiguration] = useState<
+    SensorConfig[]
+  >([]);
+  const [sensorData, setSensorData] = useState<any>(null);
+
   const [uiConfig, setUiConfig] = useState({
     showCarImage: true,
     showUssZones: false,
@@ -65,7 +63,6 @@ const SensorSetBuilderMain: React.FC = () => {
     background: "white",
   });
 
-  const stageCenter = { x: stageSize.width / 2, y: stageSize.height / 2 };
   const [image] = useImage("/vehicle.png");
   const vehicle = new Vehicle(stageSize, image);
 
@@ -77,19 +74,13 @@ const SensorSetBuilderMain: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  let vehicleKeyPoint = vehicle.refPoints;
-  const [sensorConfiguration, setSensorConfiguration] = useState<
-    SensorConfig[]
-  >([]);
-
-  const sensor_configuration = transformJsonArray(
-    _sensor_configuration,
-    vehicle._mountingPoints
-  );
-
-  const handleImport = () => {
-    console.log("Import clicked");
-    // 实现导入功能的逻辑
+  const handleImport = (type: "sensorConfig" | "sensorData", data: any) => {
+    if (type === "sensorConfig") {
+      const transformedData = transformJsonArray(data, vehicle._mountingPoints);
+      setSensorConfiguration(transformedData);
+    } else if (type === "sensorData") {
+      setSensorData(data);
+    }
   };
 
   const handleExport = () => {
@@ -177,12 +168,12 @@ const SensorSetBuilderMain: React.FC = () => {
 
             <Layer>
               {uiConfig.showVehicleRefPoint &&
-                Object.values(vehicleKeyPoint).map((position, index) => (
+                Object.values(vehicle.refPoints).map((position, index) => (
                   <Marker key={index} position={position} fill="red" />
                 ))}
 
               {uiConfig.showUssSensors &&
-                sensor_configuration
+                sensorConfiguration
                   .filter((sensor) => sensor.type === "uss")
                   .map((sensorConfig, index) => (
                     <Sensor
@@ -195,7 +186,7 @@ const SensorSetBuilderMain: React.FC = () => {
                     />
                   ))}
               {uiConfig.showLidarSensors &&
-                sensor_configuration
+                sensorConfiguration
                   .filter((sensor) => sensor.type === "lidar")
                   .map((sensorConfig, index) => (
                     <Sensor
@@ -208,7 +199,7 @@ const SensorSetBuilderMain: React.FC = () => {
                     />
                   ))}
               {uiConfig.showRadarSensors &&
-                sensor_configuration
+                sensorConfiguration
                   .filter((sensor) => sensor.type === "radar")
                   .map((sensorConfig, index) => (
                     <Sensor
@@ -221,7 +212,7 @@ const SensorSetBuilderMain: React.FC = () => {
                     />
                   ))}
               {uiConfig.showCameraSensors &&
-                sensor_configuration
+                sensorConfiguration
                   .filter((sensor) => sensor.type === "camera")
                   .map((sensorConfig, index) => (
                     <Sensor
@@ -238,7 +229,7 @@ const SensorSetBuilderMain: React.FC = () => {
         </Box>
       </Grid>
 
-      <BottomDrawer />
+      {/* <BottomDrawer /> */}
 
       {uiConfig.showNerdMode && (
         <Box
@@ -272,7 +263,7 @@ const SensorSetBuilderMain: React.FC = () => {
                 }}
               >
                 <pre style={{ whiteSpace: "pre-wrap" }}>
-                  {JSON.stringify(_sensor_configuration, null, 2)}
+                  {JSON.stringify(sensorConfiguration, null, 2)}
                 </pre>
               </Typography>
             </AccordionDetails>
