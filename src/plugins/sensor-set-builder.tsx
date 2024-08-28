@@ -88,8 +88,36 @@ const SensorSetBuilderMain: React.FC = () => {
   };
 
   const handleExport = () => {
-    console.log("Export clicked");
-    // 实现导出功能的逻辑
+    const sensorConfig = localStorage.getItem("sensorConfig");
+    const sensorData = localStorage.getItem("sensorData");
+
+    if (sensorConfig) {
+      const dataStr =
+        "data:text/json;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(JSON.parse(sensorConfig), null, 2));
+      const downloadAnchorNode = document.createElement("a");
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "sensor_config.json");
+      document.body.appendChild(downloadAnchorNode); // Required for Firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    } else {
+      alert("No sensor configuration data available to export.");
+    }
+
+    if (sensorData) {
+      const dataStr =
+        "data:text/json;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(JSON.parse(sensorData), null, 2));
+      const downloadAnchorNode = document.createElement("a");
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "sensor_data.json");
+      document.body.appendChild(downloadAnchorNode); // Required for Firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    } else {
+      alert("No sensor data available to export.");
+    }
   };
 
   return (
