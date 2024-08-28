@@ -2,6 +2,7 @@ import React from "react";
 import { Layer, Rect, Arc } from "react-konva";
 
 interface UssZonesProps {
+  show: boolean;
   x: number;
   y: number;
   carWidth: number;
@@ -14,6 +15,7 @@ interface UssZonesProps {
 }
 
 const UssZones: React.FC<UssZonesProps> = ({
+  show,
   x,
   y,
   carWidth,
@@ -34,6 +36,10 @@ const UssZones: React.FC<UssZonesProps> = ({
   const sideZoneWidth = 80;
   const sideoffset = 20;
   console.log(x, y);
+
+  if (!show) {
+    return null;
+  }
   return (
     <Layer>
       {/* 绘制左右两侧分区 */}

@@ -12,10 +12,7 @@ import { transformJsonArray } from "../parser";
 import BottomDrawer from "../components/BottomDrawer";
 import ViewMenu from "../components/ViewMenu";
 import ProfileMenu from "../components/ProfileMenu";
-import Accordion from "@mui/material/Accordion";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import NerdMode from "../components/NerdMode";
 
 interface MarkerProps {
   position: Position;
@@ -55,7 +52,7 @@ const SensorSetBuilderMain: React.FC = () => {
     showRadarSensors: true,
     showCameraSensors: true,
     showVehicleRefPoint: false,
-    showNerdMode: false,
+    showNerdMode: true,
     frontZones: 6,
     rearZones: 4,
     sideZones: 6,
@@ -143,28 +140,27 @@ const SensorSetBuilderMain: React.FC = () => {
           }}
         >
           <Stage width={stageSize.width} height={stageSize.height}>
-            {uiConfig.showCarImage && (
-              <CarImage
-                x={vehicle.origin.x}
-                y={vehicle.origin.y}
-                width={vehicle.width}
-                height={vehicle.length}
-                image={vehicle.image}
-              />
-            )}
-            {uiConfig.showUssZones && (
-              <UssZones
-                x={vehicle.origin.x}
-                y={vehicle.origin.y}
-                carWidth={vehicle.width}
-                carLength={vehicle.length}
-                frontOverhang={vehicle.frontOverhang}
-                rearOverhang={vehicle.rearOverhang}
-                frontZones={uiConfig.frontZones}
-                rearZones={uiConfig.rearZones}
-                sideZones={uiConfig.sideZones}
-              />
-            )}
+            <CarImage
+              show={uiConfig.showCarImage}
+              x={vehicle.origin.x}
+              y={vehicle.origin.y}
+              width={vehicle.width}
+              height={vehicle.length}
+              image={vehicle.image}
+            />
+
+            <UssZones
+              show={uiConfig.showUssZones}
+              x={vehicle.origin.x}
+              y={vehicle.origin.y}
+              carWidth={vehicle.width}
+              carLength={vehicle.length}
+              frontOverhang={vehicle.frontOverhang}
+              rearOverhang={vehicle.rearOverhang}
+              frontZones={uiConfig.frontZones}
+              rearZones={uiConfig.rearZones}
+              sideZones={uiConfig.sideZones}
+            />
 
             <Layer>
               {uiConfig.showVehicleRefPoint &&
@@ -229,71 +225,13 @@ const SensorSetBuilderMain: React.FC = () => {
         </Box>
       </Grid>
 
-      {/* <BottomDrawer /> */}
+      <BottomDrawer />
 
-      {uiConfig.showNerdMode && (
-        <Box
-          sx={{
-            position: "fixed",
-            top: 40,
-            right: 0,
-            width: "20vw",
-            height: "95vh",
-            padding: "5px",
-            overflowY: "auto",
-            zIndex: 1500,
-          }}
-        >
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel1-content"
-              id="panel1-header"
-            >
-              <Typography sx={{ fontSize: "0.875rem" }}>
-                Sensor Configuration
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography
-                gutterBottom
-                sx={{
-                  fontSize: "0.7rem",
-                  color: "black",
-                }}
-              >
-                <pre style={{ whiteSpace: "pre-wrap" }}>
-                  {JSON.stringify(sensorConfiguration, null, 2)}
-                </pre>
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion>
-            <AccordionSummary
-              expandIcon={<ArrowDropDownIcon />}
-              aria-controls="panel2-content"
-              id="panel2-header"
-            >
-              <Typography sx={{ fontSize: "0.875rem" }}>
-                Sensor Stocks
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography
-                gutterBottom
-                sx={{
-                  fontSize: "0.7rem",
-                  color: "black",
-                }}
-              >
-                <pre style={{ whiteSpace: "pre-wrap" }}>
-                  {JSON.stringify(sensorData, null, 2)}
-                </pre>
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-        </Box>
-      )}
+      <NerdMode
+        show={uiConfig.showNerdMode}
+        sensor_configuration={sensorConfiguration}
+        sensor_stocks={sensorData}
+      />
     </Grid>
   );
 };

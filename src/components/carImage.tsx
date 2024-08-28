@@ -1,8 +1,8 @@
 import React from "react";
 import { Layer, Image, Rect } from "react-konva";
-import useImage from "use-image";
 
 interface CarImageProps {
+  show: boolean;
   x: number;
   y: number;
   width: number;
@@ -10,7 +10,17 @@ interface CarImageProps {
   image: HTMLImageElement | undefined;
 }
 
-const CarImage: React.FC<CarImageProps> = ({ x, y, width, height, image }) => {
+const CarImage: React.FC<CarImageProps> = ({
+  show,
+  x,
+  y,
+  width,
+  height,
+  image,
+}) => {
+  if (!show) {
+    return null;
+  }
   return (
     <Layer>
       {image && (
