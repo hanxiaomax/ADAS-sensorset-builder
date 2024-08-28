@@ -260,7 +260,7 @@ const SensorSetBuilderMain: React.FC = () => {
         </Box>
       </Grid>
 
-      {/* <BottomDrawer sensorData={sensorData} /> */}
+      <BottomDrawer />
 
       <NerdMode
         show={uiConfig.showNerdMode}
