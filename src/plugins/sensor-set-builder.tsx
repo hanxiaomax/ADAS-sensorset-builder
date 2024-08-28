@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Box, AppBar, Toolbar, ButtonGroup } from "@mui/material";
+import {
+  Grid,
+  Box,
+  AppBar,
+  Toolbar,
+  ButtonGroup,
+  Typography,
+} from "@mui/material";
 import { Stage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
@@ -45,6 +52,7 @@ const SensorSetBuilderMain: React.FC = () => {
     showRadarSensors: true,
     showCameraSensors: true,
     showVehicleRefPoint: false,
+    showNerdMode: false,
     frontZones: 6,
     rearZones: 4,
     sideZones: 6,
@@ -231,6 +239,28 @@ const SensorSetBuilderMain: React.FC = () => {
 
       {/* 引入 BottomDrawer 组件 */}
       <BottomDrawer />
+      {uiConfig.showNerdMode && (
+        <Box
+          sx={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            width: "25%",
+            height: "100%",
+            backgroundColor: "#f4f4f4",
+            padding: "16px",
+            overflowY: "auto",
+            zIndex: 1500,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Sensor Configuration (Nerd Mode)
+          </Typography>
+          <pre style={{ whiteSpace: "pre-wrap" }}>
+            {JSON.stringify(_sensor_configuration, null, 2)}
+          </pre>
+        </Box>
+      )}
     </Grid>
   );
 };

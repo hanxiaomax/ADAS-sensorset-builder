@@ -134,6 +134,22 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
             label="Camera Sensors"
           />
         </MenuItem>
+        <MenuItem>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={uiConfig.showNerdMode}
+                onChange={() =>
+                  setUiConfig({
+                    ...uiConfig,
+                    showNerdMode: !uiConfig.showNerdMode,
+                  })
+                }
+              />
+            }
+            label="Nerd Mode"
+          />
+        </MenuItem>
       </Menu>
     </>
   );
