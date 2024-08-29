@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from "react";
-import { Grid, Box, AppBar, ButtonGroup, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import {
+  Grid,
+  Box,
+  AppBar,
+  ButtonGroup,
+  Typography,
+  Paper,
+} from "@mui/material";
 import { Stage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
 import { Sensor } from "../components/Sensors";
 import useImage from "use-image";
-import { Position, SensorConfig } from "../types/Common";
+import { MountPosition, Position, SensorConfig } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import { transformJsonArray } from "../parser";
 import BottomDrawer from "../components/BottomDrawer";
@@ -39,15 +46,8 @@ const SensorSetBuilderMain: React.FC = () => {
 
   const [sensorConfiguration, setSensorConfiguration] = useState<
     SensorConfig[]
-  >(() => {
-    const savedConfig = localStorage.getItem("sensorConfig");
-    return savedConfig ? JSON.parse(savedConfig) : [];
-  });
-
-  const [sensorData, setSensorData] = useState<any>(() => {
-    const savedData = localStorage.getItem("sensorData");
-    return savedData ? JSON.parse(savedData) : null;
-  });
+  >([]);
+  const [sensorData, setSensorData] = useState<any>(null);
 
   const [uiConfig, setUiConfig] = useState({
     showCarImage: true,
@@ -80,10 +80,8 @@ const SensorSetBuilderMain: React.FC = () => {
     if (type === "sensorConfig") {
       const transformedData = transformJsonArray(data, vehicle._mountingPoints);
       setSensorConfiguration(transformedData);
-      localStorage.setItem("sensorConfig", JSON.stringify(transformedData));
     } else if (type === "sensorData") {
       setSensorData(data);
-      localStorage.setItem("sensorData", JSON.stringify(data));
     }
   };
 
@@ -98,7 +96,7 @@ const SensorSetBuilderMain: React.FC = () => {
       const downloadAnchorNode = document.createElement("a");
       downloadAnchorNode.setAttribute("href", dataStr);
       downloadAnchorNode.setAttribute("download", "sensor_config.json");
-      document.body.appendChild(downloadAnchorNode); // Required for Firefox
+      document.body.appendChild(downloadAnchorNode);
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
     } else {
@@ -112,7 +110,7 @@ const SensorSetBuilderMain: React.FC = () => {
       const downloadAnchorNode = document.createElement("a");
       downloadAnchorNode.setAttribute("href", dataStr);
       downloadAnchorNode.setAttribute("download", "sensor_data.json");
-      document.body.appendChild(downloadAnchorNode); // Required for Firefox
+      document.body.appendChild(downloadAnchorNode);
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
     } else {
@@ -267,6 +265,41 @@ const SensorSetBuilderMain: React.FC = () => {
         sensor_configuration={sensorConfiguration}
         sensor_stocks={sensorData}
       />
+
+      {/* 右侧面板，渲染 sensor_configuration */}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 40,
+          right: 0,
+          width: "20vw",
+          height: "95vh",
+          padding: "10px",
+          backgroundColor: "#f5f5f5",
+          overflowY: "auto",
+          zIndex: 1500,
+        }}
+      >
+        <Typography variant="h6" gutterBottom>
+          Installed Sensors
+        </Typography>
+        {sensorConfiguration.map((sensor, index) => (
+          <Paper
+            key={index}
+            elevation={3}
+            sx={{
+              padding: "10px",
+              marginBottom: "10px",
+              backgroundColor: "#ffffff",
+            }}
+          >
+            <Typography variant="subtitle1">{sensor.name}</Typography>
+            <Typography variant="body2">
+              Position: {(sensor.mountPosition as MountPosition).name}
+            </Typography>
+          </Paper>
+        ))}
+      </Box>
     </Grid>
   );
 };

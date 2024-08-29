@@ -1,20 +1,20 @@
 [
   {
-    "name": "Front Right Side",
+    "name": "Uss FRS",
     "type": "uss",
     "mountPosition": "front_right_side",
     "fov": 120,
     "range": 50
   },
   {
-    "name": "Front Middle Right 1",
+    "name": "USS FRM1",
     "type": "uss",
     "mountPosition": "front_middle_right1",
     "fov": 120,
     "range": 50
   },
   {
-    "name": "Front Middle Right 2",
+    "name": "USS FRM2",
     "type": "uss",
     "mountPosition": "front_middle_right2",
     "fov": 120,

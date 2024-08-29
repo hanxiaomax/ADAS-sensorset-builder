@@ -25,7 +25,7 @@ const NerdMode: React.FC<NerdModeProps> = ({
     <Box
       sx={{
         position: "fixed",
-        top: 40,
+        top: 200,
         right: 0,
         width: "20vw",
         height: "95vh",

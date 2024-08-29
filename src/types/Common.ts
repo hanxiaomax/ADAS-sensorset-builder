@@ -1,8 +1,11 @@
+import exp from "constants";
+
 export interface Position {
   x: number;
   y: number;
 }
 export interface MountPosition {
+  name?: string;
   position: Position;
   orientation: number;
 }
