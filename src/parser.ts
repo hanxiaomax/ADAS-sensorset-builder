@@ -12,7 +12,7 @@ export function transformJsonArray(
     const name = item.mountPosition as string;
     let pose = mountingPoints[name];
     pose["name"] = name;
-    // console.log(name, pose);
+    console.log(name, pose);
     if (pose) {
       return {
         ...item,

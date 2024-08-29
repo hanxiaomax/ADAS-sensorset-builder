@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from "react";
-import {
-  Grid,
-  Box,
-  AppBar,
-  ButtonGroup,
-  Typography,
-  Paper,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Grid, Box, AppBar, ButtonGroup, Typography } from "@mui/material";
 import { Stage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
 import { Sensor } from "../components/Sensors";
 import useImage from "use-image";
-import { MountPosition, Position, SensorConfig } from "../types/Common";
+import { Position, SensorConfig, MountPosition } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import { transformJsonArray } from "../parser";
 import BottomDrawer from "../components/BottomDrawer";
 import ViewMenu from "../components/ViewMenu";
 import ProfileMenu from "../components/ProfileMenu";
 import NerdMode from "../components/NerdMode";
+import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
 
 interface MarkerProps {
   position: Position;
@@ -76,12 +70,31 @@ const SensorSetBuilderMain: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 在组件加载时从 localStorage 中加载数据
+  useEffect(() => {
+    const storedSensorConfig = localStorage.getItem("sensorConfig");
+    const storedSensorData = localStorage.getItem("sensorData");
+
+    if (storedSensorConfig) {
+      const parsedConfig = JSON.parse(storedSensorConfig);
+
+      setSensorConfiguration(parsedConfig);
+    }
+
+    if (storedSensorData) {
+      setSensorData(JSON.parse(storedSensorData));
+    }
+  }, [vehicle._mountingPoints]);
+
   const handleImport = (type: "sensorConfig" | "sensorData", data: any) => {
     if (type === "sensorConfig") {
       const transformedData = transformJsonArray(data, vehicle._mountingPoints);
+      console.log(transformedData);
       setSensorConfiguration(transformedData);
+      localStorage.setItem("sensorConfig", JSON.stringify(transformedData)); // 保存到 localStorage
     } else if (type === "sensorData") {
       setSensorData(data);
+      localStorage.setItem("sensorData", JSON.stringify(data)); // 保存到 localStorage
     }
   };
 
@@ -266,40 +279,8 @@ const SensorSetBuilderMain: React.FC = () => {
         sensor_stocks={sensorData}
       />
 
-      {/* 右侧面板，渲染 sensor_configuration */}
-      <Box
-        sx={{
-          position: "fixed",
-          top: 40,
-          right: 0,
-          width: "20vw",
-          height: "95vh",
-          padding: "10px",
-          backgroundColor: "#f5f5f5",
-          overflowY: "auto",
-          zIndex: 1500,
-        }}
-      >
-        <Typography variant="h6" gutterBottom>
-          Installed Sensors
-        </Typography>
-        {sensorConfiguration.map((sensor, index) => (
-          <Paper
-            key={index}
-            elevation={3}
-            sx={{
-              padding: "10px",
-              marginBottom: "10px",
-              backgroundColor: "#ffffff",
-            }}
-          >
-            <Typography variant="subtitle1">{sensor.name}</Typography>
-            <Typography variant="body2">
-              Position: {(sensor.mountPosition as MountPosition).name}
-            </Typography>
-          </Paper>
-        ))}
-      </Box>
+      {/* 使用新的 SensorPanel 组件 */}
+      <SensorPanel sensorConfiguration={sensorConfiguration} />
     </Grid>
   );
 };
