@@ -42,6 +42,9 @@ const SensorSetBuilderMain: React.FC = () => {
     SensorConfig[]
   >([]);
   const [sensorData, setSensorData] = useState<any>(null);
+  const [selectedSensorIndex, setSelectedSensorIndex] = useState<number | null>(
+    null
+  ); // 用于存储选中的传感器索引
 
   const [uiConfig, setUiConfig] = useState({
     showCarImage: true,
@@ -220,58 +223,17 @@ const SensorSetBuilderMain: React.FC = () => {
                   <Marker key={index} position={position} fill="red" />
                 ))}
 
-              {uiConfig.showUssSensors &&
-                sensorConfiguration
-                  .filter((sensor) => sensor.type === "uss")
-                  .map((sensorConfig, index) => (
-                    <Sensor
-                      key={index}
-                      type={sensorConfig.type}
-                      mountPosition={sensorConfig.mountPosition}
-                      fov={sensorConfig.fov}
-                      range={sensorConfig.range}
-                      uiConfig={uiConfig}
-                    />
-                  ))}
-              {uiConfig.showLidarSensors &&
-                sensorConfiguration
-                  .filter((sensor) => sensor.type === "lidar")
-                  .map((sensorConfig, index) => (
-                    <Sensor
-                      key={index}
-                      type={sensorConfig.type}
-                      mountPosition={sensorConfig.mountPosition}
-                      fov={sensorConfig.fov}
-                      range={sensorConfig.range}
-                      uiConfig={uiConfig}
-                    />
-                  ))}
-              {uiConfig.showRadarSensors &&
-                sensorConfiguration
-                  .filter((sensor) => sensor.type === "radar")
-                  .map((sensorConfig, index) => (
-                    <Sensor
-                      key={index}
-                      type={sensorConfig.type}
-                      mountPosition={sensorConfig.mountPosition}
-                      fov={sensorConfig.fov}
-                      range={sensorConfig.range}
-                      uiConfig={uiConfig}
-                    />
-                  ))}
-              {uiConfig.showCameraSensors &&
-                sensorConfiguration
-                  .filter((sensor) => sensor.type === "camera")
-                  .map((sensorConfig, index) => (
-                    <Sensor
-                      key={index}
-                      type={sensorConfig.type}
-                      mountPosition={sensorConfig.mountPosition}
-                      fov={sensorConfig.fov}
-                      range={sensorConfig.range}
-                      uiConfig={uiConfig}
-                    />
-                  ))}
+              {sensorConfiguration.map((sensorConfig, index) => (
+                <Sensor
+                  key={index}
+                  type={sensorConfig.type}
+                  mountPosition={sensorConfig.mountPosition}
+                  fov={sensorConfig.fov}
+                  range={sensorConfig.range}
+                  uiConfig={uiConfig}
+                  highlighted={selectedSensorIndex === index} // 高亮显示选中的传感器
+                />
+              ))}
             </Layer>
           </Stage>
         </Box>
@@ -285,10 +247,11 @@ const SensorSetBuilderMain: React.FC = () => {
         sensor_stocks={sensorData}
       />
 
-      {/* 使用新的 SensorPanel 组件，并传递 onDelete 函数 */}
+      {/* 使用新的 SensorPanel 组件，并传递 onDelete 和 setSelectedSensorIndex 函数 */}
       <SensorPanel
         sensorConfiguration={sensorConfiguration}
         onDelete={handleDeleteSensor}
+        onSelectSensor={(index) => setSelectedSensorIndex(index)} // 传递选择传感器的回调
       />
     </Grid>
   );

@@ -12,21 +12,23 @@ import { SensorConfig, MountPosition } from "../types/Common";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { DeleteOutlineOutlined } from "@mui/icons-material";
 
 interface SensorPanelProps {
   sensorConfiguration: SensorConfig[];
   onDelete: (index: number) => void;
+  onSelectSensor: (index: number) => void; // 新增的回调函数，用于选择传感器
 }
 
 const SensorPanel: React.FC<SensorPanelProps> = ({
   sensorConfiguration,
   onDelete,
+  onSelectSensor,
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   const handleExpandClick = (index: number) => {
     setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
+    onSelectSensor(index); // 当展开时，选择传感器
   };
 
   const handleDeleteClick = (index: number, event: React.MouseEvent) => {
@@ -126,7 +128,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                       boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)", // 自定义阴影
                     }}
                   >
-                    <DeleteOutlineOutlined />
+                    <DeleteIcon />
                   </IconButton>
                 </Grid>
               </Grid>

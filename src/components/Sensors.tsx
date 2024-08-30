@@ -1,6 +1,6 @@
 import React from "react";
 import { Layer, Arc, Rect } from "react-konva";
-import { MountPosition, Position, SensorConfig } from "../types/Common";
+import { MountPosition, SensorConfig } from "../types/Common";
 import { UiConfig } from "../types/Common";
 
 const sensorStyles: {
@@ -15,13 +15,16 @@ const sensorStyles: {
 
 interface SensorProp extends SensorConfig {
   uiConfig: UiConfig;
+  highlighted: boolean; // 新增的属性
 }
+
 export const Sensor: React.FC<SensorProp> = ({
   mountPosition,
   fov,
   range,
   type,
   uiConfig,
+  highlighted, // 接受 highlighted 属性
 }) => {
   const offset = 5;
 
@@ -64,7 +67,8 @@ export const Sensor: React.FC<SensorProp> = ({
         fill={`${color}${Math.floor(opacity * 255)
           .toString(16)
           .padStart(2, "0")}`} // 计算透明度的hex值
-        strokeWidth={2}
+        strokeWidth={highlighted ? 4 : 2} // 当传感器高亮时增加边框厚度
+        stroke={highlighted ? "yellow" : color} // 当传感器高亮时显示黄色边框
       />
       {/* 绘制传感器的主体 */}
       <Rect
@@ -72,7 +76,7 @@ export const Sensor: React.FC<SensorProp> = ({
         y={mt.position.y - offset}
         width={2 * offset}
         height={2 * offset}
-        fill={color} // 使用传入的hex颜色值
+        fill={highlighted ? "yellow" : color} // 当传感器高亮时填充黄色
       />
     </React.Fragment>
   );
