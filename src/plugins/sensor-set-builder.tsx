@@ -51,7 +51,7 @@ const SensorSetBuilderMain: React.FC = () => {
     showRadarSensors: true,
     showCameraSensors: true,
     showVehicleRefPoint: false,
-    showNerdMode: true,
+    showNerdMode: false,
     frontZones: 6,
     rearZones: 4,
     sideZones: 6,
@@ -77,7 +77,6 @@ const SensorSetBuilderMain: React.FC = () => {
 
     if (storedSensorConfig) {
       const parsedConfig = JSON.parse(storedSensorConfig);
-
       setSensorConfiguration(parsedConfig);
     }
 
@@ -129,6 +128,13 @@ const SensorSetBuilderMain: React.FC = () => {
     } else {
       alert("No sensor data available to export.");
     }
+  };
+
+  const handleDeleteSensor = (index: number) => {
+    const updatedConfig = [...sensorConfiguration];
+    updatedConfig.splice(index, 1); // 删除指定的传感器
+    setSensorConfiguration(updatedConfig);
+    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig)); // 更新localStorage中的数据
   };
 
   return (
@@ -279,8 +285,11 @@ const SensorSetBuilderMain: React.FC = () => {
         sensor_stocks={sensorData}
       />
 
-      {/* 使用新的 SensorPanel 组件 */}
-      <SensorPanel sensorConfiguration={sensorConfiguration} />
+      {/* 使用新的 SensorPanel 组件，并传递 onDelete 函数 */}
+      <SensorPanel
+        sensorConfiguration={sensorConfiguration}
+        onDelete={handleDeleteSensor}
+      />
     </Grid>
   );
 };
