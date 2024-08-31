@@ -18,24 +18,16 @@ import {
 import InstallConfigDialog from "./InstallConfigDialog"; // 引入 InstallConfigDialog 组件
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog"; // 引入新的 SensorInfoDialog 组件
-import { transformJsonArray } from "../parser";
-interface SensorProps {
+import { SensorConfig } from "../types/Common";
+
+interface SensorStockItemProps {
   icon: React.ReactElement;
-  name: string;
-  isNew?: boolean;
-  description: string;
-  specs?: { [key: string]: string };
-  image?: string; // 添加 image 字段，用于传递图片链接
+  sensor: SensorConfig;
   onDelete?: (name: string) => void; // 添加删除处理函数
 }
-
-const Sensor: React.FC<SensorProps> = ({
+const SensorStockItem: React.FC<SensorStockItemProps> = ({
   icon,
-  name,
-  isNew,
-  description,
-  specs,
-  image,
+  sensor,
   onDelete,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -80,15 +72,15 @@ const Sensor: React.FC<SensorProps> = ({
     );
 
     const newSensorConfig = {
-      name: name,
-      type: "uss",
+      name: sensor.profile.name,
+      type: sensor.profile.type,
       mountPosition: {
         position: {
           x: 1020,
           y: 329,
         },
         orientation: -90,
-        name: "front_right_side",
+        name: sensor.mountPosition,
       },
       fov: 120,
       range: 500,
@@ -107,7 +99,7 @@ const Sensor: React.FC<SensorProps> = ({
 
   const handleDeleteConfirm = () => {
     if (onDelete) {
-      onDelete(name);
+      onDelete(sensor.profile.name);
     }
     setDeleteDialogOpen(false);
   };
@@ -128,7 +120,9 @@ const Sensor: React.FC<SensorProps> = ({
     >
       <Badge
         badgeContent={
-          isNew ? <Chip label="New" color="primary" size="small" /> : null
+          sensor.attr.new ? (
+            <Chip label="New" color="primary" size="small" />
+          ) : null
         }
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         overlap="circular"
@@ -208,15 +202,15 @@ const Sensor: React.FC<SensorProps> = ({
         <Card sx={{ maxWidth: 300 }}>
           <CardContent>
             <Typography variant="subtitle1" component="span">
-              {name}
+              {sensor.profile.name}
             </Typography>
           </CardContent>
-          {image ? (
+          {sensor.profile.image ? (
             <CardMedia
               component="img"
               height="140"
-              image={image}
-              alt={name}
+              image={sensor.profile.image}
+              alt={sensor.profile.name}
               sx={{ objectFit: "contain" }}
             />
           ) : (
@@ -233,10 +227,10 @@ const Sensor: React.FC<SensorProps> = ({
             </Box>
           )}
           <CardContent>
-            {specs && (
+            {sensor.spec && (
               <Table size="small" aria-label="sensor specs">
                 <TableBody>
-                  {Object.entries(specs).map(([key, value]) => (
+                  {Object.entries(sensor.spec).map(([key, value]) => (
                     <TableRow key={key}>
                       <TableCell component="th" scope="row">
                         {key}
@@ -260,21 +254,21 @@ const Sensor: React.FC<SensorProps> = ({
         open={deleteDialogOpen}
         onClose={handleDeleteDialogClose}
         onConfirm={handleDeleteConfirm}
-        sensorName={name}
+        sensorName={sensor.profile.name}
       />
       <SensorInfoDialog
         open={sensorInfoOpen}
         onClose={handleSensorInfoClose}
         onInstall={handleInstallClick}
         onRemove={handleDeleteClick}
-        name={name}
-        description={description}
-        specs={specs}
-        image={image}
+        name={sensor.profile.name}
+        description={sensor.profile.desc ? sensor.profile.desc : ""}
+        specs={sensor.spec}
+        image={sensor.profile.image}
         icon={icon}
       />{" "}
     </Box>
   );
 };
 
-export default Sensor;
+export default SensorStockItem;

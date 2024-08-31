@@ -2,13 +2,19 @@ import React from "react";
 import { Menu, MenuItem, Button } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { SensorStock } from "../types/Common";
 
 interface ProfileMenuProps {
   onImport: (type: "sensorConfig" | "sensorData", data: any) => void;
+  onImportSensorStock: (data: any) => void;
   onExport: () => void;
 }
 
-const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport }) => {
+const ProfileMenu: React.FC<ProfileMenuProps> = ({
+  onImport,
+  onImportSensorStock,
+  onExport,
+}) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -28,8 +34,14 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({ onImport, onExport }) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const data = JSON.parse(e.target?.result as string);
-          onImport(type, data);
+          if (type == "sensorData") {
+            const data = JSON.parse(e.target?.result as string) as SensorStock;
+            onImportSensorStock(data);
+          } else if (type == "sensorConfig") {
+            const data = JSON.parse(e.target?.result as string);
+            onImport(type, data);
+          } else {
+          }
         } catch (error) {
           console.error("Error parsing JSON file:", error);
         }

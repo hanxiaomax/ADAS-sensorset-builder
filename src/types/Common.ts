@@ -5,42 +5,42 @@ export interface Position {
   y: number;
 }
 export interface MountPosition {
-  name?: string;
-  position: Position;
-  orientation: number;
+  name: string;
+  position?: Position;
+  orientation?: number;
 }
 
-export interface SensorConfig {
-  name?: string;
+export interface SensorSpec {
+  range: number;
+  fov: number;
+}
+export interface SensorAttr {
+  promotion: boolean;
+  new: boolean;
+}
+export interface SensorProfile {
+  name: string;
   brand?: string;
   desc?: string;
   type: string;
-  img?: string;
-  mountPosition: string | MountPosition;
-  fov: number;
-  range: number;
+  image?: string;
 }
-
-interface Sensor {
+export interface SensorConfig {
   id: number;
-  name: string;
-  type: string;
-  isNew: boolean;
-  description: string;
-  specs: {
-    [key: string]: string; // 动态键值对，用于传感器的规格描述
-  };
-  image?: string; // 可选字段，用于传感器的图片链接
+  profile: SensorProfile;
+  mountPosition?: MountPosition;
+  spec: SensorSpec;
+  attr: SensorAttr;
 }
 
 // 定义传感器类型的接口
 interface SensorType {
   title: string;
-  sensors: Sensor[]; // 包含传感器列表
+  sensors: SensorConfig[]; // 包含传感器列表
 }
 
 // 定义sensorData接口，用于表示传感器的完整数据结构
-export interface SensorData {
+export interface SensorStock {
   uss_sensors: SensorType;
   lidar_sensors: SensorType;
   radar_sensors: SensorType;

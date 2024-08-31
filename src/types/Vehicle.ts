@@ -12,6 +12,7 @@ function setMountingPosition(
   orientation: number
 ): MountPosition {
   return {
+    name: "",
     position: setPosition(x, y),
     orientation: orientation,
   };

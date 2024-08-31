@@ -89,19 +89,21 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
             <Grid container alignItems="center" spacing={2}>
               <Grid item>
                 <Avatar
-                  src={sensor.img || undefined}
-                  alt={sensor.name}
+                  src={sensor.profile.image || undefined}
+                  alt={sensor.profile.name}
                   sx={{
                     width: 30,
                     height: 30,
                     backgroundColor: "#e0e0e0",
                   }}
                 >
-                  {!sensor.img && sensor.name![0]}
+                  {!sensor.profile.image && sensor.profile.name![0]}
                 </Avatar>
               </Grid>
               <Grid item xs>
-                <Typography variant="subtitle1">{sensor.name}</Typography>
+                <Typography variant="subtitle1">
+                  {sensor.profile.name}
+                </Typography>
                 <Typography variant="body2">
                   Position: {(sensor.mountPosition as MountPosition).name}
                 </Typography>
@@ -113,7 +115,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
               <Grid container alignItems="center" spacing={2}>
                 <Grid item xs>
                   <Typography variant="body2">
-                    More details about {sensor.name}...
+                    More details about {sensor.profile.name}...
                   </Typography>
                 </Grid>
                 <Grid item>

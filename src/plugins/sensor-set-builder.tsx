@@ -5,7 +5,12 @@ import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
 import { Sensor } from "../components/Sensors";
 import useImage from "use-image";
-import { Position, SensorConfig, MountPosition } from "../types/Common";
+import {
+  Position,
+  SensorConfig,
+  MountPosition,
+  SensorStock,
+} from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import { transformJsonArray } from "../parser";
 import BottomDrawer from "../components/BottomDrawer";
@@ -41,7 +46,7 @@ const SensorSetBuilderMain: React.FC = () => {
   const [sensorConfiguration, setSensorConfiguration] = useState<
     SensorConfig[]
   >([]);
-  const [sensorData, setSensorData] = useState<any>(null);
+  const [sensorData, setSensorData] = useState<SensorStock>();
   const [selectedSensorIndex, setSelectedSensorIndex] = useState<number | null>(
     null
   ); // 用于存储选中的传感器索引
@@ -77,29 +82,36 @@ const SensorSetBuilderMain: React.FC = () => {
   useEffect(() => {
     const storedSensorConfig = localStorage.getItem("sensorConfig");
     const storedSensorData = localStorage.getItem("sensorData");
-
     if (storedSensorConfig) {
       const parsedConfig = JSON.parse(storedSensorConfig);
       setSensorConfiguration(parsedConfig);
     }
 
     if (storedSensorData) {
-      setSensorData(JSON.parse(storedSensorData));
+      setSensorData(JSON.parse(storedSensorData) as SensorStock);
     }
-  }, [vehicle._mountingPoints]);
+  }, []);
 
   const handleImport = (type: "sensorConfig" | "sensorData", data: any) => {
+    console.log(type, data);
     if (type === "sensorConfig") {
       const transformedData = transformJsonArray(data, vehicle._mountingPoints);
       console.log(transformedData);
       setSensorConfiguration(transformedData);
       localStorage.setItem("sensorConfig", JSON.stringify(transformedData)); // 保存到 localStorage
     } else if (type === "sensorData") {
+      const sensor_stock = JSON.parse(data);
+      console.log(sensor_stock);
       setSensorData(data);
       localStorage.setItem("sensorData", JSON.stringify(data)); // 保存到 localStorage
     }
   };
 
+  const handleSensorStockImport = (data: SensorStock) => {
+    console.log(data);
+    setSensorData(data);
+    localStorage.setItem("sensorData", JSON.stringify(data)); // 保存到 localStorage
+  };
   const handleExport = () => {
     const sensorConfig = localStorage.getItem("sensorConfig");
     const sensorData = localStorage.getItem("sensorData");
@@ -177,7 +189,11 @@ const SensorSetBuilderMain: React.FC = () => {
             },
           }}
         >
-          <ProfileMenu onImport={handleImport} onExport={handleExport} />
+          <ProfileMenu
+            onImport={handleImport}
+            onImportSensorStock={handleSensorStockImport}
+            onExport={handleExport}
+          />
           <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
         </ButtonGroup>
       </AppBar>
@@ -223,7 +239,7 @@ const SensorSetBuilderMain: React.FC = () => {
                   <Marker key={index} position={position} fill="red" />
                 ))}
 
-              {sensorConfiguration.map((sensorConfig, index) => (
+              {/* {sensorConfiguration.map((sensorConfig, index) => (
                 <Sensor
                   key={index}
                   type={sensorConfig.type}
@@ -233,19 +249,19 @@ const SensorSetBuilderMain: React.FC = () => {
                   uiConfig={uiConfig}
                   highlighted={selectedSensorIndex === index} // 高亮显示选中的传感器
                 />
-              ))}
+              ))} */}
             </Layer>
           </Stage>
         </Box>
       </Grid>
 
-      <BottomDrawer />
+      <BottomDrawer sensorStocks={sensorData} />
 
-      <NerdMode
+      {/* <NerdMode
         show={uiConfig.showNerdMode}
         sensor_configuration={sensorConfiguration}
         sensor_stocks={sensorData}
-      />
+      /> */}
 
       {/* 使用新的 SensorPanel 组件，并传递 onDelete 和 setSelectedSensorIndex 函数 */}
       <SensorPanel

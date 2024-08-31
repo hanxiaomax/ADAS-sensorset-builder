@@ -5,14 +5,18 @@ import RadarIcon from "@mui/icons-material/Radar";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
 import ToysIcon from "@mui/icons-material/Toys";
 import AddIcon from "@mui/icons-material/Add";
-import sensorData from "../sensor_stocks.json"; // 引入 JSON 文件
 import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
-import Sensor from "./Sensor"; // 引入更新后的 Sensor 组件
+import SensorStockItem from "./SensorStock";
+import { SensorConfig, SensorStock } from "../types/Common";
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+}
+
+interface BottomDrawerProps {
+  sensorStocks: SensorStock | undefined; // 定义外部传入的 prop 类型
 }
 
 const TabPanel: React.FC<TabPanelProps> = ({
@@ -34,7 +38,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
   );
 };
 
-const BottomDrawer: React.FC = () => {
+const BottomDrawer: React.FC<BottomDrawerProps> = ({ sensorStocks }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -47,10 +51,14 @@ const BottomDrawer: React.FC = () => {
     setSelectedTab(newValue);
   };
 
-  const renderSensors = (sensorType: keyof typeof sensorData) => {
-    return sensorData[sensorType].sensors.map((sensor) => {
+  const renderSensors = (sensorType: keyof SensorStock) => {
+    if (!sensorStocks || !sensorStocks[sensorType]) {
+      return null;
+    }
+
+    return sensorStocks[sensorType].sensors.map((sensor) => {
       let icon;
-      switch (sensor.type) {
+      switch (sensor.profile.type) {
         case "uss":
           icon = <SensorsIcon sx={{ fontSize: "40px" }} />;
           break;
@@ -66,15 +74,12 @@ const BottomDrawer: React.FC = () => {
         default:
           icon = <SensorsIcon sx={{ fontSize: "40px" }} />;
       }
+
       return (
-        <Sensor
+        <SensorStockItem
           key={sensor.id}
           icon={icon}
-          name={sensor.name}
-          isNew={sensor.isNew}
-          description={sensor.description}
-          specs={sensor.specs}
-          image={sensor.image}
+          sensor={sensor as SensorConfig}
         />
       );
     });
@@ -116,8 +121,8 @@ const BottomDrawer: React.FC = () => {
         onClose={toggleDrawer}
         variant="persistent"
         hideBackdrop
-        sx={{
-          ".MuiDrawer-paper": {
+        PaperProps={{
+          sx: {
             borderRadius: "16px 16px 0 0",
             width: "80vw",
             height: "230px",
@@ -135,43 +140,45 @@ const BottomDrawer: React.FC = () => {
           aria-label="sensor types"
           variant="fullWidth"
         >
-          {Object.keys(sensorData).map((key, index) => (
-            <Tab
-              key={index}
-              label={sensorData[key as keyof typeof sensorData].title}
-            />
-          ))}
+          {sensorStocks &&
+            Object.keys(sensorStocks).map((key, index) => (
+              <Tab
+                key={index}
+                label={sensorStocks[key as keyof SensorStock].title}
+              />
+            ))}
         </Tabs>
 
-        {Object.keys(sensorData).map((key, index) => (
-          <TabPanel key={index} value={selectedTab} index={index}>
-            <Box display="flex" flexWrap="wrap">
-              {renderSensors(key as keyof typeof sensorData)}
-              <Box
-                sx={{
-                  width: "180px",
-                  height: "80px",
-                  backgroundColor: "#e0e0e0",
-                  borderRadius: "16px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: "8px",
-                  cursor: "pointer",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                  "&:hover": {
-                    transform: "translateY(-5px)",
-                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-                  },
-                }}
-              >
-                <IconButton>
-                  <AddIcon sx={{ fontSize: "40px" }} />
-                </IconButton>
+        {sensorStocks &&
+          Object.keys(sensorStocks).map((key, index) => (
+            <TabPanel key={index} value={selectedTab} index={index}>
+              <Box display="flex" flexWrap="wrap">
+                {renderSensors(key as keyof SensorStock)}
+                <Box
+                  sx={{
+                    width: "180px",
+                    height: "80px",
+                    backgroundColor: "#e0e0e0",
+                    borderRadius: "16px",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: "8px",
+                    cursor: "pointer",
+                    transition: "transform 0.2s, box-shadow 0.2s",
+                    "&:hover": {
+                      transform: "translateY(-5px)",
+                      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+                    },
+                  }}
+                >
+                  <IconButton>
+                    <AddIcon sx={{ fontSize: "40px" }} />
+                  </IconButton>
+                </Box>
               </Box>
-            </Box>
-          </TabPanel>
-        ))}
+            </TabPanel>
+          ))}
       </Drawer>
     </>
   );

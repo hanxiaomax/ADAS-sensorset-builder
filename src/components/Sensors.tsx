@@ -19,15 +19,16 @@ interface SensorProp extends SensorConfig {
 }
 
 export const Sensor: React.FC<SensorProp> = ({
-  mountPosition,
-  fov,
-  range,
-  type,
   uiConfig,
+  profile,
+  spec,
+  mountPosition,
   highlighted, // 接受 highlighted 属性
 }) => {
   const offset = 5;
-
+  const type = profile.type;
+  const fov = spec.fov;
+  const range = spec.range;
   // 根据传感器类型动态设置颜色和透明度
   const { color, opacity } = sensorStyles[type] || {
     color: "#000",
@@ -58,12 +59,12 @@ export const Sensor: React.FC<SensorProp> = ({
     <React.Fragment>
       {/* 绘制传感器的FOV扇形区域 */}
       <Arc
-        x={mt.position.x}
-        y={mt.position.y}
+        x={mt.position!.x}
+        y={mt.position!.y}
         innerRadius={0}
         outerRadius={range} // 视场的可见范围大小，通常根据需求进行调整
         angle={fov}
-        rotation={mt.orientation - fov / 2}
+        rotation={mt.orientation! - fov / 2}
         fill={`${color}${Math.floor(opacity * 255)
           .toString(16)
           .padStart(2, "0")}`} // 计算透明度的hex值
@@ -73,8 +74,8 @@ export const Sensor: React.FC<SensorProp> = ({
       />
       {/* 绘制传感器的主体 */}
       <Rect
-        x={mt.position.x - offset}
-        y={mt.position.y - offset}
+        x={mt.position!.x - offset}
+        y={mt.position!.y - offset}
         width={2 * offset}
         height={2 * offset}
         fill={highlighted ? "#f9653e" : color} // 传感器主体颜色

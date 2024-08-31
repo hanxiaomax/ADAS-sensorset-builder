@@ -9,7 +9,7 @@ export function transformJsonArray(
   mountingPoints: MountingPoints
 ): SensorConfig[] {
   return dataArray.map((item) => {
-    const name = item.mountPosition as string;
+    const name = item.mountPosition!.name as string;
     let pose = mountingPoints[name];
     pose["name"] = name;
     console.log(name, pose);

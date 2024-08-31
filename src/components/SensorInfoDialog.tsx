@@ -13,17 +13,18 @@ import {
   TableCell,
   Box,
 } from "@mui/material";
+import { SensorSpec } from "../types/Common";
 
 interface SensorInfoDialogProps {
   open: boolean;
+  name: string;
+  description: string;
+  specs?: SensorSpec;
+  image?: string;
+  icon: React.ReactElement;
   onClose: () => void;
   onInstall: () => void;
   onRemove: () => void;
-  name: string;
-  description: string;
-  specs?: { [key: string]: string };
-  image?: string;
-  icon: React.ReactElement;
 }
 
 const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
