@@ -7,9 +7,23 @@ import {
   Collapse,
   IconButton,
   Grid,
+  Drawer,
+  Divider,
+  Button,
 } from "@mui/material";
 import { SensorConfig } from "../types/Common";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import {
+  AppsOutlined,
+  ArrowForwardIosOutlined,
+  ExpandLessOutlined,
+  ExpandMoreOutlined,
+  FormatListBulletedTwoTone,
+  TableRows,
+  TvTwoTone,
+} from "@mui/icons-material";
 
 interface SensorPanelProps {
   sensorConfiguration: SensorConfig[];
@@ -23,6 +37,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   onSelectSensor,
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(true); // 控制 Drawer 的状态
 
   const handleExpandClick = (index: number) => {
     if (expandedIndex === index) {
@@ -48,103 +63,139 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     }
   };
 
-  return (
-    <Box
-      borderRadius={2}
-      boxShadow={3}
-      position="absolute"
-      top={40}
-      right={16}
-      sx={{
-        width: "18vw",
-        height: "80vh",
-        zIndex: 1200,
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
-      <Box
-        sx={{
-          padding: "10px",
-          backgroundColor: "#0c7a92",
-          color: "white",
-          position: "sticky",
-          top: 0,
-          zIndex: 1200,
-        }}
-      >
-        <Typography variant="h6">Sensor Set</Typography>
-      </Box>
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
 
-      <Box
+  return (
+    <>
+      <IconButton
+        onClick={toggleDrawer}
         sx={{
-          overflowY: "auto",
-          padding: "10px",
+          position: "fixed",
+          color: "#0c7a92",
+          top: 0, // 垂直居中
+          right: 0, // 放置在右侧
+          fontSize: "40px",
+          textAlign: "center",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1300,
         }}
       >
-        {sensorConfiguration.map((sensor, index) => (
-          <Paper
-            key={index}
-            elevation={3}
+        {drawerOpen ? (
+          <ArrowForwardIosOutlined sx={{ fontSize: "40px", color: "white" }} />
+        ) : (
+          <TableRows sx={{ fontSize: "40px" }} />
+        )}
+      </IconButton>
+
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={toggleDrawer}
+        sx={{ zIndex: 1200 }}
+        variant="persistent"
+      >
+        <Box
+          sx={{
+            width: "20vw",
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box
             sx={{
               padding: "10px",
-              marginBottom: "10px",
-              backgroundColor: expandedIndex === index ? "#f8f7f7" : "#ffffff",
-              border: expandedIndex === index ? "3px solid #0698b4" : "none",
-              cursor: "pointer",
+              backgroundColor: "#0c7a92",
+              color: "white",
             }}
-            onClick={() => handleExpandClick(index)}
           >
-            <Grid container alignItems="center" spacing={2}>
-              <Grid item>
-                <Avatar
-                  src={sensor.profile.image || undefined}
-                  alt={sensor.profile.name}
-                  sx={{
-                    width: 30,
-                    height: 30,
-                    backgroundColor: "#e0e0e0",
-                  }}
-                >
-                  {!sensor.profile.image && sensor.profile.name![0]}
-                </Avatar>
-              </Grid>
-              <Grid item xs>
-                <Typography variant="subtitle1">
-                  {sensor.profile.name}
-                </Typography>
-                <Typography variant="body2">
-                  Position: {sensor.mountPosition!.name}
-                </Typography>
-              </Grid>
-            </Grid>
+            <Typography variant="h6">Sensor Set</Typography>
+          </Box>
 
-            <Collapse in={expandedIndex === index} timeout="auto" unmountOnExit>
-              <Grid container alignItems="center" spacing={2}>
-                <Grid item xs>
-                  <Typography variant="body2">
-                    More details about {sensor.profile.name}...
-                  </Typography>
+          <Divider />
+
+          <Box
+            sx={{
+              overflowY: "auto",
+              padding: "10px",
+              flexGrow: 1, // 确保列表部分占满剩余空间
+            }}
+          >
+            {sensorConfiguration.map((sensor, index) => (
+              <Paper
+                key={index}
+                elevation={3}
+                sx={{
+                  padding: "10px",
+                  marginBottom: "10px",
+                  backgroundColor:
+                    expandedIndex === index ? "#f8f7f7" : "#ffffff",
+                  border:
+                    expandedIndex === index ? "3px solid #0698b4" : "none",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleExpandClick(index)}
+              >
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid item>
+                    <Avatar
+                      src={sensor.profile.image || undefined}
+                      alt={sensor.profile.name}
+                      sx={{
+                        width: 30,
+                        height: 30,
+                        backgroundColor: "#e0e0e0",
+                      }}
+                    >
+                      {!sensor.profile.image && sensor.profile.name![0]}
+                    </Avatar>
+                  </Grid>
+                  <Grid item xs>
+                    <Typography variant="subtitle1">
+                      {sensor.profile.name}
+                    </Typography>
+                    <Typography variant="body2">
+                      Position: {sensor.mountPosition!.name}
+                    </Typography>
+                  </Grid>
                 </Grid>
-                <Grid item>
-                  <IconButton
-                    onClick={(event) => handleDeleteClick(index, event)}
-                    size="small"
-                    sx={{
-                      backgroundColor: "#fefeff",
-                      color: "#000",
-                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)", // 自定义阴影
-                    }}
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </Grid>
-              </Grid>
-            </Collapse>
-          </Paper>
-        ))}
-      </Box>
-    </Box>
+
+                <Collapse
+                  in={expandedIndex === index}
+                  timeout="auto"
+                  unmountOnExit
+                >
+                  <Grid container alignItems="center" spacing={2}>
+                    <Grid item xs>
+                      <Typography variant="body2">
+                        More details about {sensor.profile.name}...
+                      </Typography>
+                    </Grid>
+                    <Grid item>
+                      <IconButton
+                        onClick={(event) => handleDeleteClick(index, event)}
+                        size="small"
+                        sx={{
+                          backgroundColor: "#fefeff",
+                          color: "#000",
+                          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)", // 自定义阴影
+                        }}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Grid>
+                  </Grid>
+                </Collapse>
+              </Paper>
+            ))}
+          </Box>
+        </Box>
+      </Drawer>
+    </>
   );
 };
 
