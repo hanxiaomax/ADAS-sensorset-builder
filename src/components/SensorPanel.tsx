@@ -8,13 +8,13 @@ import {
   IconButton,
   Grid,
 } from "@mui/material";
-import { SensorConfig, MountPosition } from "../types/Common";
+import { SensorConfig } from "../types/Common";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface SensorPanelProps {
   sensorConfiguration: SensorConfig[];
   setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
-  onSelectSensor: (index: number) => void; // 新增的回调函数，用于选择传感器
+  onSelectSensor: (index: number | null) => void; // 修改回调函数，允许取消选择
 }
 
 const SensorPanel: React.FC<SensorPanelProps> = ({
@@ -23,9 +23,15 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   onSelectSensor,
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
   const handleExpandClick = (index: number) => {
-    setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
-    onSelectSensor(index); // 当展开时，选择传感器
+    if (expandedIndex === index) {
+      setExpandedIndex(null); // 取消展开
+      onSelectSensor(null); // 取消选择，取消高亮
+    } else {
+      setExpandedIndex(index); // 展开新的传感器
+      onSelectSensor(index); // 选择传感器并高亮
+    }
   };
 
   const handleDeleteClick = (index: number, event: React.MouseEvent) => {
@@ -34,41 +40,42 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     updatedConfig.splice(index, 1); // 删除指定的传感器
     setSensorConfiguration(updatedConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig)); // 更新localStorage中的数据
+
+    // 如果删除的是当前选中的传感器，取消高亮显示
+    if (expandedIndex === index) {
+      setExpandedIndex(null);
+      onSelectSensor(null);
+    }
   };
 
   return (
     <Box
       borderRadius={2}
       boxShadow={3}
-      bgcolor="#efefef"
       position="absolute"
       top={40}
       right={16}
       sx={{
-        width: "20vw",
+        width: "18vw",
         height: "80vh",
-        backgroundColor: "#f0f0f0",
         zIndex: 1200,
         display: "flex",
         flexDirection: "column",
       }}
     >
-      {/* Header部分，始终保持可见 */}
       <Box
         sx={{
           padding: "10px",
-          backgroundColor: "#f0f0f0",
+          backgroundColor: "#0c7a92",
+          color: "white",
           position: "sticky",
           top: 0,
           zIndex: 1200,
         }}
       >
-        <Typography variant="h6" gutterBottom>
-          Sensor Configuration
-        </Typography>
+        <Typography variant="h6">Sensor Set</Typography>
       </Box>
 
-      {/* 可滚动的传感器列表部分 */}
       <Box
         sx={{
           overflowY: "auto",
@@ -83,7 +90,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
               padding: "10px",
               marginBottom: "10px",
               backgroundColor: expandedIndex === index ? "#f8f7f7" : "#ffffff",
-              border: expandedIndex === index ? "2px solid #3f51b5" : "none",
+              border: expandedIndex === index ? "3px solid #0698b4" : "none",
               cursor: "pointer",
             }}
             onClick={() => handleExpandClick(index)}
@@ -112,7 +119,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
               </Grid>
             </Grid>
 
-            {/* 展开部分 */}
             <Collapse in={expandedIndex === index} timeout="auto" unmountOnExit>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item xs>

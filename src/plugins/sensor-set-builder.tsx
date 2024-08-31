@@ -18,6 +18,7 @@ import ProfileMenu from "../components/ProfileMenu";
 import NerdMode from "../components/NerdMode";
 import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
 import Marker from "../components/utils";
+import MenuBar from "../components/MenuBar";
 
 const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -134,40 +135,13 @@ const SensorSetBuilderMain: React.FC = () => {
         backgroundColor: uiConfig.background,
       }}
     >
-      <AppBar
-        position="static"
-        elevation={1}
-        sx={{
-          backgroundColor: "#f8f8f8",
-          color: "black",
-        }}
-      >
-        <ButtonGroup
-          disableElevation
-          variant="outlined"
-          size="small"
-          sx={{
-            "& .MuiButtonBase-root": {
-              backgroundColor: "#ebebeb",
-              borderColor: "#f6f6f6",
-              borderRightColor: "#d1d1d1",
-              borderLeftColor: "#d1d1d1",
-              color: "black",
-              borderRadius: 0,
-              "&:hover": {
-                backgroundColor: "#f6f6f6",
-              },
-            },
-          }}
-        >
-          <ProfileMenu
-            onImportSensorSetConfigImport={handleSensorSetConfigImport}
-            onImportSensorStock={handleSensorStockImport}
-            onExport={handleExport}
-          />
-          <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
-        </ButtonGroup>
-      </AppBar>
+      <MenuBar
+        handleSensorSetConfigImport={handleSensorSetConfigImport}
+        handleSensorStockImport={handleSensorStockImport}
+        handleExport={handleExport}
+        uiConfig={uiConfig}
+        setUiConfig={setUiConfig}
+      />
 
       <Grid item xs={12}>
         <Box

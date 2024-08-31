@@ -128,7 +128,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       >
         <Box
           sx={{
-            width: "180px",
+            width: "80px",
             height: "80px",
             backgroundColor: "#f0f0f0",
             borderRadius: "16px",
@@ -158,7 +158,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
         sx={{
           "& .MuiButtonBase-root": {
             backgroundColor: hover ? "#f6f6f6" : "transparent",
-            width: "180px",
+            width: "80px",
             height: "30px",
             color: "#111111",
             border: 0,

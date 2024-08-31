@@ -1,11 +1,6 @@
 import React from "react";
-import { Layer, Arc, Rect } from "react-konva";
-import {
-  UiConfig,
-  MountPosition,
-  SensorConfig,
-  Position,
-} from "../types/Common";
+import { Layer, Arc, Rect, Circle } from "react-konva";
+import { UiConfig, MountPosition, SensorConfig } from "../types/Common";
 import { mountStringToPosition } from "./utils";
 
 const sensorStyles: {
@@ -76,16 +71,16 @@ export const Sensor: React.FC<SensorProp> = ({
           .toString(16)
           .padStart(2, "0")}`} // 计算透明度的hex值
         strokeWidth={highlighted ? 4 : 0} // 高亮时设置边框宽度
-        stroke={highlighted ? "#f9653e" : color} // 高亮时使用蓝色边框
-        dash={highlighted ? [10, 5] : undefined} // 高亮时设置虚线轮廓
+        stroke={highlighted ? "#0698b4" : color} // 高亮时使用蓝色边框
+        dash={highlighted ? [8, 5] : undefined} // 高亮时设置虚线轮廓
       />
       {/* 绘制传感器的主体 */}
-      <Rect
-        x={mount_position.position!.x - offset}
-        y={mount_position.position!.y - offset}
-        width={2 * offset}
-        height={2 * offset}
-        fill={highlighted ? "#f9653e" : color} // 传感器主体颜色
+      <Circle
+        x={mount_position.position!.x}
+        y={mount_position.position!.y}
+        width={highlighted ? 15 : 10}
+        height={highlighted ? 15 : 10}
+        fill={highlighted ? "#0698b4" : color} // 传感器主体颜色
       />
     </React.Fragment>
   );

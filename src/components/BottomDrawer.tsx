@@ -100,16 +100,16 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           bottom: 0,
           left: "50%",
           transform: "translateX(-50%)",
-          width: "80vw",
+          width: "50vw",
           height: "30px",
-          backgroundColor: "#ece2dc",
+          backgroundColor: "rgba(20, 98, 118, 0.1)",
           textAlign: "center",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
           zIndex: 1300,
           "&:hover": {
-            backgroundColor: "#d2b29f", // 悬停时的背景色
+            backgroundColor: "rgba(20, 98, 118, 0.4)", // 悬停时的背景色
           },
         }}
       >
@@ -129,7 +129,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
         PaperProps={{
           sx: {
             borderRadius: "16px 16px 0 0",
-            width: "80vw",
+            width: "50vw",
             height: "230px",
             margin: "0 auto",
             position: "fixed",
@@ -161,7 +161,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
                 {renderSensors(key as keyof SensorStock)}
                 <Box
                   sx={{
-                    width: "180px",
+                    width: "80px",
                     height: "80px",
                     backgroundColor: "#e0e0e0",
                     borderRadius: "16px",
