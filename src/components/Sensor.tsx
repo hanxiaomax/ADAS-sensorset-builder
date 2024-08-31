@@ -18,7 +18,7 @@ import {
 import InstallConfigDialog from "./InstallConfigDialog"; // 引入 InstallConfigDialog 组件
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog"; // 引入新的 SensorInfoDialog 组件
-
+import { transformJsonArray } from "../parser";
 interface SensorProps {
   icon: React.ReactElement;
   name: string;
@@ -74,7 +74,31 @@ const Sensor: React.FC<SensorProps> = ({
 
   const handleSave = (selectedPosition: string) => {
     console.log("Selected Position:", selectedPosition);
-    // 在这里处理保存逻辑
+
+    const sensorConfig = JSON.parse(
+      localStorage.getItem("sensorConfig") || "[]"
+    );
+
+    const newSensorConfig = {
+      name: name,
+      type: "uss",
+      mountPosition: {
+        position: {
+          x: 1020,
+          y: 329,
+        },
+        orientation: -90,
+        name: "front_right_side",
+      },
+      fov: 120,
+      range: 500,
+    };
+
+    console.log(newSensorConfig);
+    sensorConfig.push(newSensorConfig);
+    localStorage.setItem("sensorConfig", JSON.stringify(sensorConfig));
+
+    setDialogOpen(false);
   };
 
   const handleDeleteClick = () => {
