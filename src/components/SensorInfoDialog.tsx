@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -12,6 +12,7 @@ import {
   TableRow,
   TableCell,
   Box,
+  TextField,
 } from "@mui/material";
 import { SensorSpec } from "../types/Common";
 
@@ -38,6 +39,26 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
   image,
   icon,
 }) => {
+  const [editingCell, setEditingCell] = useState<string | null>(null); // 当前正在编辑的单元格
+  const [editedSpecs, setEditedSpecs] = useState<SensorSpec | undefined>(specs);
+
+  const handleCellClick = (key: string) => {
+    setEditingCell(key);
+  };
+
+  const handleInputChange = (key: string, value: string) => {
+    if (editedSpecs) {
+      setEditedSpecs({
+        ...editedSpecs,
+        [key]: value,
+      });
+    }
+  };
+
+  const handleInputBlur = () => {
+    setEditingCell(null);
+  };
+
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{name}</DialogTitle>
@@ -67,15 +88,27 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {description}
         </Typography>
-        {specs && (
+        {editedSpecs && (
           <Table size="small" aria-label="sensor specs">
             <TableBody>
-              {Object.entries(specs).map(([key, value]) => (
+              {Object.entries(editedSpecs).map(([key, value]) => (
                 <TableRow key={key}>
                   <TableCell component="th" scope="row">
                     {key}
                   </TableCell>
-                  <TableCell>{value}</TableCell>
+                  <TableCell onClick={() => handleCellClick(key)}>
+                    {editingCell === key ? (
+                      <TextField
+                        value={value}
+                        onChange={(e) => handleInputChange(key, e.target.value)}
+                        onBlur={handleInputBlur}
+                        autoFocus
+                        size="small"
+                      />
+                    ) : (
+                      value
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
