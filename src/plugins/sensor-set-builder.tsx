@@ -123,13 +123,6 @@ const SensorSetBuilderMain: React.FC = () => {
     }
   };
 
-  const handleDeleteSensor = (index: number) => {
-    const updatedConfig = [...sensorConfiguration];
-    updatedConfig.splice(index, 1); // 删除指定的传感器
-    setSensorConfiguration(updatedConfig);
-    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig)); // 更新localStorage中的数据
-  };
-
   return (
     <Grid
       container
@@ -244,7 +237,7 @@ const SensorSetBuilderMain: React.FC = () => {
       {/* 使用新的 SensorPanel 组件，并传递 onDelete 和 setSelectedSensorIndex 函数 */}
       <SensorPanel
         sensorConfiguration={sensorConfiguration}
-        onDelete={handleDeleteSensor}
+        setSensorConfiguration={setSensorConfiguration}
         onSelectSensor={(index) => setSelectedSensorIndex(index)} // 传递选择传感器的回调
       />
     </Grid>

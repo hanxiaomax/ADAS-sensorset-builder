@@ -13,13 +13,13 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 interface SensorPanelProps {
   sensorConfiguration: SensorConfig[];
-  onDelete: (index: number) => void;
+  setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
   onSelectSensor: (index: number) => void; // 新增的回调函数，用于选择传感器
 }
 
 const SensorPanel: React.FC<SensorPanelProps> = ({
   sensorConfiguration,
-  onDelete,
+  setSensorConfiguration,
   onSelectSensor,
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
@@ -30,7 +30,10 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
 
   const handleDeleteClick = (index: number, event: React.MouseEvent) => {
     event.stopPropagation(); // 阻止事件冒泡
-    onDelete(index);
+    const updatedConfig = [...sensorConfiguration];
+    updatedConfig.splice(index, 1); // 删除指定的传感器
+    setSensorConfiguration(updatedConfig);
+    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig)); // 更新localStorage中的数据
   };
 
   return (
