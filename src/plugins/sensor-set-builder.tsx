@@ -156,15 +156,6 @@ const SensorSetBuilderMain: React.FC = () => {
           }}
         >
           <Stage width={stageSize.width} height={stageSize.height}>
-            <CarImage
-              show={uiConfig.showCarImage}
-              x={vehicle.origin.x}
-              y={vehicle.origin.y}
-              width={vehicle.width}
-              height={vehicle.length}
-              image={vehicle.image}
-            />
-
             <UssZones
               show={uiConfig.showUssZones}
               x={vehicle.origin.x}
@@ -177,7 +168,14 @@ const SensorSetBuilderMain: React.FC = () => {
               rearZones={uiConfig.rearZones}
               sideZones={uiConfig.sideZones}
             />
-
+            <CarImage
+              show={uiConfig.showCarImage}
+              x={vehicle.origin.x}
+              y={vehicle.origin.y}
+              width={vehicle.width}
+              height={vehicle.length}
+              image={vehicle.image}
+            />
             <Layer>
               {uiConfig.showVehicleRefPoint &&
                 Object.values(vehicle.refPoints).map((position, index) => (
