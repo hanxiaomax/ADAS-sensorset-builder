@@ -138,6 +138,22 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
           <FormControlLabel
             control={
               <Switch
+                checked={uiConfig.showVehicleRefPoint}
+                onChange={() =>
+                  setUiConfig((prev: any) => ({
+                    ...prev,
+                    showVehicleRefPoint: !prev.showVehicleRefPoint,
+                  }))
+                }
+              />
+            }
+            label="Vehicle Key Point"
+          />
+        </MenuItem>
+        <MenuItem>
+          <FormControlLabel
+            control={
+              <Switch
                 checked={uiConfig.showNerdMode}
                 onChange={() =>
                   setUiConfig({

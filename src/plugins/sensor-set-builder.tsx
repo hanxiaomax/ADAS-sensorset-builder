@@ -11,14 +11,13 @@ import {
   MountPosition,
   SensorStock,
 } from "../types/Common";
-import { Mounts, Vehicle } from "../types/Vehicle";
-import { transformJsonArray } from "../parser";
+import { Vehicle } from "../types/Vehicle";
 import BottomDrawer from "../components/BottomDrawer";
 import ViewMenu from "../components/ViewMenu";
 import ProfileMenu from "../components/ProfileMenu";
 import NerdMode from "../components/NerdMode";
 import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
-import { mountStringToPosition } from "../parser";
+
 interface MarkerProps {
   position: Position;
   fill?: string;
