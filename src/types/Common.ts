@@ -28,9 +28,9 @@ export interface SensorProfile {
 export interface SensorConfig {
   id: number;
   profile: SensorProfile;
-  mountPosition?: MountPosition;
   spec: SensorSpec;
   attr: SensorAttr;
+  mountPosition?: MountPosition;
 }
 
 // 定义传感器类型的接口

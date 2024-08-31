@@ -105,7 +105,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                   {sensor.profile.name}
                 </Typography>
                 <Typography variant="body2">
-                  {/* Position: {(sensor.mountPosition as MountPosition).name} */}
+                  Position: {sensor.mountPosition!.name}
                 </Typography>
               </Grid>
             </Grid>

@@ -15,6 +15,6 @@
       "promotion": false,
       "new": false
     },
-    "mountPosition": "front_middle_right2"
+    "mountPosition": {"name":"front_middle_right2"}
   }
 ]

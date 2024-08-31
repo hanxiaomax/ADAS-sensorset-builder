@@ -11,14 +11,14 @@ import {
   MountPosition,
   SensorStock,
 } from "../types/Common";
-import { Vehicle } from "../types/Vehicle";
+import { Mounts, Vehicle } from "../types/Vehicle";
 import { transformJsonArray } from "../parser";
 import BottomDrawer from "../components/BottomDrawer";
 import ViewMenu from "../components/ViewMenu";
 import ProfileMenu from "../components/ProfileMenu";
 import NerdMode from "../components/NerdMode";
 import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
-
+import { mountStringToPosition } from "../parser";
 interface MarkerProps {
   position: Position;
   fill?: string;
@@ -47,6 +47,7 @@ const SensorSetBuilderMain: React.FC = () => {
     SensorConfig[]
   >([]);
   const [sensorData, setSensorData] = useState<SensorStock>();
+
   const [selectedSensorIndex, setSelectedSensorIndex] = useState<number | null>(
     null
   ); // 用于存储选中的传感器索引
@@ -69,6 +70,9 @@ const SensorSetBuilderMain: React.FC = () => {
 
   const [image] = useImage("/vehicle.png");
   const vehicle = new Vehicle(stageSize, image);
+
+  const mountingPointsJSON = JSON.stringify(vehicle._mountingPoints);
+  localStorage.setItem("mountingPoints", mountingPointsJSON);
 
   useEffect(() => {
     const handleResize = () => {
@@ -230,17 +234,14 @@ const SensorSetBuilderMain: React.FC = () => {
                   <Marker key={index} position={position} fill="red" />
                 ))}
 
-              {/* {sensorConfiguration.map((sensorConfig, index) => (
+              {sensorConfiguration.map((sensor, index) => (
                 <Sensor
                   key={index}
-                  type={sensorConfig.type}
-                  mountPosition={sensorConfig.mountPosition}
-                  fov={sensorConfig.fov}
-                  range={sensorConfig.range}
+                  sensorConfig={sensor}
                   uiConfig={uiConfig}
                   highlighted={selectedSensorIndex === index} // 高亮显示选中的传感器
                 />
-              ))} */}
+              ))}
             </Layer>
           </Stage>
         </Box>

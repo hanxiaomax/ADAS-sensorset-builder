@@ -37,33 +37,7 @@ export interface VehicleRefPoints {
   roof_top: Position;
 }
 
-export interface MountingPoints {
-  front_middle_right1: MountPosition;
-  front_middle_right2: MountPosition;
-  front_middle_left1: MountPosition;
-  front_middle_left2: MountPosition;
-  front_right_side: MountPosition;
-  front_left_side: MountPosition;
-  rear_middle_right1: MountPosition;
-  rear_middle_right2: MountPosition;
-  rear_middle_left1: MountPosition;
-  rear_middle_left2: MountPosition;
-  rear_right_side: MountPosition;
-  rear_left_side: MountPosition;
-  roof_top: MountPosition;
-  front_left_corner: MountPosition;
-  front_right_corner: MountPosition;
-  rear_left_corner: MountPosition;
-  rear_right_corner: MountPosition;
-  front_windshield: MountPosition;
-  rear_windshield: MountPosition;
-  wingside_left: MountPosition;
-  wingside_right: MountPosition;
-  b_pillar_left: MountPosition;
-  b_pillar_right: MountPosition;
-}
-
-interface Mounts {
+export interface Mounts {
   [key: string]: MountPosition;
 }
 
@@ -74,7 +48,6 @@ export class Vehicle {
   rearOverhang: number;
   origin: Position;
   refPoints: VehicleRefPoints;
-  mountingPoints: MountingPoints;
   orientation_front: number = -90;
   orientation_rear: number = 90;
   image: HTMLImageElement | undefined;
@@ -147,126 +120,6 @@ export class Vehicle {
       roof_top: setPosition(
         this.origin.x + this.width / 2,
         this.origin.y + this.length / 2
-      ),
-    };
-
-    this.mountingPoints = {
-      front_middle_right1: setMountingPosition(
-        this.refPoints.front_center.x + 20,
-        this.refPoints.front_center.y + 5,
-        this.orientation_front
-      ),
-      front_middle_right2: setMountingPosition(
-        this.refPoints.front_center.x + 45,
-        this.refPoints.front_center.y + 13,
-        this.orientation_front
-      ),
-
-      front_middle_left1: setMountingPosition(
-        this.refPoints.front_center.x - 20,
-        this.refPoints.front_center.y + 5,
-        this.orientation_front
-      ),
-      front_middle_left2: setMountingPosition(
-        this.refPoints.front_center.x - 45,
-        this.refPoints.front_center.y + 13,
-        this.orientation_front
-      ),
-      front_right_side: setMountingPosition(
-        this.refPoints.front_bumper_right.x - 5,
-        this.refPoints.front_bumper_right.y,
-        this.orientation_front
-      ),
-      front_left_side: setMountingPosition(
-        this.refPoints.front_bumper_left.x + 5,
-        this.refPoints.front_bumper_left.y,
-        this.orientation_front
-      ),
-      rear_middle_right1: setMountingPosition(
-        this.refPoints.rear_center.x + 20,
-        this.refPoints.rear_center.y - 5,
-        this.orientation_rear
-      ),
-      rear_middle_right2: setMountingPosition(
-        this.refPoints.rear_center.x + 45,
-        this.refPoints.rear_center.y - 13,
-        this.orientation_rear
-      ),
-      rear_middle_left1: setMountingPosition(
-        this.refPoints.rear_center.x - 20,
-        this.refPoints.rear_center.y - 5,
-        this.orientation_rear
-      ),
-      rear_middle_left2: setMountingPosition(
-        this.refPoints.rear_center.x - 45,
-        this.refPoints.rear_center.y - 13,
-        this.orientation_rear
-      ),
-      rear_right_side: setMountingPosition(
-        this.refPoints.rear_bumper_right.x - 5,
-        this.refPoints.rear_bumper_right.y,
-        this.orientation_rear
-      ),
-      rear_left_side: setMountingPosition(
-        this.refPoints.rear_bumper_left.x + 5,
-        this.refPoints.rear_bumper_left.y,
-        this.orientation_rear
-      ),
-      roof_top: setMountingPosition(
-        this.refPoints.roof_top.x,
-        this.refPoints.roof_top.y,
-        this.orientation_front
-      ),
-
-      front_left_corner: setMountingPosition(
-        this.refPoints.front_bumper_left.x,
-        this.refPoints.front_bumper_left.y,
-        -120
-      ),
-      front_right_corner: setMountingPosition(
-        this.refPoints.front_bumper_right.x,
-        this.refPoints.front_bumper_right.y,
-        -60
-      ),
-      rear_left_corner: setMountingPosition(
-        this.refPoints.rear_bumper_left.x,
-        this.refPoints.rear_bumper_left.y,
-        120
-      ),
-      rear_right_corner: setMountingPosition(
-        this.refPoints.rear_bumper_right.x,
-        this.refPoints.rear_bumper_right.y,
-        60
-      ),
-      front_windshield: setMountingPosition(
-        this.refPoints.front_windsheild.x,
-        this.refPoints.front_windsheild.y,
-        -90
-      ),
-      rear_windshield: setMountingPosition(
-        this.refPoints.rear_windsheild.x,
-        this.refPoints.rear_windsheild.y,
-        -90
-      ),
-      wingside_left: setMountingPosition(
-        this.refPoints.wingside_left.x,
-        this.refPoints.wingside_left.y,
-        -180
-      ),
-      wingside_right: setMountingPosition(
-        this.refPoints.wingside_right.x,
-        this.refPoints.wingside_right.y,
-        0
-      ),
-      b_pillar_left: setMountingPosition(
-        this.refPoints.b_pillar_left.x,
-        this.refPoints.b_pillar_left.y,
-        -180
-      ),
-      b_pillar_right: setMountingPosition(
-        this.refPoints.b_pillar_right.x,
-        this.refPoints.b_pillar_right.y,
-        0
       ),
     };
 

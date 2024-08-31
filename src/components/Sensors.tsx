@@ -1,7 +1,12 @@
 import React from "react";
 import { Layer, Arc, Rect } from "react-konva";
-import { MountPosition, SensorConfig } from "../types/Common";
-import { UiConfig } from "../types/Common";
+import {
+  UiConfig,
+  MountPosition,
+  SensorConfig,
+  Position,
+} from "../types/Common";
+import { mountStringToPosition } from "../parser";
 
 const sensorStyles: {
   [key: string]: { color: string; opacity: number };
@@ -13,28 +18,30 @@ const sensorStyles: {
   tele_camera: { color: "#f1dae0", opacity: 0.5 },
 };
 
-interface SensorProp extends SensorConfig {
+interface SensorProp {
+  sensorConfig: SensorConfig;
   uiConfig: UiConfig;
   highlighted: boolean; // 新增的属性
 }
 
 export const Sensor: React.FC<SensorProp> = ({
   uiConfig,
-  profile,
-  spec,
-  mountPosition,
+  sensorConfig,
   highlighted, // 接受 highlighted 属性
 }) => {
   const offset = 5;
-  const type = profile.type;
-  const fov = spec.fov;
-  const range = spec.range;
+  const type = sensorConfig.profile.type;
+  const fov = sensorConfig.spec.fov;
+  const range = sensorConfig.spec.range;
+  const mount_position = mountStringToPosition(
+    sensorConfig.mountPosition!.name
+  ) as MountPosition;
+  console.log(mount_position);
   // 根据传感器类型动态设置颜色和透明度
   const { color, opacity } = sensorStyles[type] || {
     color: "#000",
     opacity: 1,
   };
-  const mt = mountPosition as MountPosition;
 
   // 根据传感器类型选择 visibility 条件
   const visibility = (() => {
@@ -59,12 +66,12 @@ export const Sensor: React.FC<SensorProp> = ({
     <React.Fragment>
       {/* 绘制传感器的FOV扇形区域 */}
       <Arc
-        x={mt.position!.x}
-        y={mt.position!.y}
+        x={mount_position.position!.x}
+        y={mount_position.position!.y}
         innerRadius={0}
         outerRadius={range} // 视场的可见范围大小，通常根据需求进行调整
         angle={fov}
-        rotation={mt.orientation! - fov / 2}
+        rotation={mount_position.orientation! - fov / 2}
         fill={`${color}${Math.floor(opacity * 255)
           .toString(16)
           .padStart(2, "0")}`} // 计算透明度的hex值
@@ -74,8 +81,8 @@ export const Sensor: React.FC<SensorProp> = ({
       />
       {/* 绘制传感器的主体 */}
       <Rect
-        x={mt.position!.x - offset}
-        y={mt.position!.y - offset}
+        x={mount_position.position!.x - offset}
+        y={mount_position.position!.y - offset}
         width={2 * offset}
         height={2 * offset}
         fill={highlighted ? "#f9653e" : color} // 传感器主体颜色
