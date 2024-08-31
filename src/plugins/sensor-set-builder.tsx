@@ -13,9 +13,6 @@ import {
 } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import BottomDrawer from "../components/BottomDrawer";
-import ViewMenu from "../components/ViewMenu";
-import ProfileMenu from "../components/ProfileMenu";
-import NerdMode from "../components/NerdMode";
 import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
 import Marker from "../components/utils";
 import MenuBar from "../components/MenuBar";

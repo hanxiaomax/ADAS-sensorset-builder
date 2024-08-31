@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar, ButtonGroup } from "@mui/material";
+import { AppBar, Button, ButtonGroup } from "@mui/material";
 import ProfileMenu from "../components/ProfileMenu";
 import ViewMenu from "../components/ViewMenu";
 
@@ -24,6 +24,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
       elevation={0}
       sx={{
         backgroundColor: "#ffffff",
+        height: "10px",
       }}
     >
       <ButtonGroup
@@ -50,6 +51,9 @@ const MenuBar: React.FC<MenuBarProps> = ({
           onExport={handleExport}
         />
         <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
+        <Button>Tools</Button>
+        <Button>Snapshot</Button>
+        <Button>About</Button>
       </ButtonGroup>
     </AppBar>
   );
