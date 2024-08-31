@@ -2,16 +2,16 @@ import React from "react";
 import { Menu, MenuItem, Button } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { SensorStock } from "../types/Common";
+import { SensorConfig, SensorStock } from "../types/Common";
 
 interface ProfileMenuProps {
-  onImport: (type: "sensorConfig" | "sensorData", data: any) => void;
+  onImportSensorSetConfigImport: (data: any) => void;
   onImportSensorStock: (data: any) => void;
   onExport: () => void;
 }
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({
-  onImport,
+  onImportSensorSetConfigImport,
   onImportSensorStock,
   onExport,
 }) => {
@@ -38,8 +38,12 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
             const data = JSON.parse(e.target?.result as string) as SensorStock;
             onImportSensorStock(data);
           } else if (type == "sensorConfig") {
-            const data = JSON.parse(e.target?.result as string);
-            onImport(type, data);
+            const data = JSON.parse(
+              e.target?.result as string
+            ) as SensorConfig[];
+            console.log(data);
+            onImportSensorSetConfigImport(data);
+            console.log("success");
           } else {
           }
         } catch (error) {

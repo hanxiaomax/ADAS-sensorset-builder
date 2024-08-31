@@ -92,26 +92,17 @@ const SensorSetBuilderMain: React.FC = () => {
     }
   }, []);
 
-  const handleImport = (type: "sensorConfig" | "sensorData", data: any) => {
-    console.log(type, data);
-    if (type === "sensorConfig") {
-      const transformedData = transformJsonArray(data, vehicle._mountingPoints);
-      console.log(transformedData);
-      setSensorConfiguration(transformedData);
-      localStorage.setItem("sensorConfig", JSON.stringify(transformedData)); // 保存到 localStorage
-    } else if (type === "sensorData") {
-      const sensor_stock = JSON.parse(data);
-      console.log(sensor_stock);
-      setSensorData(data);
-      localStorage.setItem("sensorData", JSON.stringify(data)); // 保存到 localStorage
-    }
+  const handleSensorSetConfigImport = (data: SensorConfig[]) => {
+    // const transformedData = transformJsonArray(data, vehicle._mountingPoints);
+    setSensorConfiguration(data);
+    localStorage.setItem("sensorConfig", JSON.stringify(data)); // 保存到 localStorage
   };
 
   const handleSensorStockImport = (data: SensorStock) => {
-    console.log(data);
     setSensorData(data);
     localStorage.setItem("sensorData", JSON.stringify(data)); // 保存到 localStorage
   };
+
   const handleExport = () => {
     const sensorConfig = localStorage.getItem("sensorConfig");
     const sensorData = localStorage.getItem("sensorData");
@@ -190,7 +181,7 @@ const SensorSetBuilderMain: React.FC = () => {
           }}
         >
           <ProfileMenu
-            onImport={handleImport}
+            onImportSensorSetConfigImport={handleSensorSetConfigImport}
             onImportSensorStock={handleSensorStockImport}
             onExport={handleExport}
           />
