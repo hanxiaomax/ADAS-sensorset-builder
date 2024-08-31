@@ -6,7 +6,7 @@ import {
   SensorConfig,
   Position,
 } from "../types/Common";
-import { mountStringToPosition } from "../parser";
+import { mountStringToPosition } from "./utils";
 
 const sensorStyles: {
   [key: string]: { color: string; opacity: number };

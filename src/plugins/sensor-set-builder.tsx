@@ -17,24 +17,7 @@ import ViewMenu from "../components/ViewMenu";
 import ProfileMenu from "../components/ProfileMenu";
 import NerdMode from "../components/NerdMode";
 import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
-
-interface MarkerProps {
-  position: Position;
-  fill?: string;
-}
-
-const Marker: React.FC<MarkerProps> = ({ position, fill = "black" }) => {
-  const offset = 5;
-  return (
-    <Rect
-      x={position.x - offset}
-      y={position.y - offset}
-      width={10}
-      height={10}
-      fill={fill}
-    />
-  );
-};
+import Marker from "../components/utils";
 
 const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
