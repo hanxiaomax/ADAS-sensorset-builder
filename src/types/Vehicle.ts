@@ -219,7 +219,7 @@ export class Vehicle {
       rear_windshield: setMountingPosition(
         this.refPoints.rear_windsheild.x,
         this.refPoints.rear_windsheild.y,
-        -90
+        90
       ),
       wingside_left: setMountingPosition(
         this.refPoints.wingside_left.x,

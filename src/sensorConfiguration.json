@@ -2,19 +2,481 @@
   {
     "id": 1,
     "profile": {
-      "name": "USS Sensor 1",
+      "name": "USS Sensor",
       "type": "uss",
-      "desc": "This is USS Sensor 1. It is used for obstacle detection.",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
       "image": ""
     },
     "spec": {
-      "range": 200,
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "front_left_side"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "front_right_side"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "front_middle_right1"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "front_middle_right2"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "front_middle_left1"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "front_middle_left2"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "rear_middle_right1"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "rear_middle_right2"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "rear_middle_left1"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "rear_middle_left2"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "rear_right_side"
+    }
+  },
+  {
+    "id": 1,
+    "profile": {
+      "name": "USS Sensor",
+      "type": "uss",
+      "desc": "This is USS Sensor , suitable for close-range detection.",
+      "image": ""
+    },
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "rear_left_side"
+    }
+  },
+  {
+    "id": 4,
+    "profile": {
+      "name": "Lidar Sensor",
+      "type": "lidar",
+      "desc": "Lidar Sensor for high level automated driving",
+      "image": ""
+    },
+    "spec": {
+      "range": 100,
       "fov": 120
     },
     "attr": {
       "promotion": false,
       "new": false
     },
-    "mountPosition": {"name":"front_middle_right2"}
+    "mountPosition": {
+      "name": "roof_top"
+    }
+  },
+  {
+    "id": 8,
+    "profile": {
+      "name": "Fish Eye Camera ",
+      "type": "camera",
+      "desc": "Camera Sensor  for surrounding view",
+      "image": ""
+    },
+    "spec": {
+      "range": 30,
+      "fov": 180
+    },
+    "attr": {
+      "promotion": false,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "wingside_left"
+    }
+  },
+  {
+    "id": 8,
+    "profile": {
+      "name": "Fish Eye Camera ",
+      "type": "camera",
+      "desc": "Camera Sensor  for surrounding view",
+      "image": ""
+    },
+    "spec": {
+      "range": 30,
+      "fov": 180
+    },
+    "attr": {
+      "promotion": false,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "wingside_right"
+    }
+  },
+  {
+    "id": 9,
+    "profile": {
+      "name": "Tele Camera",
+      "type": "camera",
+      "desc": "Camera Sensor for lang range",
+      "image": ""
+    },
+    "spec": {
+      "range": 100,
+      "fov": 30
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    },
+    "mountPosition": {
+      "name": "front_windshield"
+    }
+  },
+  {
+    "id": 9,
+    "profile": {
+      "name": "Wite Camera",
+      "type": "camera",
+      "desc": "Camera Sensor for sensing",
+      "image": ""
+    },
+    "spec": {
+      "range": 50,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    },
+    "mountPosition": {
+      "name": "front_windshield"
+    }
+  },
+  {
+    "id": 9,
+    "profile": {
+      "name": "Wite Camera",
+      "type": "camera",
+      "desc": "Camera Sensor for sensing",
+      "image": ""
+    },
+    "spec": {
+      "range": 50,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    },
+    "mountPosition": {
+      "name": "rear_windshield"
+    }
+  },
+  {
+    "id": 7,
+    "profile": {
+      "name": "Corner Radar",
+      "type": "radar",
+      "desc": "Corner for parking use case",
+      "image": ""
+    },
+    "spec": {
+      "range": 70,
+      "fov": 100
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    },
+    "mountPosition": {
+      "name": "front_left_corner"
+    }
+  },
+  {
+    "id": 7,
+    "profile": {
+      "name": "Corner Radar",
+      "type": "radar",
+      "desc": "Corner for parking use case",
+      "image": ""
+    },
+    "spec": {
+      "range": 70,
+      "fov": 100
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    },
+    "mountPosition": {
+      "name": "front_right_corner"
+    }
+  },
+  {
+    "id": 7,
+    "profile": {
+      "name": "Corner Radar",
+      "type": "radar",
+      "desc": "Corner for parking use case",
+      "image": ""
+    },
+    "spec": {
+      "range": 70,
+      "fov": 100
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    },
+    "mountPosition": {
+      "name": "rear_left_corner"
+    }
+  },
+  {
+    "id": 7,
+    "profile": {
+      "name": "Corner Radar",
+      "type": "radar",
+      "desc": "Corner for parking use case",
+      "image": ""
+    },
+    "spec": {
+      "range": 70,
+      "fov": 100
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    },
+    "mountPosition": {
+      "name": "rear_right_corner"
+    }
+  },
+  {
+    "id": 8,
+    "profile": {
+      "name": "Fish Eye Camera ",
+      "type": "camera",
+      "desc": "Camera Sensor  for surrounding view",
+      "image": ""
+    },
+    "spec": {
+      "range": 30,
+      "fov": 180
+    },
+    "attr": {
+      "promotion": false,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "b_pillar_left"
+    }
+  },
+  {
+    "id": 8,
+    "profile": {
+      "name": "Fish Eye Camera ",
+      "type": "camera",
+      "desc": "Camera Sensor  for surrounding view",
+      "image": ""
+    },
+    "spec": {
+      "range": 30,
+      "fov": 180
+    },
+    "attr": {
+      "promotion": false,
+      "new": false
+    },
+    "mountPosition": {
+      "name": "b_pillar_right"
+    }
   }
 ]

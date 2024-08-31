@@ -2,7 +2,7 @@ import React from "react";
 import { Layer, Arc, Rect, Circle } from "react-konva";
 import { UiConfig, MountPosition, SensorConfig } from "../types/Common";
 import { mountStringToPosition } from "./utils";
-
+const SENSOR_RANGE_FACTOR = 5;
 const sensorStyles: {
   [key: string]: { color: string; opacity: number };
 } = {
@@ -27,7 +27,7 @@ export const Sensor: React.FC<SensorProp> = ({
   const offset = 5;
   const type = sensorConfig.profile.type;
   const fov = sensorConfig.spec.fov;
-  const range = sensorConfig.spec.range;
+  const range = sensorConfig.spec.range * SENSOR_RANGE_FACTOR;
   const mount_position = mountStringToPosition(
     sensorConfig.mountPosition!.name
   ) as MountPosition;

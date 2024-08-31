@@ -33,7 +33,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
         sx={{
           "& .MuiButtonBase-root": {
             borderColor: "#f6f6f6",
-            color: "#146276",
+            color: "#0c7a92",
             borderRadius: 0,
             fontWeight: "bold", // 设置字体为粗体
             textTransform: "none", // 禁用大写转换

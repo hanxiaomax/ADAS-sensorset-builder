@@ -5,18 +5,18 @@
       {
         "id": 1,
         "profile": {
-          "name": "USS Sensor 3",
+          "name": "USS Sensor",
           "type": "uss",
-          "desc": "This is USS Sensor 3, suitable for close-range detection.",
+          "desc": "This is USS Sensor , suitable for close-range detection.",
           "image": ""
         },
         "spec": {
-          "range": 200,
+          "range": 15,
           "fov": 120
         },
         "attr": {
-          "promotion": false,
-          "new": true
+          "promotion": true,
+          "new": false
         }
       }
     ]
@@ -27,35 +27,18 @@
       {
         "id": 4,
         "profile": {
-          "name": "Lidar Sensor 1",
+          "name": "Lidar Sensor",
           "type": "lidar",
-          "desc": "Lidar Sensor 1 is used for high-precision mapping.",
+          "desc": "Lidar Sensor for high level automated driving",
           "image": ""
         },
         "spec": {
           "range": 100,
-          "fov": 0.1
+          "fov": 120
         },
         "attr": {
           "promotion": false,
           "new": false
-        }
-      },
-      {
-        "id": 5,
-        "profile": {
-          "name": "Lidar Sensor 2",
-          "type": "lidar",
-          "desc": "New Lidar Sensor 2 with extended range and better resolution.",
-          "image": ""
-        },
-        "spec": {
-          "range": 100,
-          "fov": 0.1
-        },
-        "attr": {
-          "promotion": false,
-          "new": true
         }
       }
     ]
@@ -66,14 +49,14 @@
       {
         "id": 6,
         "profile": {
-          "name": "Radar Sensor 1",
+          "name": "Radar Sensor",
           "type": "radar",
-          "desc": "Radar Sensor 1 is designed for long-range object detection.",
+          "desc": "Radar Sensor  is designed for long-range object detection.",
           "image": ""
         },
         "spec": {
-          "range": 200,
-          "fov": 120
+          "range": 100,
+          "fov": 60
         },
         "attr": {
           "promotion": false,
@@ -83,14 +66,14 @@
       {
         "id": 7,
         "profile": {
-          "name": "Radar Sensor 2",
+          "name": "Corner Radar",
           "type": "radar",
-          "desc": "This new Radar Sensor 2 offers better resolution at long range.",
+          "desc": "Corner for parking use case",
           "image": ""
         },
         "spec": {
-          "range": 200,
-          "fov": 120
+          "range": 70,
+          "fov": 100
         },
         "attr": {
           "promotion": false,
@@ -105,14 +88,14 @@
       {
         "id": 8,
         "profile": {
-          "name": "Camera Sensor 1",
+          "name": "Fish Eye Camera ",
           "type": "camera",
-          "desc": "Camera Sensor 1 for high-resolution imaging.",
+          "desc": "Camera Sensor  for surrounding view",
           "image": ""
         },
         "spec": {
-          "range": 200,
-          "fov": 120
+          "range": 30,
+          "fov": 180
         },
         "attr": {
           "promotion": false,
@@ -122,13 +105,30 @@
       {
         "id": 9,
         "profile": {
-          "name": "Camera Sensor 2",
+          "name": "Tele Camera",
           "type": "camera",
-          "desc": "New Camera Sensor 2 with enhanced low-light performance.",
+          "desc": "Camera Sensor for lang range",
           "image": ""
         },
         "spec": {
-          "range": 200,
+          "range": 100,
+          "fov": 30
+        },
+        "attr": {
+          "promotion": false,
+          "new": true
+        }
+      },
+      {
+        "id": 9,
+        "profile": {
+          "name": "Wite Camera",
+          "type": "camera",
+          "desc": "Camera Sensor for sensing",
+          "image": ""
+        },
+        "spec": {
+          "range": 50,
           "fov": 120
         },
         "attr": {
