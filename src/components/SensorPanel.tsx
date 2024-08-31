@@ -9,8 +9,6 @@ import {
   Grid,
 } from "@mui/material";
 import { SensorConfig, MountPosition } from "../types/Common";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 interface SensorPanelProps {

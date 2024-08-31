@@ -67,8 +67,9 @@ export const Sensor: React.FC<SensorProp> = ({
         fill={`${color}${Math.floor(opacity * 255)
           .toString(16)
           .padStart(2, "0")}`} // 计算透明度的hex值
-        strokeWidth={highlighted ? 4 : 2} // 当传感器高亮时增加边框厚度
-        stroke={highlighted ? "yellow" : color} // 当传感器高亮时显示黄色边框
+        strokeWidth={highlighted ? 4 : 0} // 高亮时设置边框宽度
+        stroke={highlighted ? "#f9653e" : color} // 高亮时使用蓝色边框
+        dash={highlighted ? [10, 5] : undefined} // 高亮时设置虚线轮廓
       />
       {/* 绘制传感器的主体 */}
       <Rect
@@ -76,7 +77,7 @@ export const Sensor: React.FC<SensorProp> = ({
         y={mt.position.y - offset}
         width={2 * offset}
         height={2 * offset}
-        fill={highlighted ? "yellow" : color} // 当传感器高亮时填充黄色
+        fill={highlighted ? "#f9653e" : color} // 传感器主体颜色
       />
     </React.Fragment>
   );
