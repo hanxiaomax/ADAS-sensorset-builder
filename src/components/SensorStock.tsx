@@ -24,11 +24,13 @@ interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorConfig;
   onDelete?: (name: string) => void; // 添加删除处理函数
+  setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
 }
 const SensorStockItem: React.FC<SensorStockItemProps> = ({
   icon,
   sensor,
   onDelete,
+  setSensorConfiguration,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [hover, setHover] = useState(false);
@@ -78,6 +80,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
 
     console.log(newSensorConfig);
     sensorConfig.push(newSensorConfig);
+    setSensorConfiguration(sensorConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(sensorConfig));
 
     setDialogOpen(false);

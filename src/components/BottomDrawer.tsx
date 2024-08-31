@@ -17,6 +17,7 @@ interface TabPanelProps {
 
 interface BottomDrawerProps {
   sensorStocks: SensorStock | undefined; // 定义外部传入的 prop 类型
+  setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
 }
 
 const TabPanel: React.FC<TabPanelProps> = ({
@@ -38,7 +39,10 @@ const TabPanel: React.FC<TabPanelProps> = ({
   );
 };
 
-const BottomDrawer: React.FC<BottomDrawerProps> = ({ sensorStocks }) => {
+const BottomDrawer: React.FC<BottomDrawerProps> = ({
+  sensorStocks,
+  setSensorConfiguration,
+}) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
@@ -80,6 +84,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({ sensorStocks }) => {
           key={sensor.id}
           icon={icon}
           sensor={sensor as SensorConfig}
+          setSensorConfiguration={setSensorConfiguration}
         />
       );
     });

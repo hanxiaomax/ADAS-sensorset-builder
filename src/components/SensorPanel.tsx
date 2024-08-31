@@ -23,7 +23,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   onSelectSensor,
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  console.log("11", sensorConfiguration);
   const handleExpandClick = (index: number) => {
     setExpandedIndex((prevIndex) => (prevIndex === index ? null : index));
     onSelectSensor(index); // 当展开时，选择传感器
