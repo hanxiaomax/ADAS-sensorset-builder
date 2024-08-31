@@ -67,31 +67,30 @@ const SensorSetBuilderMain: React.FC = () => {
   // 在组件加载时从 localStorage 中加载数据
   useEffect(() => {
     const storedSensorConfig = localStorage.getItem("sensorConfig");
-    const storedSensorData = localStorage.getItem("sensorData");
+    const storedSensorStocks = localStorage.getItem("sensorStocks");
     if (storedSensorConfig) {
       const parsedConfig = JSON.parse(storedSensorConfig);
       setSensorConfiguration(parsedConfig);
     }
 
-    if (storedSensorData) {
-      setSensorData(JSON.parse(storedSensorData) as SensorStock);
+    if (storedSensorStocks) {
+      setSensorData(JSON.parse(storedSensorStocks) as SensorStock);
     }
   }, []);
 
   const handleSensorSetConfigImport = (data: SensorConfig[]) => {
-    // const transformedData = transformJsonArray(data, vehicle._mountingPoints);
     setSensorConfiguration(data);
     localStorage.setItem("sensorConfig", JSON.stringify(data)); // 保存到 localStorage
   };
 
   const handleSensorStockImport = (data: SensorStock) => {
     setSensorData(data);
-    localStorage.setItem("sensorData", JSON.stringify(data)); // 保存到 localStorage
+    localStorage.setItem("sensorStocks", JSON.stringify(data)); // 保存到 localStorage
   };
 
   const handleExport = () => {
     const sensorConfig = localStorage.getItem("sensorConfig");
-    const sensorData = localStorage.getItem("sensorData");
+    const sensorStockData = localStorage.getItem("sensorStocks");
 
     if (sensorConfig) {
       const dataStr =
@@ -107,10 +106,12 @@ const SensorSetBuilderMain: React.FC = () => {
       alert("No sensor configuration data available to export.");
     }
 
-    if (sensorData) {
+    if (sensorStockData) {
       const dataStr =
         "data:text/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(JSON.parse(sensorData), null, 2));
+        encodeURIComponent(
+          JSON.stringify(JSON.parse(sensorStockData), null, 2)
+        );
       const downloadAnchorNode = document.createElement("a");
       downloadAnchorNode.setAttribute("href", dataStr);
       downloadAnchorNode.setAttribute("download", "sensor_data.json");

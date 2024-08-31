@@ -27,14 +27,14 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
 
   const handleFileUpload = (
     event: React.ChangeEvent<HTMLInputElement>,
-    type: "sensorConfig" | "sensorData"
+    type: "sensorConfig" | "sensorStocks"
   ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          if (type == "sensorData") {
+          if (type == "sensorStocks") {
             const data = JSON.parse(e.target?.result as string) as SensorStock;
             onImportSensorStock(data);
           } else if (type == "sensorConfig") {
@@ -73,7 +73,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
       >
         <MenuItem component="label">
           <FileUploadIcon sx={{ mr: 1 }} />
-          Import Sensor Configuration
+          Import Sensor Set
           <input
             type="file"
             accept=".json"
@@ -83,12 +83,12 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
         </MenuItem>
         <MenuItem component="label">
           <FileUploadIcon sx={{ mr: 1 }} />
-          Import Sensor Data
+          Import Sensor Stocks
           <input
             type="file"
             accept=".json"
             style={{ display: "none" }}
-            onChange={(e) => handleFileUpload(e, "sensorData")}
+            onChange={(e) => handleFileUpload(e, "sensorStocks")}
           />
         </MenuItem>
         <MenuItem onClick={onExport}>

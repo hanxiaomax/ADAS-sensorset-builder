@@ -5,40 +5,6 @@
       {
         "id": 1,
         "profile": {
-          "name": "USS Sensor 1",
-          "type": "uss",
-          "desc": "This is USS Sensor 1. It is used for obstacle detection.",
-          "image": ""
-        },
-        "spec": {
-          "range": 200,
-          "fov": 120
-        },
-        "attr": {
-          "promotion": false,
-          "new": false
-        }
-      },
-      {
-        "id": 2,
-        "profile": {
-          "name": "USS Sensor 2",
-          "type": "uss",
-          "desc": "This is the new USS Sensor 2 with improved accuracy.",
-          "image": ""
-        },
-        "spec": {
-          "range": 200,
-          "fov": 120
-        },
-        "attr": {
-          "promotion": false,
-          "new": true
-        }
-      },
-      {
-        "id": 3,
-        "profile": {
           "name": "USS Sensor 3",
           "type": "uss",
           "desc": "This is USS Sensor 3, suitable for close-range detection.",
