@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -9,6 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Box,
 } from "@mui/material";
 
 interface InstallConfigDialogProps {
@@ -22,7 +23,16 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
   onClose,
   onSave,
 }) => {
-  const [selectedPosition, setSelectedPosition] = React.useState("");
+  const [selectedPosition, setSelectedPosition] = useState("");
+  const [mountingPoints, setMountingPoints] = useState<string[]>([]);
+
+  useEffect(() => {
+    const mountingPointsData = localStorage.getItem("mountingPoints");
+    if (mountingPointsData) {
+      const data = JSON.parse(mountingPointsData);
+      setMountingPoints(Object.keys(data));
+    }
+  }, []);
 
   const handleSave = () => {
     onSave(selectedPosition);
@@ -30,27 +40,44 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
   };
 
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm" // 设置对话框的最大宽度
+      fullWidth // 让对话框占据整个宽度
+    >
       <DialogTitle>Install Sensor</DialogTitle>
       <DialogContent>
-        <FormControl fullWidth sx={{ mt: 2 }}>
-          <InputLabel id="install-position-label">Install Position</InputLabel>
-          <Select
-            labelId="install-position-label"
-            value={selectedPosition}
-            onChange={(e) => setSelectedPosition(e.target.value as string)}
-            label="Install Position"
-          >
-            <MenuItem value="Front">Front</MenuItem>
-            <MenuItem value="Rear">Rear</MenuItem>
-            <MenuItem value="Left">Left</MenuItem>
-            <MenuItem value="Right">Right</MenuItem>
-          </Select>
-        </FormControl>
+        <Box sx={{ mt: 2, mb: 2 }}>
+          <FormControl fullWidth>
+            <InputLabel id="install-position-label">
+              Install Position
+            </InputLabel>
+            <Select
+              labelId="install-position-label"
+              value={selectedPosition}
+              onChange={(e) => setSelectedPosition(e.target.value as string)}
+              label="Install Position"
+            >
+              {mountingPoints.map((point) => (
+                <MenuItem key={point} value={point}>
+                  {point}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave} variant="contained" color="primary">
+      <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+        <Button onClick={onClose} sx={{ minWidth: 100 }}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          color="primary"
+          sx={{ minWidth: 100 }}
+        >
           Save
         </Button>
       </DialogActions>

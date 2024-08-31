@@ -72,18 +72,8 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     );
 
     const newSensorConfig = {
-      name: sensor.profile.name,
-      type: sensor.profile.type,
-      mountPosition: {
-        position: {
-          x: 1020,
-          y: 329,
-        },
-        orientation: -90,
-        name: sensor.mountPosition,
-      },
-      fov: 120,
-      range: 500,
+      ...sensor,
+      mountPosition: { name: selectedPosition },
     };
 
     console.log(newSensorConfig);
