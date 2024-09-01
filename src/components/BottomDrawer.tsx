@@ -157,6 +157,42 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
     handleDialogClose();
   };
 
+  const handleDelete = (id: number, type: string) => {
+    if (!sensorStocks) return;
+
+    let updatedSensorStocks: SensorStock = { ...sensorStocks };
+
+    switch (type) {
+      case "uss":
+        updatedSensorStocks.uss.sensors =
+          updatedSensorStocks.uss.sensors.filter((sensor) => sensor.id !== id);
+        break;
+      case "lidar":
+        updatedSensorStocks.lidar.sensors =
+          updatedSensorStocks.lidar.sensors.filter(
+            (sensor) => sensor.id !== id
+          );
+        break;
+      case "radar":
+        updatedSensorStocks.radar.sensors =
+          updatedSensorStocks.radar.sensors.filter(
+            (sensor) => sensor.id !== id
+          );
+        break;
+      case "camera":
+        updatedSensorStocks.camera.sensors =
+          updatedSensorStocks.camera.sensors.filter(
+            (sensor) => sensor.id !== id
+          );
+        break;
+      default:
+        break;
+    }
+
+    setSensorStocks(updatedSensorStocks);
+    localStorage.setItem("sensorStocks", JSON.stringify(updatedSensorStocks));
+  };
+
   const renderSensors = (sensorType: keyof SensorStock) => {
     if (!sensorStocks || !sensorStocks[sensorType]) {
       return null;
@@ -188,6 +224,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           sensor={sensor as SensorConfig}
           setSensorConfiguration={setSensorConfiguration}
           onEdit={handleEdit}
+          onDelete={() => handleDelete(sensor.id, sensor.profile.type)}
         />
       );
     });

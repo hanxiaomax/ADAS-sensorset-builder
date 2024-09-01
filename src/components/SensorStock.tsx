@@ -15,18 +15,19 @@ import {
   Typography,
   CardMedia,
 } from "@mui/material";
-import InstallConfigDialog from "./InstallConfigDialog"; // 引入 InstallConfigDialog 组件
+import InstallConfigDialog from "./InstallConfigDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
-import SensorInfoDialog from "./SensorInfoDialog"; // 引入新的 SensorInfoDialog 组件
-import { SensorConfig, SensorSpec, SensorStock } from "../types/Common";
+import SensorInfoDialog from "./SensorInfoDialog";
+import { SensorConfig, SensorSpec } from "../types/Common";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorConfig;
-  onDelete?: (name: string) => void; // 添加删除处理函数
+  onDelete: (id: number) => void; // 添加删除处理函数，使用 sensor ID 进行删除
   setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
   onEdit: (editedSensor: SensorConfig) => void;
 }
+
 const SensorStockItem: React.FC<SensorStockItemProps> = ({
   icon,
   sensor,
@@ -69,8 +70,6 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
   };
 
   const handleSave = (selectedPosition: string) => {
-    console.log("Selected Position:", selectedPosition);
-
     const sensorConfig = JSON.parse(
       localStorage.getItem("sensorConfig") || "[]"
     );
@@ -80,7 +79,6 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       mountPosition: { name: selectedPosition },
     };
 
-    console.log(newSensorConfig);
     sensorConfig.push(newSensorConfig);
     setSensorConfiguration(sensorConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(sensorConfig));
@@ -92,10 +90,9 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     setDeleteDialogOpen(true);
   };
 
-  const handleSpecChange = (id: number, spec: SensorSpec) => {};
   const handleDeleteConfirm = () => {
     if (onDelete) {
-      onDelete(sensor.profile.name);
+      onDelete(sensor.id); // 删除使用 sensor ID
     }
     setDeleteDialogOpen(false);
   };
@@ -153,7 +150,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
           {icon}
         </Box>
       </Badge>
-      {/* Use 按钮，仅在悬停时显示 */}
+      {/* Use 和 Delete 按钮，仅在悬停时显示 */}
       <ButtonGroup
         disableElevation
         variant="outlined"
@@ -175,7 +172,6 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
         }}
       >
         <Button onClick={handleInstallClick}>Install</Button>
-        {/* <Button onClick={handleDeleteClick}>Remove</Button> */}
       </ButtonGroup>
       {/* Popover 显示详细信息卡片 */}
       <Popover
@@ -246,12 +242,14 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
         onClose={handleDialogClose}
         onConfirm={handleSave}
       />
+      {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
         open={deleteDialogOpen}
         onClose={handleDeleteDialogClose}
         onConfirm={handleDeleteConfirm}
         sensorName={sensor.profile.name}
       />
+      {/* Sensor Info Dialog */}
       <SensorInfoDialog
         open={sensorInfoOpen}
         onClose={handleSensorInfoClose}
