@@ -41,10 +41,10 @@ interface SensorType {
 
 // 定义sensorData接口，用于表示传感器的完整数据结构
 export interface SensorStock {
-  uss_sensors: SensorType;
-  lidar_sensors: SensorType;
-  radar_sensors: SensorType;
-  camera_sensors: SensorType;
+  uss: SensorType;
+  lidar: SensorType;
+  radar: SensorType;
+  camera: SensorType;
 }
 
 // ui configuration interface used in control panel

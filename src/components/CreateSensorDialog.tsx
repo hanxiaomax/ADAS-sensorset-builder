@@ -100,6 +100,7 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
   };
 
   const handleCreate = () => {
+    console.log(newSensor);
     onCreate(newSensor);
     onClose();
   };

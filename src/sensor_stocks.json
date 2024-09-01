@@ -1,5 +1,5 @@
 {
-  "uss_sensors": {
+  "uss": {
     "title": "USS",
     "sensors": [
       {
@@ -21,7 +21,7 @@
       }
     ]
   },
-  "lidar_sensors": {
+  "lidar": {
     "title": "Lidar",
     "sensors": [
       {
@@ -43,7 +43,7 @@
       }
     ]
   },
-  "radar_sensors": {
+  "radar": {
     "title": "Radar",
     "sensors": [
       {
@@ -82,7 +82,7 @@
       }
     ]
   },
-  "camera_sensors": {
+  "camera": {
     "title": "Camera",
     "sensors": [
       {

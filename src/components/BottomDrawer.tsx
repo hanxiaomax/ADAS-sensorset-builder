@@ -66,49 +66,49 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
 
     switch (editedSensor.profile.type) {
       case "uss":
-        const updatedUssSensors = sensorStocks?.uss_sensors.sensors.map(
-          (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
+        const updatedUssSensors = sensorStocks?.uss.sensors.map((sensor) =>
+          sensor.id === editedSensor.id ? editedSensor : sensor
         );
         updatedSensorStocks = {
           ...updatedSensorStocks,
-          uss_sensors: {
-            ...updatedSensorStocks.uss_sensors,
+          uss: {
+            ...updatedSensorStocks.uss,
             sensors: updatedUssSensors!,
           },
         };
         break;
       case "lidar":
-        const updatedLidarSensors = sensorStocks?.lidar_sensors.sensors.map(
-          (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
+        const updatedLidarSensors = sensorStocks?.lidar.sensors.map((sensor) =>
+          sensor.id === editedSensor.id ? editedSensor : sensor
         );
         updatedSensorStocks = {
           ...updatedSensorStocks,
-          lidar_sensors: {
-            ...updatedSensorStocks.lidar_sensors,
+          lidar: {
+            ...updatedSensorStocks.lidar,
             sensors: updatedLidarSensors!,
           },
         };
         break;
       case "radar":
-        const updatedRadarSensors = sensorStocks?.radar_sensors.sensors.map(
-          (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
+        const updatedRadarSensors = sensorStocks?.radar.sensors.map((sensor) =>
+          sensor.id === editedSensor.id ? editedSensor : sensor
         );
         updatedSensorStocks = {
           ...updatedSensorStocks,
-          radar_sensors: {
-            ...updatedSensorStocks.radar_sensors,
+          radar: {
+            ...updatedSensorStocks.radar,
             sensors: updatedRadarSensors!,
           },
         };
         break;
       case "camera":
-        const updatedCameraSensors = sensorStocks?.camera_sensors.sensors.map(
+        const updatedCameraSensors = sensorStocks?.camera.sensors.map(
           (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
         );
         updatedSensorStocks = {
           ...updatedSensorStocks,
-          camera_sensors: {
-            ...updatedSensorStocks.camera_sensors,
+          camera: {
+            ...updatedSensorStocks.camera,
             sensors: updatedCameraSensors!,
           },
         };
@@ -134,18 +134,19 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
 
     let updatedSensorStocks: SensorStock = { ...sensorStocks };
 
+    console.log(updatedSensorStocks);
     switch (newSensor.profile.type) {
       case "uss":
-        updatedSensorStocks.uss_sensors.sensors.push(newSensor);
+        updatedSensorStocks.uss.sensors.push(newSensor);
         break;
       case "lidar":
-        updatedSensorStocks.lidar_sensors.sensors.push(newSensor);
+        updatedSensorStocks.lidar.sensors.push(newSensor);
         break;
       case "radar":
-        updatedSensorStocks.radar_sensors.sensors.push(newSensor);
+        updatedSensorStocks.radar.sensors.push(newSensor);
         break;
       case "camera":
-        updatedSensorStocks.camera_sensors.sensors.push(newSensor);
+        updatedSensorStocks.camera.sensors.push(newSensor);
         break;
       default:
         break;
