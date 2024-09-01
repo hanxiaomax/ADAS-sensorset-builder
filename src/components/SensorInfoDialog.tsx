@@ -13,19 +13,18 @@ import {
   TableCell,
   Box,
   TextField,
+  Tooltip,
 } from "@mui/material";
-import { SensorSpec } from "../types/Common";
+import { SensorConfig, SensorSpec } from "../types/Common";
 
 interface SensorInfoDialogProps {
   open: boolean;
-  name: string;
-  description: string;
-  specs?: SensorSpec;
-  image?: string;
   icon: React.ReactElement;
   onClose: () => void;
   onInstall: () => void;
   onRemove: () => void;
+  onEdit: (editedSensor: SensorConfig) => void;
+  sensor: SensorConfig;
 }
 
 const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
@@ -33,14 +32,14 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
   onClose,
   onInstall,
   onRemove,
-  name,
-  description,
-  specs,
-  image,
+  onEdit,
+  sensor,
   icon,
 }) => {
   const [editingCell, setEditingCell] = useState<string | null>(null); // 当前正在编辑的单元格
-  const [editedSpecs, setEditedSpecs] = useState<SensorSpec | undefined>(specs);
+  const [editedSpecs, setEditedSpecs] = useState<SensorSpec | undefined>(
+    sensor.spec
+  );
 
   const handleCellClick = (key: string) => {
     setEditingCell(key);
@@ -53,22 +52,30 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
         [key]: value,
       });
     }
+    console.log(editedSpecs);
   };
 
   const handleInputBlur = () => {
-    setEditingCell(null);
+    if (editedSpecs) {
+      const editedSensor = {
+        ...sensor,
+        spec: editedSpecs,
+      };
+      onEdit(editedSensor);
+    }
+    setEditingCell(null); // 取消编辑状态
   };
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{name}</DialogTitle>
+      <DialogTitle>{sensor.profile.name}</DialogTitle>
       <DialogContent>
-        {image ? (
+        {sensor.profile.image ? (
           <CardMedia
             component="img"
             height="140"
-            image={image}
-            alt={name}
+            image={sensor.profile.image}
+            alt={sensor.profile.name}
             sx={{ objectFit: "contain", marginBottom: "16px" }}
           />
         ) : (
@@ -86,7 +93,7 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
           </Box>
         )}
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {description}
+          {sensor.profile.desc}
         </Typography>
         {editedSpecs && (
           <Table size="small" aria-label="sensor specs">
@@ -96,19 +103,26 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
                   <TableCell component="th" scope="row">
                     {key}
                   </TableCell>
-                  <TableCell onClick={() => handleCellClick(key)}>
-                    {editingCell === key ? (
-                      <TextField
-                        value={value}
-                        onChange={(e) => handleInputChange(key, e.target.value)}
-                        onBlur={handleInputBlur}
-                        autoFocus
-                        size="small"
-                      />
-                    ) : (
-                      value
-                    )}
-                  </TableCell>
+                  <Tooltip title="Click to edit" arrow>
+                    <TableCell onClick={() => handleCellClick(key)}>
+                      {editingCell === key ? (
+                        <TextField
+                          value={value}
+                          onChange={(e) =>
+                            handleInputChange(key, e.target.value)
+                          }
+                          onBlur={handleInputBlur}
+                          autoFocus
+                          size="small"
+                          InputProps={{
+                            style: { textAlign: "center" }, // 文字居中
+                          }}
+                        />
+                      ) : (
+                        value
+                      )}
+                    </TableCell>
+                  </Tooltip>
                 </TableRow>
               ))}
             </TableBody>

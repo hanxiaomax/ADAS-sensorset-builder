@@ -7,7 +7,7 @@ import ToysIcon from "@mui/icons-material/Toys";
 import AddIcon from "@mui/icons-material/Add";
 import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
 import SensorStockItem from "./SensorStock";
-import { SensorConfig, SensorStock } from "../types/Common";
+import { SensorConfig, SensorSpec, SensorStock } from "../types/Common";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -17,6 +17,9 @@ interface TabPanelProps {
 
 interface BottomDrawerProps {
   sensorStocks: SensorStock | undefined; // 定义外部传入的 prop 类型
+  setSensorStocks: React.Dispatch<
+    React.SetStateAction<SensorStock | undefined>
+  >;
   setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
 }
 
@@ -41,6 +44,7 @@ const TabPanel: React.FC<TabPanelProps> = ({
 
 const BottomDrawer: React.FC<BottomDrawerProps> = ({
   sensorStocks,
+  setSensorStocks,
   setSensorConfiguration,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -53,6 +57,83 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
+  };
+
+  const handleEdit = (editedSensor: SensorConfig) => {
+    let updatedSensorStocks: SensorStock = { ...sensorStocks! };
+
+    switch (editedSensor.profile.type) {
+      case "uss":
+        const updatedUssSensors = sensorStocks?.uss_sensors.sensors.map(
+          (sensor) =>
+            sensor.id === editedSensor.id // 使用传递过来的 id 进行比较
+              ? editedSensor
+              : sensor
+        );
+        updatedSensorStocks = {
+          ...updatedSensorStocks,
+          uss_sensors: {
+            ...updatedSensorStocks.uss_sensors,
+            sensors: updatedUssSensors!,
+          },
+        };
+        break;
+
+      case "lidar":
+        const updatedLidarSensors = sensorStocks?.lidar_sensors.sensors.map(
+          (sensor) =>
+            sensor.id === editedSensor.id // 使用传递过来的 id 进行比较
+              ? editedSensor
+              : sensor
+        );
+        updatedSensorStocks = {
+          ...updatedSensorStocks,
+          lidar_sensors: {
+            ...updatedSensorStocks.lidar_sensors,
+            sensors: updatedLidarSensors!,
+          },
+        };
+        break;
+
+      case "radar":
+        const updatedRadarSensors = sensorStocks?.radar_sensors.sensors.map(
+          (sensor) =>
+            sensor.id === editedSensor.id // 使用传递过来的 id 进行比较
+              ? editedSensor
+              : sensor
+        );
+        updatedSensorStocks = {
+          ...updatedSensorStocks,
+          radar_sensors: {
+            ...updatedSensorStocks.radar_sensors,
+            sensors: updatedRadarSensors!,
+          },
+        };
+        break;
+
+      case "camera":
+        const updatedCameraSensors = sensorStocks?.camera_sensors.sensors.map(
+          (sensor) =>
+            sensor.id === editedSensor.id // 使用传递过来的 id 进行比较
+              ? editedSensor
+              : sensor
+        );
+        updatedSensorStocks = {
+          ...updatedSensorStocks,
+          camera_sensors: {
+            ...updatedSensorStocks.camera_sensors,
+            sensors: updatedCameraSensors!,
+          },
+        };
+        break;
+
+      default:
+        break;
+    }
+
+    setSensorStocks(updatedSensorStocks);
+    localStorage.setItem("sensorStocks", JSON.stringify(updatedSensorStocks));
+    console.log("-------", updatedSensorStocks);
   };
 
   const renderSensors = (sensorType: keyof SensorStock) => {
@@ -85,6 +166,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           icon={icon}
           sensor={sensor as SensorConfig}
           setSensorConfiguration={setSensorConfiguration}
+          onEdit={handleEdit}
         />
       );
     });

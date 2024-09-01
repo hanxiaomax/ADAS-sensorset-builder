@@ -18,18 +18,20 @@ import {
 import InstallConfigDialog from "./InstallConfigDialog"; // 引入 InstallConfigDialog 组件
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog"; // 引入新的 SensorInfoDialog 组件
-import { SensorConfig } from "../types/Common";
+import { SensorConfig, SensorSpec, SensorStock } from "../types/Common";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorConfig;
   onDelete?: (name: string) => void; // 添加删除处理函数
   setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
+  onEdit: (editedSensor: SensorConfig) => void;
 }
 const SensorStockItem: React.FC<SensorStockItemProps> = ({
   icon,
   sensor,
   onDelete,
+  onEdit,
   setSensorConfiguration,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -90,6 +92,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     setDeleteDialogOpen(true);
   };
 
+  const handleSpecChange = (id: number, spec: SensorSpec) => {};
   const handleDeleteConfirm = () => {
     if (onDelete) {
       onDelete(sensor.profile.name);
@@ -241,7 +244,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       <InstallConfigDialog
         open={dialogOpen}
         onClose={handleDialogClose}
-        onSave={handleSave}
+        onConfirm={handleSave}
       />
       <DeleteConfirmationDialog
         open={deleteDialogOpen}
@@ -254,10 +257,8 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
         onClose={handleSensorInfoClose}
         onInstall={handleInstallClick}
         onRemove={handleDeleteClick}
-        name={sensor.profile.name}
-        description={sensor.profile.desc ? sensor.profile.desc : ""}
-        specs={sensor.spec}
-        image={sensor.profile.image}
+        onEdit={onEdit}
+        sensor={sensor}
         icon={icon}
       />{" "}
     </Box>

@@ -194,6 +194,7 @@ const SensorSetBuilderMain: React.FC = () => {
 
       <BottomDrawer
         sensorStocks={sensorData}
+        setSensorStocks={setSensorData}
         setSensorConfiguration={setSensorConfiguration}
       />
 

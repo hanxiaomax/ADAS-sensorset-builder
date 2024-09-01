@@ -11,17 +11,18 @@ import {
   MenuItem,
   Box,
 } from "@mui/material";
+import { SensorConfig } from "../types/Common";
 
 interface InstallConfigDialogProps {
   open: boolean;
   onClose: () => void;
-  onSave: (selectedPosition: string) => void;
+  onConfirm: (selectedPosition: string) => void;
 }
 
 const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
   open,
   onClose,
-  onSave,
+  onConfirm,
 }) => {
   const [selectedPosition, setSelectedPosition] = useState("");
   const [mountingPoints, setMountingPoints] = useState<string[]>([]);
@@ -35,7 +36,7 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
   }, []);
 
   const handleSave = () => {
-    onSave(selectedPosition);
+    onConfirm(selectedPosition);
     onClose();
   };
 
@@ -46,7 +47,7 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
       maxWidth="sm" // 设置对话框的最大宽度
       fullWidth // 让对话框占据整个宽度
     >
-      <DialogTitle>Install Sensor</DialogTitle>
+      <DialogTitle>Please Choose Installation Position</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2, mb: 2 }}>
           <FormControl fullWidth>
@@ -69,16 +70,15 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
         </Box>
       </DialogContent>
       <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
-        <Button onClick={onClose} sx={{ minWidth: 100 }}>
-          Cancel
-        </Button>
         <Button
           onClick={handleSave}
           variant="contained"
-          color="primary"
-          sx={{ minWidth: 100 }}
+          sx={{ minWidth: 100, color: "white", backgroundColor: "#0c7a92" }}
         >
-          Save
+          Confirm
+        </Button>
+        <Button onClick={onClose} sx={{ minWidth: 100 }}>
+          Cancel
         </Button>
       </DialogActions>
     </Dialog>

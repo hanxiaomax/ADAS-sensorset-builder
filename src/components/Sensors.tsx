@@ -31,7 +31,6 @@ export const Sensor: React.FC<SensorProp> = ({
   const mount_position = mountStringToPosition(
     sensorConfig.mountPosition!.name
   ) as MountPosition;
-  console.log(mount_position);
   // 根据传感器类型动态设置颜色和透明度
   const { color, opacity } = sensorStyles[type] || {
     color: "#000",
