@@ -7,7 +7,8 @@ import ToysIcon from "@mui/icons-material/Toys";
 import AddIcon from "@mui/icons-material/Add";
 import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
 import SensorStockItem from "./SensorStock";
-import { SensorConfig, SensorSpec, SensorStock } from "../types/Common";
+import CreateSensorDialog from "../components/CreateSensorDialog";
+import { SensorConfig, SensorStock } from "../types/Common";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -16,7 +17,7 @@ interface TabPanelProps {
 }
 
 interface BottomDrawerProps {
-  sensorStocks: SensorStock | undefined; // 定义外部传入的 prop 类型
+  sensorStocks: SensorStock | undefined;
   setSensorStocks: React.Dispatch<
     React.SetStateAction<SensorStock | undefined>
   >;
@@ -48,6 +49,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
   setSensorConfiguration,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false); // 用于控制对话框的打开状态
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -65,10 +67,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
     switch (editedSensor.profile.type) {
       case "uss":
         const updatedUssSensors = sensorStocks?.uss_sensors.sensors.map(
-          (sensor) =>
-            sensor.id === editedSensor.id // 使用传递过来的 id 进行比较
-              ? editedSensor
-              : sensor
+          (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
         );
         updatedSensorStocks = {
           ...updatedSensorStocks,
@@ -78,13 +77,9 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           },
         };
         break;
-
       case "lidar":
         const updatedLidarSensors = sensorStocks?.lidar_sensors.sensors.map(
-          (sensor) =>
-            sensor.id === editedSensor.id // 使用传递过来的 id 进行比较
-              ? editedSensor
-              : sensor
+          (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
         );
         updatedSensorStocks = {
           ...updatedSensorStocks,
@@ -94,13 +89,9 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           },
         };
         break;
-
       case "radar":
         const updatedRadarSensors = sensorStocks?.radar_sensors.sensors.map(
-          (sensor) =>
-            sensor.id === editedSensor.id // 使用传递过来的 id 进行比较
-              ? editedSensor
-              : sensor
+          (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
         );
         updatedSensorStocks = {
           ...updatedSensorStocks,
@@ -110,13 +101,9 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           },
         };
         break;
-
       case "camera":
         const updatedCameraSensors = sensorStocks?.camera_sensors.sensors.map(
-          (sensor) =>
-            sensor.id === editedSensor.id // 使用传递过来的 id 进行比较
-              ? editedSensor
-              : sensor
+          (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
         );
         updatedSensorStocks = {
           ...updatedSensorStocks,
@@ -126,14 +113,47 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           },
         };
         break;
-
       default:
         break;
     }
 
     setSensorStocks(updatedSensorStocks);
     localStorage.setItem("sensorStocks", JSON.stringify(updatedSensorStocks));
-    console.log("-------", updatedSensorStocks);
+  };
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleCreateSensor = (newSensor: SensorConfig) => {
+    if (!sensorStocks) return;
+
+    let updatedSensorStocks: SensorStock = { ...sensorStocks };
+
+    switch (newSensor.profile.type) {
+      case "uss":
+        updatedSensorStocks.uss_sensors.sensors.push(newSensor);
+        break;
+      case "lidar":
+        updatedSensorStocks.lidar_sensors.sensors.push(newSensor);
+        break;
+      case "radar":
+        updatedSensorStocks.radar_sensors.sensors.push(newSensor);
+        break;
+      case "camera":
+        updatedSensorStocks.camera_sensors.sensors.push(newSensor);
+        break;
+      default:
+        break;
+    }
+
+    setSensorStocks(updatedSensorStocks);
+    localStorage.setItem("sensorStocks", JSON.stringify(updatedSensorStocks));
+    handleDialogClose();
   };
 
   const renderSensors = (sensorType: keyof SensorStock) => {
@@ -258,6 +278,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
                       boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
                     },
                   }}
+                  onClick={handleDialogOpen}
                 >
                   <IconButton>
                     <AddIcon sx={{ fontSize: "40px" }} />
@@ -267,6 +288,13 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
             </TabPanel>
           ))}
       </Drawer>
+
+      <CreateSensorDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        onCreate={handleCreateSensor}
+        existingTypes={Object.keys(sensorStocks || {})} // 将现有类型传递给对话框
+      />
     </>
   );
 };

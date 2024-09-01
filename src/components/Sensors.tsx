@@ -63,14 +63,14 @@ export const Sensor: React.FC<SensorProp> = ({
         x={mount_position.position!.x}
         y={mount_position.position!.y}
         innerRadius={0}
-        outerRadius={range} // 视场的可见范围大小，通常根据需求进行调整
+        outerRadius={range}
         angle={fov}
         rotation={mount_position.orientation! - fov / 2}
         fill={`${color}${Math.floor(opacity * 255)
           .toString(16)
           .padStart(2, "0")}`} // 计算透明度的hex值
         strokeWidth={highlighted ? 4 : 0} // 高亮时设置边框宽度
-        stroke={highlighted ? "#fc4400" : color} // 高亮时使用蓝色边框
+        stroke={highlighted ? "#fc4400" : color} //
         dash={highlighted ? [8, 5] : undefined} // 高亮时设置虚线轮廓
       />
       {/* 绘制传感器的主体 */}
