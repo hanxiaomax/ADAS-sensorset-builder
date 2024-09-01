@@ -77,9 +77,9 @@ export const Sensor: React.FC<SensorProp> = ({
       <Circle
         x={mount_position.position!.x}
         y={mount_position.position!.y}
-        width={highlighted ? 15 : 10}
-        height={highlighted ? 15 : 10}
-        fill={highlighted ? "#0698b4" : color} // 传感器主体颜色
+        width={highlighted ? 20 : 10}
+        height={highlighted ? 20 : 10}
+        fill={highlighted ? "#fc4400" : color} // 传感器主体颜色
       />
     </React.Fragment>
   );
