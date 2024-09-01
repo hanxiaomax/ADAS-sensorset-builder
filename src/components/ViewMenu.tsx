@@ -5,6 +5,8 @@ import {
   MenuItem,
   FormControlLabel,
   Switch,
+  Box,
+  TextField,
 } from "@mui/material";
 
 interface ViewMenuProps {
@@ -23,6 +25,22 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
     setAnchorEl(null);
   };
 
+  const handleUssZonesToggle = () => {
+    setUiConfig((prev: any) => ({
+      ...prev,
+      showUssZones: !prev.showUssZones,
+    }));
+  };
+
+  const handleZoneChange =
+    (zone: "frontZones" | "sideZones" | "rearZones") =>
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setUiConfig((prev: any) => ({
+        ...prev,
+        [zone]: Number(event.target.value),
+      }));
+    };
+
   return (
     <>
       <Button
@@ -30,7 +48,7 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
         aria-haspopup="true"
         onClick={handleMenuClick}
       >
-        View
+        View Control
       </Button>
       <Menu
         id="view-menu"
@@ -59,17 +77,55 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
             control={
               <Switch
                 checked={uiConfig.showUssZones}
-                onChange={() =>
-                  setUiConfig((prev: any) => ({
-                    ...prev,
-                    showUssZones: !prev.showUssZones,
-                  }))
-                }
+                onChange={handleUssZonesToggle}
               />
             }
             label="USS Zones"
           />
         </MenuItem>
+
+        {uiConfig.showUssZones && (
+          <Box
+            sx={{
+              padding: "0 16px",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+            }}
+          >
+            <TextField
+              label="Front"
+              type="number"
+              variant="standard"
+              value={uiConfig.frontZones}
+              onChange={handleZoneChange("frontZones")}
+              size="small"
+              sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
+              inputProps={{ min: 0, style: { textAlign: "center" } }} // 使数字居中
+            />
+            <TextField
+              label="Side"
+              type="number"
+              variant="standard"
+              value={uiConfig.sideZones}
+              onChange={handleZoneChange("sideZones")}
+              size="small"
+              sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
+              inputProps={{ min: 0, style: { textAlign: "center" } }} // 使数字居中
+            />
+            <TextField
+              label="Rear"
+              type="number"
+              variant="standard"
+              value={uiConfig.rearZones}
+              onChange={handleZoneChange("rearZones")}
+              size="small"
+              sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
+              inputProps={{ min: 0, style: { textAlign: "center" } }} // 使数字居中
+            />
+          </Box>
+        )}
+
         <MenuItem>
           <FormControlLabel
             control={
@@ -148,22 +204,6 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
               />
             }
             label="Vehicle Key Point"
-          />
-        </MenuItem>
-        <MenuItem>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={uiConfig.showNerdMode}
-                onChange={() =>
-                  setUiConfig({
-                    ...uiConfig,
-                    showNerdMode: !uiConfig.showNerdMode,
-                  })
-                }
-              />
-            }
-            label="Nerd Mode"
           />
         </MenuItem>
       </Menu>
