@@ -70,7 +70,7 @@ export const Sensor: React.FC<SensorProp> = ({
           .toString(16)
           .padStart(2, "0")}`} // 计算透明度的hex值
         strokeWidth={highlighted ? 4 : 0} // 高亮时设置边框宽度
-        stroke={highlighted ? "#0698b4" : color} // 高亮时使用蓝色边框
+        stroke={highlighted ? "#fc4400" : color} // 高亮时使用蓝色边框
         dash={highlighted ? [8, 5] : undefined} // 高亮时设置虚线轮廓
       />
       {/* 绘制传感器的主体 */}
