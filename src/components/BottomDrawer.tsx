@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Drawer, Tabs, Tab, Button, Box, IconButton } from "@mui/material";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import RadarIcon from "@mui/icons-material/Radar";
@@ -50,15 +50,25 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false); // 用于控制对话框的打开状态
+  const [selectedTab, setSelectedTab] = useState(0);
+  const [currentType, setCurrentType] = useState<string>("");
+
+  useEffect(() => {
+    if (sensorStocks) {
+      const firstType = Object.keys(sensorStocks)[0];
+      setCurrentType(firstType || "uss");
+    }
+  }, [sensorStocks]);
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
 
-  const [selectedTab, setSelectedTab] = useState(0);
-
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
+    // 根据当前选中的Tab索引来设置类型
+    const typeKey = Object.keys(sensorStocks || {})[newValue];
+    setCurrentType(typeKey);
   };
 
   const handleEdit = (editedSensor: SensorConfig) => {
@@ -134,7 +144,6 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
 
     let updatedSensorStocks: SensorStock = { ...sensorStocks };
 
-    console.log(updatedSensorStocks);
     switch (newSensor.profile.type) {
       case "uss":
         updatedSensorStocks.uss.sensors.push(newSensor);
@@ -332,6 +341,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
         onClose={handleDialogClose}
         onCreate={handleCreateSensor}
         existingTypes={Object.keys(sensorStocks || {})} // 将现有类型传递给对话框
+        defaultType={currentType} // 传递当前选中的类型作为默认值
       />
     </>
   );

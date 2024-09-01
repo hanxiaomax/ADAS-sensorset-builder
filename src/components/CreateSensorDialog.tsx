@@ -8,17 +8,15 @@ import {
   Button,
   MenuItem,
   Box,
-  InputLabel,
-  IconButton,
 } from "@mui/material";
 import { SensorConfig } from "../types/Common";
-import PhotoCamera from "@mui/icons-material/PhotoCamera";
 
 interface CreateSensorDialogProps {
   open: boolean;
   onClose: () => void;
   onCreate: (sensor: SensorConfig) => void;
   existingTypes: string[]; // 传入现有的传感器类型
+  defaultType: string; // 传入默认类型
 }
 
 const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
@@ -26,12 +24,14 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
   onClose,
   onCreate,
   existingTypes,
+  defaultType,
 }) => {
+  console.log("defaultType:", defaultType);
   const [newSensor, setNewSensor] = useState<SensorConfig>({
     id: Date.now(),
     profile: {
       name: "",
-      type: existingTypes[0] || "uss_sensors", // 将默认类型调整为现有选项之一
+      type: defaultType, // 使用传入的默认类型
       desc: "",
       image: "",
     },
@@ -85,22 +85,7 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
     }));
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        setNewSensor((prev) => ({
-          ...prev,
-          profile: { ...prev.profile, image: reader.result as string }, // 将图片文件的URL保存在状态中
-        }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const handleCreate = () => {
-    console.log(newSensor);
     onCreate(newSensor);
     onClose();
   };
@@ -132,7 +117,7 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
           select
           fullWidth
           variant="standard"
-          value={isOtherType ? "Other" : newSensor.profile.type} // 控制选择项的显示
+          value={defaultType} // 控制选择项的显示
           onChange={handleTypeChange}
         >
           {existingTypes.map((type) => (
@@ -180,21 +165,6 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
             }))
           }
         />
-        <Box sx={{ marginTop: 2 }}>
-          <InputLabel htmlFor="upload-image">
-            Upload Sensor Image
-            <IconButton color="primary" component="span">
-              <PhotoCamera />
-            </IconButton>
-          </InputLabel>
-          <input
-            accept="image/*"
-            id="upload-image"
-            type="file"
-            style={{ display: "none" }}
-            onChange={handleImageUpload}
-          />
-        </Box>
       </DialogContent>
       <DialogActions>
         <Button
