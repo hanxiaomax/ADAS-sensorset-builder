@@ -9,26 +9,20 @@ import {
   Grid,
   Drawer,
   Divider,
-  Button,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
-import { SensorConfig } from "../types/Common";
+import { SensorConfig, SensorState } from "../types/Common";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
-import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import {
-  AppsOutlined,
-  ArrowForwardIosOutlined,
-  ExpandLessOutlined,
-  ExpandMoreOutlined,
-  FormatListBulletedTwoTone,
-  TableRows,
-  TvTwoTone,
-} from "@mui/icons-material";
+import { ArrowForwardIosOutlined, TableRows } from "@mui/icons-material";
+import { SelectChangeEvent } from "@mui/material";
 
 interface SensorPanelProps {
   sensorConfiguration: SensorConfig[];
   setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
-  onSelectSensor: (index: number | null) => void; // 修改回调函数，允许取消选择
+  onSelectSensor: (index: number | null) => void;
 }
 
 const SensorPanel: React.FC<SensorPanelProps> = ({
@@ -37,26 +31,25 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   onSelectSensor,
 }) => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(true); // 控制 Drawer 的状态
+  const [drawerOpen, setDrawerOpen] = useState(true);
 
   const handleExpandClick = (index: number) => {
     if (expandedIndex === index) {
-      setExpandedIndex(null); // 取消展开
-      onSelectSensor(null); // 取消选择，取消高亮
+      setExpandedIndex(null);
+      onSelectSensor(null);
     } else {
-      setExpandedIndex(index); // 展开新的传感器
-      onSelectSensor(index); // 选择传感器并高亮
+      setExpandedIndex(index);
+      onSelectSensor(index);
     }
   };
 
   const handleDeleteClick = (index: number, event: React.MouseEvent) => {
-    event.stopPropagation(); // 阻止事件冒泡
+    event.stopPropagation();
     const updatedConfig = [...sensorConfiguration];
-    updatedConfig.splice(index, 1); // 删除指定的传感器
+    updatedConfig.splice(index, 1);
     setSensorConfiguration(updatedConfig);
-    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig)); // 更新localStorage中的数据
+    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
 
-    // 如果删除的是当前选中的传感器，取消高亮显示
     if (expandedIndex === index) {
       setExpandedIndex(null);
       onSelectSensor(null);
@@ -67,6 +60,25 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     setDrawerOpen(!drawerOpen);
   };
 
+  const handleMarkerChange = (
+    index: number,
+    event: SelectChangeEvent<SensorState>
+  ) => {
+    const updatedConfig = [...sensorConfiguration];
+    updatedConfig[index] = {
+      ...updatedConfig[index],
+      state: event.target.value as SensorState,
+    };
+    setSensorConfiguration(updatedConfig);
+    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
+  };
+
+  const sensorStateLabels: { [key in SensorState]: string } = {
+    [SensorState.NORMAL]: "NORMAL",
+    [SensorState.BROKEN]: "BROKEN",
+    [SensorState.HIDE]: "HIDE",
+  };
+
   return (
     <>
       <IconButton
@@ -74,8 +86,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
         sx={{
           position: "fixed",
           color: "#0c7a92",
-          top: 0, // 垂直居中
-          right: 0, // 放置在右侧
+          top: 0,
+          right: 0,
           fontSize: "40px",
           textAlign: "center",
           display: "flex",
@@ -122,7 +134,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
             sx={{
               overflowY: "auto",
               padding: "10px",
-              flexGrow: 1, // 确保列表部分占满剩余空间
+              flexGrow: 1,
             }}
           >
             {sensorConfiguration.map((sensor, index) => (
@@ -169,11 +181,40 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                   timeout="auto"
                   unmountOnExit
                 >
-                  <Grid container alignItems="center" spacing={2}>
+                  <Grid
+                    container
+                    alignItems="center"
+                    spacing={2}
+                    sx={{ height: "150px" }}
+                  >
                     <Grid item xs>
-                      <Typography variant="body2">
-                        More details about {sensor.profile.name}...
-                      </Typography>
+                      <FormControl
+                        variant="standard"
+                        sx={{ m: 1, minWidth: 120 }}
+                      >
+                        <InputLabel id="demo-simple-select-standard-label">
+                          Age
+                        </InputLabel>
+                        <Select
+                          labelId="demo-simple-select-standard-label"
+                          id="demo-simple-select-standard"
+                          value={sensor.state ?? SensorState.NORMAL}
+                          onChange={(event) => handleMarkerChange(index, event)}
+                          label="Age"
+                        >
+                          {Object.values(SensorState)
+                            .filter((value) => typeof value === "number")
+                            .map((value) => (
+                              <MenuItem
+                                key={value}
+                                value={value}
+                                sx={{ fontSize: "14px" }}
+                              >
+                                {sensorStateLabels[value as SensorState]}
+                              </MenuItem>
+                            ))}
+                        </Select>
+                      </FormControl>
                     </Grid>
                     <Grid item>
                       <IconButton
@@ -182,7 +223,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                         sx={{
                           backgroundColor: "#fefeff",
                           color: "#000",
-                          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)", // 自定义阴影
+                          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
                         }}
                       >
                         <DeleteIcon />

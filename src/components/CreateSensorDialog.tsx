@@ -9,7 +9,7 @@ import {
   MenuItem,
   Box,
 } from "@mui/material";
-import { SensorConfig } from "../types/Common";
+import { SensorConfig, SensorState } from "../types/Common";
 
 interface CreateSensorDialogProps {
   open: boolean;
@@ -43,6 +43,7 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
       promotion: false,
       new: false,
     },
+    state: SensorState.NORMAL,
   });
 
   const [isOtherType, setIsOtherType] = useState(false);

@@ -25,12 +25,19 @@ export interface SensorProfile {
   type: string;
   image?: string;
 }
+
+export enum SensorState {
+  NORMAL = 0,
+  BROKEN = 1,
+  HIDE = 2,
+}
 export interface SensorConfig {
   id: number;
   profile: SensorProfile;
   spec: SensorSpec;
   attr: SensorAttr;
   mountPosition?: MountPosition;
+  state: SensorState;
 }
 
 // 定义传感器类型的接口
