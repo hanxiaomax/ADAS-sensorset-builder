@@ -132,7 +132,7 @@ export class Vehicle {
       front_middle_right2: setMountingPosition(
         this.refPoints.front_center.x + 45,
         this.refPoints.front_center.y + 13,
-        this.orientation_front
+        this.orientation_front + 20
       ),
 
       front_middle_left1: setMountingPosition(
@@ -143,17 +143,17 @@ export class Vehicle {
       front_middle_left2: setMountingPosition(
         this.refPoints.front_center.x - 45,
         this.refPoints.front_center.y + 13,
-        this.orientation_front
+        this.orientation_front - 20
       ),
       front_right_side: setMountingPosition(
         this.refPoints.front_bumper_right.x - 5,
         this.refPoints.front_bumper_right.y,
-        this.orientation_front
+        0
       ),
       front_left_side: setMountingPosition(
         this.refPoints.front_bumper_left.x + 5,
         this.refPoints.front_bumper_left.y,
-        this.orientation_front
+        180
       ),
       rear_middle_right1: setMountingPosition(
         this.refPoints.rear_center.x + 20,
@@ -163,7 +163,7 @@ export class Vehicle {
       rear_middle_right2: setMountingPosition(
         this.refPoints.rear_center.x + 45,
         this.refPoints.rear_center.y - 13,
-        this.orientation_rear
+        this.orientation_rear - 20
       ),
       rear_middle_left1: setMountingPosition(
         this.refPoints.rear_center.x - 20,
@@ -173,17 +173,17 @@ export class Vehicle {
       rear_middle_left2: setMountingPosition(
         this.refPoints.rear_center.x - 45,
         this.refPoints.rear_center.y - 13,
-        this.orientation_rear
+        this.orientation_rear + 20
       ),
       rear_right_side: setMountingPosition(
         this.refPoints.rear_bumper_right.x - 5,
         this.refPoints.rear_bumper_right.y,
-        this.orientation_rear
+        0
       ),
       rear_left_side: setMountingPosition(
         this.refPoints.rear_bumper_left.x + 5,
         this.refPoints.rear_bumper_left.y,
-        this.orientation_rear
+        180
       ),
       roof_top: setMountingPosition(
         this.refPoints.roof_top.x,
