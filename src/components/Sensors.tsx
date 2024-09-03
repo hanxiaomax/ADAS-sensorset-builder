@@ -60,10 +60,11 @@ export const Sensor: React.FC<SensorProp> = ({ uiConfig, sensorConfig }) => {
       };
     } else if (options.includes("highlight")) {
       return {
-        fill: "rgba(252, 68, 0, 0.8)", // 半透明红色用于表示损坏状态
-        strokeWidth: 4, // 更粗的边框表示高亮状态
-        stroke: "#fc4400",
-        dash: [8, 5],
+        fill: `${color}${Math.floor(opacity * 1.5 * 255)
+          .toString(16)
+          .padStart(2, "0")}`,
+        strokeWidth: 2, // 更粗的边框表示高亮状态
+        stroke: "#black",
       };
     } else {
       return {
