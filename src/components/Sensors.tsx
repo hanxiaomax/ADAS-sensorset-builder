@@ -1,5 +1,5 @@
 import React from "react";
-import { Layer, Arc, Circle } from "react-konva";
+import { Layer, Arc, Circle, Line } from "react-konva";
 import {
   UiConfig,
   MountPosition,
@@ -22,21 +22,16 @@ const sensorStyles: {
 interface SensorProp {
   sensorConfig: SensorConfig;
   uiConfig: UiConfig;
-  highlighted: boolean;
 }
 
-export const Sensor: React.FC<SensorProp> = ({
-  uiConfig,
-  sensorConfig,
-  highlighted,
-}) => {
+export const Sensor: React.FC<SensorProp> = ({ uiConfig, sensorConfig }) => {
   const type = sensorConfig.profile.type;
   const fov = sensorConfig.spec.fov;
   const range = sensorConfig.spec.range * SENSOR_RANGE_FACTOR;
   const mount_position = mountStringToPosition(
     sensorConfig.mountPosition!.name
   ) as MountPosition;
-  // 根据传感器类型动态设置颜色和透明度
+
   const { color, opacity } = sensorStyles[type] || {
     color: "#000",
     opacity: 1,
@@ -50,32 +45,39 @@ export const Sensor: React.FC<SensorProp> = ({
     return false;
   })();
 
-  if (!visibility || sensorConfig.state === SensorState.HIDE) {
+  if (!visibility || sensorConfig.selectedOptions?.includes("hide")) {
     return null;
   }
 
-  const getStyle = (state: SensorState, highlighted: boolean) => {
-    switch (state) {
-      case SensorState.BROKEN:
-        return {
-          fill: "rgba(252, 68, 0, 0.8)", // 半透明红色用于表示损坏状态
-          strokeWidth: highlighted ? 2 : 0,
-          stroke: highlighted ? "#fc4400" : color,
-          dash: [8, 5],
-        };
-      default:
-        return {
-          fill: `${color}${Math.floor(opacity * 255)
-            .toString(16)
-            .padStart(2, "0")}`, // 使用默认颜色的透明度
-          strokeWidth: highlighted ? 2 : 0,
-          stroke: highlighted ? "#fc4400" : color,
-          dash: undefined,
-        };
+  const getStyle = (options: string[]) => {
+    console.log(options);
+    if (options.includes("broken")) {
+      return {
+        fill: "rgba(252, 68, 0, 0.8)", // 半透明红色用于表示损坏状态
+        strokeWidth: 2, // 更粗的边框表示高亮状态
+        stroke: "#fc4400",
+        dash: [8, 5],
+      };
+    } else if (options.includes("highlight")) {
+      return {
+        fill: "rgba(252, 68, 0, 0.8)", // 半透明红色用于表示损坏状态
+        strokeWidth: 4, // 更粗的边框表示高亮状态
+        stroke: "#fc4400",
+        dash: [8, 5],
+      };
+    } else {
+      return {
+        fill: `${color}${Math.floor(opacity * 255)
+          .toString(16)
+          .padStart(2, "0")}`,
+        strokeWidth: 0,
+        stroke: color,
+        dash: undefined,
+      };
     }
   };
 
-  const style = getStyle(sensorConfig.state, highlighted);
+  const style = getStyle(sensorConfig.selectedOptions || []);
 
   return (
     <>
@@ -91,15 +93,23 @@ export const Sensor: React.FC<SensorProp> = ({
         stroke={style.stroke}
         dash={style.dash}
       />
-      {
+      {sensorConfig.selectedOptions?.includes("broken") ? (
+        <Line
+          x={mount_position.position!.x}
+          y={mount_position.position!.y}
+          points={[-10, -10, 10, 10, 0, 0, 10, -10, -10, 10]} // 绘制一个 "X" 形状
+          stroke={style.stroke}
+          strokeWidth={style.strokeWidth}
+        />
+      ) : (
         <Circle
           x={mount_position.position!.x}
           y={mount_position.position!.y}
-          width={highlighted ? 20 : 10}
-          height={highlighted ? 20 : 10}
-          fill={highlighted ? "#fc4400" : color} // 传感器主体颜色
+          width={10}
+          height={10}
+          fill={style.fill} // 使用getStyle生成的fill颜色
         />
-      }
+      )}
     </>
   );
 };

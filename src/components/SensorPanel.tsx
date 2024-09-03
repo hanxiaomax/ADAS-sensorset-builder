@@ -9,15 +9,15 @@ import {
   Grid,
   Drawer,
   Divider,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
+  ToggleButton,
+  ToggleButtonGroup,
 } from "@mui/material";
-import { SensorConfig, SensorState } from "../types/Common";
+import { SensorConfig } from "../types/Common";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ArrowForwardIosOutlined, TableRows } from "@mui/icons-material";
-import { SelectChangeEvent } from "@mui/material";
+import HighlightIcon from "@mui/icons-material/Highlight";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import InfoIcon from "@mui/icons-material/Info";
 
 interface SensorPanelProps {
   sensorConfiguration: SensorConfig[];
@@ -33,13 +33,28 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(true);
 
-  const handleExpandClick = (index: number) => {
-    if (expandedIndex === index) {
-      setExpandedIndex(null);
-      onSelectSensor(null);
-    } else {
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+  };
+
+  const handleToggleChange = (
+    index: number,
+    event: React.MouseEvent<HTMLElement>,
+    newOptions: string[] | null
+  ) => {
+    const updatedConfig = [...sensorConfiguration];
+    updatedConfig[index] = {
+      ...updatedConfig[index],
+      selectedOptions: newOptions || [], // 更新选中的状态
+    };
+    setSensorConfiguration(updatedConfig);
+
+    if (newOptions && newOptions.includes("info")) {
       setExpandedIndex(index);
       onSelectSensor(index);
+    } else if (expandedIndex === index) {
+      setExpandedIndex(null);
+      onSelectSensor(null);
     }
   };
 
@@ -54,29 +69,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
       setExpandedIndex(null);
       onSelectSensor(null);
     }
-  };
-
-  const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
-  };
-
-  const handleMarkerChange = (
-    index: number,
-    event: SelectChangeEvent<SensorState>
-  ) => {
-    const updatedConfig = [...sensorConfiguration];
-    updatedConfig[index] = {
-      ...updatedConfig[index],
-      state: event.target.value as SensorState,
-    };
-    setSensorConfiguration(updatedConfig);
-    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
-  };
-
-  const sensorStateLabels: { [key in SensorState]: string } = {
-    [SensorState.NORMAL]: "NORMAL",
-    [SensorState.BROKEN]: "BROKEN",
-    [SensorState.HIDE]: "HIDE",
   };
 
   return (
@@ -144,14 +136,31 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                 sx={{
                   padding: "10px",
                   marginBottom: "10px",
+                  position: "relative", // 让子元素的定位相对于Paper
                   backgroundColor:
                     expandedIndex === index ? "#f8f7f7" : "#ffffff",
                   border:
                     expandedIndex === index ? "3px solid #0698b4" : "none",
                   cursor: "pointer",
                 }}
-                onClick={() => handleExpandClick(index)}
               >
+                <IconButton
+                  onClick={(event) => handleDeleteClick(index, event)}
+                  size="small"
+                  sx={{
+                    position: "absolute",
+                    top: 4,
+                    right: 4,
+                    backgroundColor: "#097c74",
+                    color: "white",
+                    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
+                    width: 24,
+                    height: 24,
+                  }}
+                >
+                  <DeleteIcon sx={{ fontSize: "16px" }} />
+                </IconButton>
+
                 <Grid container alignItems="center" spacing={2}>
                   <Grid item>
                     <Avatar
@@ -167,69 +176,55 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     </Avatar>
                   </Grid>
                   <Grid item xs>
-                    <Typography variant="subtitle1">
+                    <Typography variant="subtitle1" sx={{ fontSize: "14px" }}>
                       {sensor.profile.name}
                     </Typography>
-                    <Typography variant="body2">
+                    <Typography variant="body2" sx={{ fontSize: "12px" }}>
                       Position: {sensor.mountPosition!.name}
                     </Typography>
                   </Grid>
                 </Grid>
+
+                <Box sx={{ display: "flex", justifyContent: "right", mt: 1 }}>
+                  <ToggleButtonGroup
+                    value={sensor.selectedOptions || []}
+                    onChange={(event, newOptions) =>
+                      handleToggleChange(index, event, newOptions)
+                    }
+                    aria-label="sensor options"
+                    size="small"
+                    exclusive={false} // 允许多选
+                  >
+                    <ToggleButton
+                      value="highlight"
+                      aria-label="highlight"
+                      sx={{ width: 28, height: 28 }}
+                    >
+                      <HighlightIcon sx={{ fontSize: "16px" }} />
+                    </ToggleButton>
+                    <ToggleButton
+                      value="hide"
+                      aria-label="hide"
+                      sx={{ width: 28, height: 28 }}
+                    >
+                      <VisibilityOffIcon sx={{ fontSize: "16px" }} />
+                    </ToggleButton>
+                    <ToggleButton
+                      value="info"
+                      aria-label="info"
+                      sx={{ width: 28, height: 28 }}
+                    >
+                      <InfoIcon sx={{ fontSize: "16px" }} />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Box>
 
                 <Collapse
                   in={expandedIndex === index}
                   timeout="auto"
                   unmountOnExit
                 >
-                  <Grid
-                    container
-                    alignItems="center"
-                    spacing={2}
-                    sx={{ height: "150px" }}
-                  >
-                    <Grid item xs>
-                      <FormControl
-                        variant="standard"
-                        sx={{ m: 1, minWidth: 120 }}
-                      >
-                        <InputLabel id="demo-simple-select-standard-label">
-                          Age
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-standard-label"
-                          id="demo-simple-select-standard"
-                          value={sensor.state ?? SensorState.NORMAL}
-                          onChange={(event) => handleMarkerChange(index, event)}
-                          label="Age"
-                        >
-                          {Object.values(SensorState)
-                            .filter((value) => typeof value === "number")
-                            .map((value) => (
-                              <MenuItem
-                                key={value}
-                                value={value}
-                                sx={{ fontSize: "14px" }}
-                              >
-                                {sensorStateLabels[value as SensorState]}
-                              </MenuItem>
-                            ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-                    <Grid item>
-                      <IconButton
-                        onClick={(event) => handleDeleteClick(index, event)}
-                        size="small"
-                        sx={{
-                          backgroundColor: "#fefeff",
-                          color: "#000",
-                          boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
-                        }}
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
+                  {/* 额外的内容可以放在这里 */}
                 </Collapse>
               </Paper>
             ))}

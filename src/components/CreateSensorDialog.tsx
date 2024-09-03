@@ -43,7 +43,6 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
       promotion: false,
       new: false,
     },
-    state: SensorState.NORMAL,
   });
 
   const [isOtherType, setIsOtherType] = useState(false);

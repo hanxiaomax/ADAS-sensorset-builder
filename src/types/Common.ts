@@ -37,7 +37,7 @@ export interface SensorConfig {
   spec: SensorSpec;
   attr: SensorAttr;
   mountPosition?: MountPosition;
-  state: SensorState;
+  selectedOptions?: string[]; // 添加这个属性
 }
 
 // 定义传感器类型的接口

@@ -180,12 +180,7 @@ const SensorSetBuilderMain: React.FC = () => {
                 ))}
 
               {sensorConfiguration.map((sensor, index) => (
-                <Sensor
-                  key={index}
-                  sensorConfig={sensor}
-                  uiConfig={uiConfig}
-                  highlighted={selectedSensorIndex === index} // 高亮显示选中的传感器
-                />
+                <Sensor key={index} sensorConfig={sensor} uiConfig={uiConfig} />
               ))}
             </Layer>
           </Stage>
