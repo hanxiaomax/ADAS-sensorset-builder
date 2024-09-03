@@ -4,7 +4,6 @@ import {
   Typography,
   Paper,
   Avatar,
-  Collapse,
   IconButton,
   Grid,
   Drawer,
@@ -17,7 +16,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { ArrowForwardIosOutlined, TableRows } from "@mui/icons-material";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import InfoIcon from "@mui/icons-material/Info";
 
 interface SensorPanelProps {
   sensorConfiguration: SensorConfig[];
@@ -30,7 +28,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   setSensorConfiguration,
   onSelectSensor,
 }) => {
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(true);
 
   const toggleDrawer = () => {
@@ -48,14 +45,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
       selectedOptions: newOptions || [], // 更新选中的状态
     };
     setSensorConfiguration(updatedConfig);
-
-    if (newOptions && newOptions.includes("info")) {
-      setExpandedIndex(index);
-      onSelectSensor(index);
-    } else if (expandedIndex === index) {
-      setExpandedIndex(null);
-      onSelectSensor(null);
-    }
   };
 
   const handleDeleteClick = (index: number, event: React.MouseEvent) => {
@@ -64,11 +53,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     updatedConfig.splice(index, 1);
     setSensorConfiguration(updatedConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
-
-    if (expandedIndex === index) {
-      setExpandedIndex(null);
-      onSelectSensor(null);
-    }
   };
 
   return (
@@ -137,10 +121,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                   padding: "10px",
                   marginBottom: "10px",
                   position: "relative", // 让子元素的定位相对于Paper
-                  backgroundColor:
-                    expandedIndex === index ? "#f8f7f7" : "#ffffff",
-                  border:
-                    expandedIndex === index ? "3px solid #0698b4" : "none",
+                  backgroundColor: "#ffffff",
                   cursor: "pointer",
                 }}
               >
@@ -156,6 +137,10 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
                     width: 24,
                     height: 24,
+                    "&:hover": {
+                      backgroundColor: "#ff1744", // 悬浮时背景变为红色
+                      color: "white",
+                    },
                   }}
                 >
                   <DeleteIcon sx={{ fontSize: "16px" }} />
@@ -209,23 +194,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     >
                       <VisibilityOffIcon sx={{ fontSize: "16px" }} />
                     </ToggleButton>
-                    <ToggleButton
-                      value="info"
-                      aria-label="info"
-                      sx={{ width: 28, height: 28 }}
-                    >
-                      <InfoIcon sx={{ fontSize: "16px" }} />
-                    </ToggleButton>
                   </ToggleButtonGroup>
                 </Box>
-
-                <Collapse
-                  in={expandedIndex === index}
-                  timeout="auto"
-                  unmountOnExit
-                >
-                  {/* 额外的内容可以放在这里 */}
-                </Collapse>
               </Paper>
             ))}
           </Box>
