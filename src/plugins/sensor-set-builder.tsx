@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Grid, Box, AppBar, ButtonGroup, Typography } from "@mui/material";
+import { Grid, Box } from "@mui/material";
 import { Stage as KonvaStage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
 import { Sensor } from "../components/Sensors";
 import useImage from "use-image";
-import {
-  Position,
-  SensorConfig,
-  MountPosition,
-  SensorStock,
-} from "../types/Common";
+import { SensorConfig, SensorStock } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import BottomDrawer from "../components/BottomDrawer";
 import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件

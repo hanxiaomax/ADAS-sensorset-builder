@@ -7,7 +7,6 @@ import {
   TextField,
   Button,
   MenuItem,
-  Box,
 } from "@mui/material";
 import { SensorConfig, SensorState } from "../types/Common";
 
