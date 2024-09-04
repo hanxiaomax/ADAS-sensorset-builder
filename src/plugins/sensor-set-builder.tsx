@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Grid, Box, AppBar, ButtonGroup, Typography } from "@mui/material";
-import { Stage, Layer, Rect } from "react-konva";
+import { Stage as KonvaStage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
 import { Sensor } from "../components/Sensors";
@@ -16,12 +16,15 @@ import BottomDrawer from "../components/BottomDrawer";
 import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
 import Marker from "../components/utils";
 import MenuBar from "../components/MenuBar";
+import { Stage } from "konva/lib/Stage";
 
 const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
+
+  const stageRef = useRef<Stage>(null);
 
   const [sensorConfiguration, setSensorConfiguration] = useState<
     SensorConfig[]
@@ -138,6 +141,7 @@ const SensorSetBuilderMain: React.FC = () => {
         handleExport={handleExport}
         uiConfig={uiConfig}
         setUiConfig={setUiConfig}
+        stageRef={stageRef} //
       />
 
       <Grid item xs={12}>
@@ -152,7 +156,19 @@ const SensorSetBuilderMain: React.FC = () => {
             zIndex: 1000,
           }}
         >
-          <Stage width={stageSize.width} height={stageSize.height}>
+          <KonvaStage
+            width={stageSize.width}
+            height={stageSize.height}
+            ref={stageRef}
+          >
+            <Layer>
+              <Rect
+                width={stageSize.width}
+                height={stageSize.height}
+                fill="white"
+              />
+            </Layer>
+
             <UssZones
               show={uiConfig.showUssZones}
               x={vehicle.origin.x}
@@ -183,7 +199,7 @@ const SensorSetBuilderMain: React.FC = () => {
                 <Sensor key={index} sensorConfig={sensor} uiConfig={uiConfig} />
               ))}
             </Layer>
-          </Stage>
+          </KonvaStage>
         </Box>
       </Grid>
 

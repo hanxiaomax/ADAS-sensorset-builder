@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import {
   AppBar,
   Button,
@@ -11,12 +11,12 @@ import {
   Typography,
   Link,
   Box,
-  IconButton,
 } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import EmailIcon from "@mui/icons-material/Email";
 import ProfileMenu from "../components/ProfileMenu";
 import ViewMenu from "../components/ViewMenu";
+import { Stage } from "konva/lib/Stage";
 
 interface MenuBarProps {
   handleSensorSetConfigImport: (data: any) => void;
@@ -24,6 +24,7 @@ interface MenuBarProps {
   handleExport: () => void;
   uiConfig: any;
   setUiConfig: (config: any) => void;
+  stageRef: React.RefObject<Stage>; // 新增用于传递 stage 的引用
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({
@@ -32,6 +33,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
   handleExport,
   uiConfig,
   setUiConfig,
+  stageRef, // 新增
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -41,6 +43,18 @@ const MenuBar: React.FC<MenuBarProps> = ({
 
   const handleAboutClose = () => {
     setOpen(false);
+  };
+
+  const handleSnapshot = () => {
+    if (stageRef && stageRef.current) {
+      const uri = stageRef.current.toDataURL(); // 获取 Stage 的图像
+      const link = document.createElement("a");
+      link.download = "snapshot.png"; // 设置下载文件名
+      link.href = uri;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -78,7 +92,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
           />
           <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
           <Button>Tools</Button>
-          <Button>Snapshot</Button>
+          <Button onClick={handleSnapshot}>Snapshot</Button>
           <Button onClick={handleAboutOpen}>About</Button>
         </ButtonGroup>
       </AppBar>
