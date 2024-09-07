@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Menu, MenuItem, Button, Snackbar, Alert } from "@mui/material";
+import {
+  Menu,
+  MenuItem,
+  Button,
+  Snackbar,
+  Alert,
+  AlertTitle,
+  Typography,
+} from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { SensorConfig, SensorStock } from "../types/Common";
@@ -59,10 +67,11 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
             setOpenSnackbar(true);
           }
         } catch (error) {
-          setSnackbarMessage("Error importing data");
+          setSnackbarMessage(
+            `Import failed due to:\n${(error as Error).message}`
+          );
           setSnackbarSeverity("error");
           setOpenSnackbar(true);
-          console.error("Error parsing JSON file:", error);
         }
       };
       reader.readAsText(file);
@@ -129,9 +138,17 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
           onClose={handleSnackbarClose}
           severity={snackbarSeverity}
           variant="filled"
-          sx={{ width: "100%" }}
+          sx={{
+            width: "100%",
+            backgroundColor:
+              snackbarSeverity === "error" ? "#f8a108" : undefined, // 橙色背景
+            color: snackbarSeverity === "error" ? "#fff" : undefined, // 白色文字
+          }}
         >
-          {snackbarMessage}
+          {snackbarSeverity === "error" ? <AlertTitle>Error</AlertTitle> : null}
+          <Typography sx={{ whiteSpace: "pre-line" }}>
+            {snackbarMessage}
+          </Typography>
         </Alert>
       </Snackbar>
     </>
