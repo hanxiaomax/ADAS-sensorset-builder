@@ -10,10 +10,19 @@ import {
   Divider,
   ToggleButton,
   ToggleButtonGroup,
+  Menu,
+  MenuItem,
+  FormControlLabel,
+  Checkbox,
+  Button,
 } from "@mui/material";
 import { SensorConfig } from "../types/Common";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { ArrowForwardIosOutlined, TableRows } from "@mui/icons-material";
+import {
+  ArrowForwardIosOutlined,
+  TableRows,
+  FilterList,
+} from "@mui/icons-material";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
@@ -29,6 +38,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   onSelectSensor,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(true);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 用于控制筛选菜单的显示
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // 记录当前筛选的类型
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -54,6 +65,32 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     setSensorConfiguration(updatedConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
   };
+
+  // 打开筛选菜单
+  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  // 关闭筛选菜单
+  const handleFilterClose = () => {
+    setAnchorEl(null);
+  };
+
+  // 处理多选
+  const handleTypeChange = (type: string) => {
+    if (selectedTypes.includes(type)) {
+      setSelectedTypes(selectedTypes.filter((t) => t !== type)); // 取消选中
+    } else {
+      setSelectedTypes([...selectedTypes, type]); // 添加选中
+    }
+  };
+
+  // 筛选传感器
+  const filteredSensors = selectedTypes.length
+    ? sensorConfiguration.filter((sensor) =>
+        selectedTypes.includes(sensor.profile.type)
+      )
+    : sensorConfiguration; // 如果未选中任何类型，显示所有传感器
 
   return (
     <>
@@ -99,28 +136,103 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
               padding: "10px",
               backgroundColor: "#0c7a92",
               color: "white",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
             <Typography variant="h6">Sensor Set</Typography>
+
+            {/* 筛选按钮 */}
           </Box>
+
+          <Menu
+            id="filter-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleFilterClose}
+          >
+            <MenuItem>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedTypes.includes("uss")}
+                    onChange={() => handleTypeChange("uss")}
+                  />
+                }
+                label="USS"
+              />
+            </MenuItem>
+            <MenuItem>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedTypes.includes("lidar")}
+                    onChange={() => handleTypeChange("lidar")}
+                  />
+                }
+                label="Lidar"
+              />
+            </MenuItem>
+            <MenuItem>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedTypes.includes("camera")}
+                    onChange={() => handleTypeChange("camera")}
+                  />
+                }
+                label="Camera"
+              />
+            </MenuItem>
+            <MenuItem>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectedTypes.includes("radar")}
+                    onChange={() => handleTypeChange("radar")}
+                  />
+                }
+                label="Radar"
+              />
+            </MenuItem>
+          </Menu>
 
           <Divider />
 
           <Box
             sx={{
               overflowY: "auto",
-              padding: "10px",
+              paddingRight: "10px",
+              paddingLeft: "10px",
               flexGrow: 1,
             }}
           >
-            {sensorConfiguration.map((sensor, index) => (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end", // 将内容靠右对齐
+                alignItems: "center", // 垂直居中对齐
+              }}
+            >
+              <IconButton
+                aria-controls="filter-menu"
+                aria-haspopup="true"
+                onClick={handleFilterClick}
+              >
+                <FilterList />
+              </IconButton>
+            </Box>
+
+            <Divider />
+            {filteredSensors.map((sensor, index) => (
               <Paper
                 key={index}
                 elevation={3}
                 sx={{
                   padding: "10px",
                   marginBottom: "10px",
-                  position: "relative", // 让子元素的定位相对于Paper
+                  position: "relative",
                   backgroundColor: "#ffffff",
                   cursor: "pointer",
                 }}
@@ -138,7 +250,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     width: 24,
                     height: 24,
                     "&:hover": {
-                      backgroundColor: "#ff1744", // 悬浮时背景变为红色
+                      backgroundColor: "#ff1744",
                       color: "white",
                     },
                   }}
@@ -178,7 +290,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     }
                     aria-label="sensor options"
                     size="small"
-                    exclusive={false} // 允许多选
+                    exclusive={false}
                   >
                     <ToggleButton
                       value="highlight"
