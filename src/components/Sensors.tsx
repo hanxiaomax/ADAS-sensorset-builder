@@ -45,7 +45,6 @@ export const Sensor: React.FC<SensorProp> = ({ uiConfig, sensorConfig }) => {
   }
 
   const getStyle = (options: string[]) => {
-    console.log(options);
     if (options.includes("broken")) {
       return {
         fill: "rgba(252, 68, 0, 0.8)", // 半透明红色用于表示损坏状态

@@ -43,12 +43,14 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   };
 
   const showSnackbar = (message: string, severity: "success" | "error") => {
-    setOpenSnackbar(false); // 先关闭当前的Snackbar
+    setOpenSnackbar(false); // 强制关闭Snackbar
+
+    // 确保Snackbar关闭后再显示新消息，使用短暂延迟
     setTimeout(() => {
       setSnackbarMessage(message);
       setSnackbarSeverity(severity);
       setOpenSnackbar(true); // 重新打开Snackbar
-    }, 100); // 通过设置短暂延迟，确保Snackbar重新打开
+    }, 200);
   };
 
   const handleFileUpload = (
@@ -77,6 +79,9 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
         }
       };
       reader.readAsText(file);
+
+      // 重置 input 的值，确保相同文件的二次导入也能触发
+      event.target.value = "";
     }
   };
 
