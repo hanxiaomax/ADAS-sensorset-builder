@@ -14,7 +14,6 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
-  Button,
 } from "@mui/material";
 import { SensorConfig } from "../types/Common";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -120,8 +119,9 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
         anchor="right"
         open={drawerOpen}
         onClose={toggleDrawer}
-        sx={{ zIndex: 1200 }}
+        sx={{ zIndex: 1200, overflow: "visible" }} // 允许内容溢出
         variant="persistent"
+        PaperProps={{ sx: { overflow: "visible" } }} // 确保 Drawer 的 Paper 也允许内容溢出
       >
         <Box
           sx={{
@@ -129,6 +129,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
             height: "100vh",
             display: "flex",
             flexDirection: "column",
+            overflow: "visible", // 允许内容溢出
           }}
         >
           <Box
@@ -142,8 +143,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
             }}
           >
             <Typography variant="h6">Sensor Set</Typography>
-
-            {/* 筛选按钮 */}
           </Box>
 
           <Menu
@@ -206,6 +205,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
               paddingRight: "10px",
               paddingLeft: "10px",
               flexGrow: 1,
+              position: "relative", // 确保内容相对移动
             }}
           >
             <Box
@@ -224,19 +224,62 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
               </IconButton>
             </Box>
 
-            <Divider />
             {filteredSensors.map((sensor, index) => (
               <Paper
                 key={index}
                 elevation={3}
                 sx={{
-                  padding: "10px",
-                  marginBottom: "10px",
+                  padding: "5px",
+                  height: "80px",
+                  marginBottom: "5px",
                   position: "relative",
                   backgroundColor: "#ffffff",
                   cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  borderRadius: "40px 0px 0px 40px", // 左侧大圆角，右侧直角
+                  transition: "transform 0.3s ease", // 添加过渡动画
+                  zIndex: 1300, // 确保卡片悬停时在上方
+                  "&:hover": {
+                    transform: "translateX(-10px)", // 悬停时向左移动，允许跨出边界
+                    zIndex: 2000, // 悬停时更高的 z-index，确保在其他元素上方
+                  },
                 }}
               >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: 60,
+                    height: "100%",
+                    borderRadius: "50%", // 确保为圆形区域
+                    overflow: "hidden",
+                  }}
+                >
+                  <Avatar
+                    src={sensor.profile.image || undefined}
+                    alt={sensor.profile.name}
+                    sx={{
+                      width: 50,
+                      height: 50,
+                    }}
+                  >
+                    {!sensor.profile.image && sensor.profile.name![0]}
+                  </Avatar>
+                </Box>
+
+                <Grid container alignItems="center" spacing={2}>
+                  <Grid item xs sx={{ m: "8px" }}>
+                    <Typography variant="subtitle1" sx={{ fontSize: "14px" }}>
+                      {sensor.profile.name}
+                    </Typography>
+                    <Typography variant="body2" sx={{ fontSize: "12px" }}>
+                      Position: {sensor.mountPosition!.name}
+                    </Typography>
+                  </Grid>
+                </Grid>
+
                 <IconButton
                   onClick={(event) => handleDeleteClick(index, event)}
                   size="small"
@@ -258,31 +301,16 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                   <DeleteIcon sx={{ fontSize: "16px" }} />
                 </IconButton>
 
-                <Grid container alignItems="center" spacing={2}>
-                  <Grid item>
-                    <Avatar
-                      src={sensor.profile.image || undefined}
-                      alt={sensor.profile.name}
-                      sx={{
-                        width: 30,
-                        height: 30,
-                        backgroundColor: "#e0e0e0",
-                      }}
-                    >
-                      {!sensor.profile.image && sensor.profile.name![0]}
-                    </Avatar>
-                  </Grid>
-                  <Grid item xs>
-                    <Typography variant="subtitle1" sx={{ fontSize: "14px" }}>
-                      {sensor.profile.name}
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontSize: "12px" }}>
-                      Position: {sensor.mountPosition!.name}
-                    </Typography>
-                  </Grid>
-                </Grid>
-
-                <Box sx={{ display: "flex", justifyContent: "right", mt: 1 }}>
+                {/* 右下角的 ToggleButtonGroup 保留 */}
+                <Box
+                  sx={{
+                    position: "absolute",
+                    right: 10,
+                    bottom: 10,
+                    display: "flex",
+                    justifyContent: "right",
+                  }}
+                >
                   <ToggleButtonGroup
                     value={sensor.selectedOptions || []}
                     onChange={(event, newOptions) =>
