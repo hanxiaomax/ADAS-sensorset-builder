@@ -42,6 +42,15 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
     setOpenSnackbar(false);
   };
 
+  const showSnackbar = (message: string, severity: "success" | "error") => {
+    setOpenSnackbar(false); // 先关闭当前的Snackbar
+    setTimeout(() => {
+      setSnackbarMessage(message);
+      setSnackbarSeverity(severity);
+      setOpenSnackbar(true); // 重新打开Snackbar
+    }, 100); // 通过设置短暂延迟，确保Snackbar重新打开
+  };
+
   const handleFileUpload = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "sensorConfig" | "sensorStocks"
@@ -54,24 +63,17 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
           if (type === "sensorStocks") {
             const data = JSON.parse(e.target?.result as string) as SensorStock;
             onImportSensorStock(data);
-            setSnackbarMessage("Sensor Stocks imported successfully!");
-            setSnackbarSeverity("success");
-            setOpenSnackbar(true);
+            showSnackbar("Sensor Stocks imported successfully!", "success");
           } else if (type === "sensorConfig") {
             const data = JSON.parse(
               e.target?.result as string
             ) as SensorConfig[];
             onImportSensorSetConfigImport(data);
-            setSnackbarMessage("Sensor Set imported successfully!");
-            setSnackbarSeverity("success");
-            setOpenSnackbar(true);
+            showSnackbar("Sensor Set imported successfully!", "success");
           }
         } catch (error) {
-          setSnackbarMessage(
-            `Import failed due to:\n${(error as Error).message}`
-          );
-          setSnackbarSeverity("error");
-          setOpenSnackbar(true);
+          const errorMessage = (error as Error).message.replace("Error: ", "");
+          showSnackbar(`Import failed due to:\n${errorMessage}`, "error");
         }
       };
       reader.readAsText(file);
@@ -80,9 +82,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
 
   const handleExportClick = () => {
     onExport();
-    setSnackbarMessage("Data exported successfully!");
-    setSnackbarSeverity("success");
-    setOpenSnackbar(true);
+    showSnackbar("Data exported successfully!", "success");
   };
 
   return (
@@ -141,8 +141,8 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
           sx={{
             width: "100%",
             backgroundColor:
-              snackbarSeverity === "error" ? "#f8a108" : undefined, // 橙色背景
-            color: snackbarSeverity === "error" ? "#fff" : undefined, // 白色文字
+              snackbarSeverity === "error" ? "#ff9800" : undefined,
+            color: snackbarSeverity === "error" ? "#fff" : undefined,
           }}
         >
           {snackbarSeverity === "error" ? <AlertTitle>Error</AlertTitle> : null}
