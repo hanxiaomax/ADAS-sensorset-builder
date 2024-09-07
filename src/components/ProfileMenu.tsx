@@ -1,5 +1,5 @@
-import React from "react";
-import { Menu, MenuItem, Button } from "@mui/material";
+import React, { useState } from "react";
+import { Menu, MenuItem, Button, Snackbar, Alert } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { SensorConfig, SensorStock } from "../types/Common";
@@ -16,6 +16,11 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   onExport,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -23,6 +28,10 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleSnackbarClose = () => {
+    setOpenSnackbar(false);
   };
 
   const handleFileUpload = (
@@ -34,24 +43,37 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          if (type == "sensorStocks") {
+          if (type === "sensorStocks") {
             const data = JSON.parse(e.target?.result as string) as SensorStock;
             onImportSensorStock(data);
-          } else if (type == "sensorConfig") {
+            setSnackbarMessage("Sensor Stocks imported successfully!");
+            setSnackbarSeverity("success");
+            setOpenSnackbar(true);
+          } else if (type === "sensorConfig") {
             const data = JSON.parse(
               e.target?.result as string
             ) as SensorConfig[];
-            console.log(data);
             onImportSensorSetConfigImport(data);
-            console.log("success");
-          } else {
+            setSnackbarMessage("Sensor Set imported successfully!");
+            setSnackbarSeverity("success");
+            setOpenSnackbar(true);
           }
         } catch (error) {
+          setSnackbarMessage("Error importing data");
+          setSnackbarSeverity("error");
+          setOpenSnackbar(true);
           console.error("Error parsing JSON file:", error);
         }
       };
       reader.readAsText(file);
     }
+  };
+
+  const handleExportClick = () => {
+    onExport();
+    setSnackbarMessage("Data exported successfully!");
+    setSnackbarSeverity("success");
+    setOpenSnackbar(true);
   };
 
   return (
@@ -91,11 +113,27 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
             onChange={(e) => handleFileUpload(e, "sensorStocks")}
           />
         </MenuItem>
-        <MenuItem onClick={onExport}>
+        <MenuItem onClick={handleExportClick}>
           <FileDownloadIcon sx={{ mr: 1 }} />
           Export Data
         </MenuItem>
       </Menu>
+
+      {/* Snackbar for notifications */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert
+          onClose={handleSnackbarClose}
+          severity={snackbarSeverity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };
