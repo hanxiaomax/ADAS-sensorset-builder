@@ -72,7 +72,23 @@ export const Sensor: React.FC<SensorProp> = ({ uiConfig, sensorConfig }) => {
     }
   };
 
+  const getSensorStyle = (options: string[]) => {
+    if (options.includes("highlight_sensor")) {
+      return {
+        width: 15,
+        height: 15,
+        fill: "#ff9c2d",
+      };
+    } else {
+      return {
+        width: 10,
+        height: 10,
+        fill: `${color}`,
+      };
+    }
+  };
   const style = getStyle(sensorConfig.selectedOptions || []);
+  const sensor_style = getSensorStyle(sensorConfig.selectedOptions || []);
 
   return (
     <>
@@ -100,9 +116,9 @@ export const Sensor: React.FC<SensorProp> = ({ uiConfig, sensorConfig }) => {
         <Circle
           x={mount_position.position!.x}
           y={mount_position.position!.y}
-          width={10}
-          height={10}
-          fill={style.fill} // 使用getStyle生成的fill颜色
+          width={sensor_style.width}
+          height={sensor_style.height}
+          fill={sensor_style.fill} // 使用getStyle生成的fill颜色
         />
       )}
     </>
