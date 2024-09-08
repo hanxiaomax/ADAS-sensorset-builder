@@ -262,6 +262,12 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                 sx={{
                   position: "relative",
                   display: "block", // 确保卡片独占一行
+                  overflow: "visible", // 确保悬停时内容可以溢出
+                  transition: "margin-left 0.3s ease", // 使用 margin-left 代替 translateX
+                  marginLeft: "0px", // 默认位置
+                  "&:hover": {
+                    marginLeft: "-20px", // 悬停时向左移动
+                  },
                 }}
               >
                 <Paper
@@ -275,10 +281,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     display: "flex",
                     alignItems: "center",
                     borderRadius: "40px 0px 0px 40px", // 左侧大圆角，右侧直角
-                    transition: "transform 0.3s ease", // 添加过渡动画
-                    "&:hover": {
-                      transform: "translateX(-20px)", // 悬停时向左移动
-                    },
                   }}
                 >
                   <Box
