@@ -1,5 +1,3 @@
-import exp from "constants";
-
 export interface Position {
   x: number;
   y: number;
@@ -26,11 +24,6 @@ export interface SensorProfile {
   image?: string;
 }
 
-export enum SensorState {
-  NORMAL = 0,
-  BROKEN = 1,
-  HIDE = 2,
-}
 export interface SensorConfig {
   id: string;
   profile: SensorProfile;
@@ -38,6 +31,14 @@ export interface SensorConfig {
   attr: SensorAttr;
   mountPosition?: MountPosition;
   selectedOptions?: string[]; // 添加这个属性
+}
+
+export interface SensorItem {
+  id: string;
+  name: string;
+  brand: string;
+  spec: SensorSpec;
+  attr: SensorAttr;
 }
 
 // 定义传感器类型的接口
@@ -68,4 +69,27 @@ export interface UiConfig {
   sideZones: number;
   panelVisible: boolean;
   background: string;
+}
+
+export class Sensor {
+  id: string;
+  profile: SensorProfile;
+  sensorItemId: string;
+  mountPosition: MountPosition;
+  options: string[];
+  spec: SensorSpec;
+  constructor(
+    id: string,
+    profile: SensorProfile,
+    sensorItemId: string,
+    mountPosition: MountPosition,
+    spec: SensorSpec
+  ) {
+    this.id = id;
+    this.profile = profile;
+    this.sensorItemId = sensorItemId;
+    this.mountPosition = mountPosition;
+    this.options = [];
+    this.spec = spec;
+  }
 }

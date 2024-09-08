@@ -8,7 +8,7 @@ import {
   Button,
   MenuItem,
 } from "@mui/material";
-import { SensorConfig, SensorState } from "../types/Common";
+import { SensorConfig } from "../types/Common";
 import { v4 as uuidv4 } from "uuid";
 interface CreateSensorDialogProps {
   open: boolean;

@@ -10,11 +10,11 @@ import {
 } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { SensorConfig, SensorStock } from "../types/Common";
+import { SensorConfig, SensorStock, SensorItem, Sensor } from "../types/Common";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 
 interface ProfileMenuProps {
-  onImportSensorSetConfigImport: (data: any) => void;
+  onImportSensorSetConfigImport: (sensors: Sensor[]) => void;
   onImportSensorStock: (data: any) => void;
   onExport: () => void;
 }
@@ -70,24 +70,33 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
       reader.onload = (e) => {
         try {
           if (type === "sensorStocks") {
-            const data = JSON.parse(e.target?.result as string) as SensorStock;
+            const data = JSON.parse(
+              e.target?.result as string
+            ) as SensorStock[];
             onImportSensorStock(data);
             showSnackbar("Sensor Stocks imported successfully!", "success");
           } else if (type === "sensorConfig") {
-            const data = JSON.parse(
-              e.target?.result as string
-            ) as SensorConfig[];
+            const data = JSON.parse(e.target?.result as string) as Sensor[];
 
-            // 检查和生成UUID
-            const updatedData = data.map((sensor) => {
-              if (!sensor.id || !isValidUUID(sensor.id)) {
-                return { ...sensor, id: uuidv4() }; // 为无效或缺少id的传感器生成UUID
-              }
-              return sensor;
+            // 检查和生成UUID，并实例化Sensor对象
+            const sensorInstances = data.map((sensor) => {
+              const sensorId = isValidUUID(sensor.id) ? sensor.id : uuidv4();
+
+              // 实例化Sensor对象
+              return new Sensor(
+                sensorId,
+                sensor.profile,
+                sensor.sensorItemId,
+                sensor.mountPosition,
+                sensor.spec
+              );
             });
 
-            onImportSensorSetConfigImport(updatedData);
-            showSnackbar("Sensor Set imported successfully!", "success");
+            onImportSensorSetConfigImport(sensorInstances);
+            showSnackbar(
+              "Sensor Set imported and instantiated successfully!",
+              "success"
+            );
           }
         } catch (error) {
           const errorMessage = (error as Error).message.replace("Error: ", "");
