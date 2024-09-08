@@ -166,7 +166,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
     handleDialogClose();
   };
 
-  const handleDelete = (id: number, type: string) => {
+  const handleDelete = (id: string, type: string) => {
     if (!sensorStocks) return;
 
     let updatedSensorStocks: SensorStock = { ...sensorStocks };

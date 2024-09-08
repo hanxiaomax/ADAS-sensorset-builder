@@ -32,7 +32,7 @@ export enum SensorState {
   HIDE = 2,
 }
 export interface SensorConfig {
-  id: number;
+  id: string;
   profile: SensorProfile;
   spec: SensorSpec;
   attr: SensorAttr;

@@ -25,6 +25,7 @@ import {
 } from "@mui/icons-material";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { v4 as uuidv4 } from "uuid";
 
 interface SensorPanelProps {
   sensorConfiguration: SensorConfig[];
@@ -61,27 +62,31 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // 切换 Drawer 显示/隐藏状态
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
   };
 
+  // 处理 ToggleButton 的变化
   const handleToggleChange = (
-    index: number,
+    id: string, // 使用 sensor 的 uuid
     event: React.MouseEvent<HTMLElement>,
     newOptions: string[] | null
   ) => {
-    const updatedConfig = [...sensorConfiguration];
-    updatedConfig[index] = {
-      ...updatedConfig[index],
-      selectedOptions: newOptions || [], // 更新选中的状态
-    };
+    const updatedConfig = sensorConfiguration.map((sensor) =>
+      sensor.id === id
+        ? { ...sensor, selectedOptions: newOptions || [] }
+        : sensor
+    );
     setSensorConfiguration(updatedConfig);
   };
 
-  const handleDeleteClick = (index: number, event: React.MouseEvent) => {
+  // 删除操作
+  const handleDeleteClick = (id: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    const updatedConfig = [...sensorConfiguration];
-    updatedConfig.splice(index, 1);
+    const updatedConfig = sensorConfiguration.filter(
+      (sensor) => sensor.id !== id
+    );
     setSensorConfiguration(updatedConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
   };
@@ -120,6 +125,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     indexOfLastItem
   );
 
+  // 处理分页变化
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     page: number
@@ -254,9 +260,9 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
               </IconButton>
             </Box>
 
-            {currentSensors.map((sensor, index) => (
+            {currentSensors.map((sensor) => (
               <Box
-                key={index}
+                key={sensor.id} // 使用 uuid 作为 key
                 sx={{
                   position: "relative",
                   display: "block", // 确保卡片独占一行
@@ -311,11 +317,14 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                       <Typography variant="body2" sx={{ fontSize: "12px" }}>
                         Position: {sensor.mountPosition!.name}
                       </Typography>
+                      <Typography variant="body2" sx={{ fontSize: "8px" }}>
+                        {sensor.id} {/* 显示 UUID */}
+                      </Typography>
                     </Grid>
                   </Grid>
 
                   <IconButton
-                    onClick={(event) => handleDeleteClick(index, event)}
+                    onClick={(event) => handleDeleteClick(sensor.id, event)} // 使用 uuid
                     size="small"
                     sx={{
                       position: "absolute",
@@ -347,12 +356,13 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                   >
                     <ToggleButtonGroup
                       value={sensor.selectedOptions || []}
-                      onChange={(event, newOptions) =>
-                        handleToggleChange(index, event, newOptions)
+                      onChange={
+                        (event, newOptions) =>
+                          handleToggleChange(sensor.id, event, newOptions) // 使用 uuid
                       }
                       aria-label="sensor options"
                       size="small"
-                      exclusive={false}
+                      exclusive={false} // 允许多选
                     >
                       <ToggleButton
                         value="highlight"

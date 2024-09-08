@@ -9,7 +9,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { SensorConfig, SensorState } from "../types/Common";
-
+import { v4 as uuidv4 } from "uuid";
 interface CreateSensorDialogProps {
   open: boolean;
   onClose: () => void;
@@ -27,7 +27,7 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
 }) => {
   console.log("defaultType:", defaultType);
   const [newSensor, setNewSensor] = useState<SensorConfig>({
-    id: Date.now(),
+    id: uuidv4(),
     profile: {
       name: "",
       type: defaultType, // 使用传入的默认类型

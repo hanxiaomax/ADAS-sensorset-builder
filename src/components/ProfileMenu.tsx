@@ -11,6 +11,7 @@ import {
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { SensorConfig, SensorStock } from "../types/Common";
+import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 
 interface ProfileMenuProps {
   onImportSensorSetConfigImport: (data: any) => void;
@@ -53,6 +54,12 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
     }, 200);
   };
 
+  const isValidUUID = (id: string) => {
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    return uuidRegex.test(id);
+  };
+
   const handleFileUpload = (
     event: React.ChangeEvent<HTMLInputElement>,
     type: "sensorConfig" | "sensorStocks"
@@ -70,7 +77,16 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
             const data = JSON.parse(
               e.target?.result as string
             ) as SensorConfig[];
-            onImportSensorSetConfigImport(data);
+
+            // 检查和生成UUID
+            const updatedData = data.map((sensor) => {
+              if (!sensor.id || !isValidUUID(sensor.id)) {
+                return { ...sensor, id: uuidv4() }; // 为无效或缺少id的传感器生成UUID
+              }
+              return sensor;
+            });
+
+            onImportSensorSetConfigImport(updatedData);
             showSnackbar("Sensor Set imported successfully!", "success");
           }
         } catch (error) {

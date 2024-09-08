@@ -91,9 +91,9 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
   };
 
   const handleDeleteConfirm = () => {
-    if (onDelete) {
-      onDelete(sensor.id); // 删除使用 sensor ID
-    }
+    // if (onDelete) {
+    //   onDelete(sensor.id); // 删除使用 sensor ID
+    // }
     setDeleteDialogOpen(false);
   };
 
