@@ -50,3 +50,4 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 - 在view菜单中增加图层的拖动功能
 - [color theme](https://uicolors.app/create) #6aeffb 
+- import异常处理
