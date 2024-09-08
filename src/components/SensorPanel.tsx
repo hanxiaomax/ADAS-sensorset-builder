@@ -155,9 +155,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
         anchor="right"
         open={drawerOpen}
         onClose={toggleDrawer}
-        sx={{ zIndex: 1200, overflow: "visible" }} // 允许内容溢出
         variant="persistent"
-        PaperProps={{ sx: { overflow: "visible" } }} // 确保 Drawer 的 Paper 也允许内容溢出
+        PaperProps={{ sx: { overflow: "visible" } }}
       >
         <Box
           sx={{
@@ -279,10 +278,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     alignItems: "center",
                     borderRadius: "40px 0px 0px 40px", // 左侧大圆角，右侧直角
                     transition: "transform 0.3s ease", // 添加过渡动画
-                    zIndex: 1000, // 确保悬停时卡片在上方
                     "&:hover": {
                       transform: "translateX(-20px)", // 悬停时向左移动
-                      zIndex: 1500, // 确保卡片悬停时在其他元素上方
                     },
                   }}
                 >
@@ -294,7 +291,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                       width: 60,
                       height: "100%",
                       borderRadius: "50%", // 确保为圆形区域
-                      overflow: "hidden",
                     }}
                   >
                     <Avatar
@@ -311,7 +307,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
 
                   <Grid container alignItems="center" spacing={2}>
                     <Grid item xs sx={{ m: "8px" }}>
-                      <Typography variant="subtitle1" sx={{ fontSize: "14px" }}>
+                      <Typography variant="h1" sx={{ fontSize: "20px" }}>
                         {sensor.profile.name}
                       </Typography>
                       <Typography variant="body2" sx={{ fontSize: "12px" }}>
@@ -387,7 +383,12 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
               count={Math.ceil(filteredSensors.length / itemsPerPage)}
               page={currentPage}
               onChange={handlePageChange}
-              color="primary"
+              sx={{
+                "& .Mui-selected": {
+                  backgroundColor: "#0c7a92", // 选中页码按钮的背景颜色
+                  color: "white", // 选中页码按钮的文字颜色
+                },
+              }}
             />
           </Box>
         </Box>
