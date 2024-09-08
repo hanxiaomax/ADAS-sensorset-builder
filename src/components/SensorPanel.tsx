@@ -129,6 +129,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
 
   return (
     <>
+      {/* 确保 IconButton 的 z-index 比较高，避免被其他元素遮盖 */}
       <IconButton
         onClick={toggleDrawer}
         sx={{
@@ -137,10 +138,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
           top: 0,
           right: 0,
           fontSize: "40px",
-          textAlign: "center",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          zIndex: 1400, // 确保图标显示在最前面
         }}
       >
         {drawerOpen ? (
