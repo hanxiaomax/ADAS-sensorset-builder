@@ -141,7 +141,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          zIndex: 1300,
         }}
       >
         {drawerOpen ? (
@@ -263,7 +262,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                 sx={{
                   position: "relative",
                   display: "block", // 确保卡片独占一行
-                  overflow: "visible", // 确保悬停时内容可以溢出
                 }}
               >
                 <Paper
@@ -288,7 +286,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      width: 60,
+                      width: 80,
                       height: "100%",
                       borderRadius: "50%", // 确保为圆形区域
                     }}
@@ -326,8 +324,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                       backgroundColor: "#097c74",
                       color: "white",
                       boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
-                      width: 24,
-                      height: 24,
+                      width: 30,
+                      height: 30,
                       "&:hover": {
                         backgroundColor: "#ff1744",
                         color: "white",
