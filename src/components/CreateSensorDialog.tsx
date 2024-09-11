@@ -8,12 +8,12 @@ import {
   Button,
   MenuItem,
 } from "@mui/material";
-import { SensorConfig } from "../types/Common";
+import { SensorConfig, SensorItem } from "../types/Common";
 import { v4 as uuidv4 } from "uuid";
 interface CreateSensorDialogProps {
   open: boolean;
   onClose: () => void;
-  onCreate: (sensor: SensorConfig) => void;
+  onCreate: (sensorItem: SensorItem) => void;
   existingTypes: string[]; // 传入现有的传感器类型
   defaultType: string; // 传入默认类型
 }
@@ -26,14 +26,13 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
   defaultType,
 }) => {
   console.log("defaultType:", defaultType);
-  const [newSensor, setNewSensor] = useState<SensorConfig>({
+  const [newSensor, setNewSensor] = useState<SensorItem>({
     id: uuidv4(),
-    profile: {
-      name: "",
-      type: defaultType, // 使用传入的默认类型
-      desc: "",
-      image: "",
-    },
+    name: "",
+    type: defaultType, // 使用传入的默认类型
+    desc: "",
+    image: "",
+    brand: "unknow",
     spec: {
       range: 0,
       fov: 0,
@@ -52,10 +51,7 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
     const { name, value } = event.target;
     setNewSensor((prev) => ({
       ...prev,
-      profile: {
-        ...prev.profile,
-        [name]: value,
-      },
+      name: value,
     }));
   };
 
@@ -65,13 +61,13 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
       setIsOtherType(true);
       setNewSensor((prev) => ({
         ...prev,
-        profile: { ...prev.profile, type: "" }, // 将类型设为空字符串
+        type: "", // 将类型设为空字符串
       }));
     } else {
       setIsOtherType(false);
       setNewSensor((prev) => ({
         ...prev,
-        profile: { ...prev.profile, type: value },
+        type: value,
       }));
     }
   };
@@ -80,7 +76,7 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
     const value = event.target.value;
     setNewSensor((prev) => ({
       ...prev,
-      profile: { ...prev.profile, type: value }, // 将类型更新为用户输入
+      type: value, // 将类型更新为用户输入
     }));
   };
 

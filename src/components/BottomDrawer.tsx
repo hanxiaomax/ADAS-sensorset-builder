@@ -111,6 +111,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
+    setSelectedType(sensorTypes[newValue]);
   };
 
   const renderSensors = (type: string) => {
@@ -241,8 +242,8 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
         open={dialogOpen}
         onClose={handleDialogClose}
         onCreate={handleCreateSensor}
-        existingTypes={Object.keys(sensorStocks || {})} // 将现有类型传递给对话框
-        // defaultType={""}
+        existingTypes={Object.values(sensorTypes || {})} // 将现有类型传递给对话框
+        defaultType={selectedType}
       />
     </>
   );
