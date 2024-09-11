@@ -16,7 +16,7 @@ import {
   Checkbox,
   Pagination,
 } from "@mui/material";
-import { SensorConfig } from "../types/Common";
+import { Sensor } from "../types/Common";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   ArrowForwardIosOutlined,
@@ -28,8 +28,8 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { v4 as uuidv4 } from "uuid";
 
 interface SensorPanelProps {
-  sensorConfiguration: SensorConfig[];
-  setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
+  sensorConfiguration: Sensor[];
+  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
   onSelectSensor: (index: number | null) => void;
 }
 
@@ -355,7 +355,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     }}
                   >
                     <ToggleButtonGroup
-                      value={sensor.selectedOptions || []}
+                      value={sensor.options || []}
                       onChange={
                         (event, newOptions) =>
                           handleToggleChange(sensor.id, event, newOptions) // 使用 uuid

@@ -8,7 +8,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
 import SensorStockItem from "./SensorStock";
 import CreateSensorDialog from "../components/CreateSensorDialog";
-import { SensorConfig, SensorStock } from "../types/Common";
+import { Sensor, SensorItem, SensorStocks } from "../types/Common";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -17,11 +17,9 @@ interface TabPanelProps {
 }
 
 interface BottomDrawerProps {
-  sensorStocks: SensorStock | undefined;
-  setSensorStocks: React.Dispatch<
-    React.SetStateAction<SensorStock | undefined>
-  >;
-  setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
+  sensorStocks: SensorStocks;
+  setSensorStocks: React.Dispatch<React.SetStateAction<SensorStocks>>;
+  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
 }
 
 const TabPanel: React.FC<TabPanelProps> = ({
@@ -51,12 +49,10 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false); // 用于控制对话框的打开状态
   const [selectedTab, setSelectedTab] = useState(0);
-  const [currentType, setCurrentType] = useState<string>("");
 
   useEffect(() => {
     if (sensorStocks) {
-      const firstType = Object.keys(sensorStocks)[0];
-      setCurrentType(firstType || "uss");
+      setSelectedTab(0);
     }
   }, [sensorStocks]);
 
@@ -64,69 +60,11 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
     setDrawerOpen(!drawerOpen);
   };
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-    setSelectedTab(newValue);
-    // 根据当前选中的Tab索引来设置类型
-    const typeKey = Object.keys(sensorStocks || {})[newValue];
-    setCurrentType(typeKey);
-  };
-
-  const handleEdit = (editedSensor: SensorConfig) => {
-    let updatedSensorStocks: SensorStock = { ...sensorStocks! };
-
-    switch (editedSensor.profile.type) {
-      case "uss":
-        const updatedUssSensors = sensorStocks?.uss.sensors.map((sensor) =>
-          sensor.id === editedSensor.id ? editedSensor : sensor
-        );
-        updatedSensorStocks = {
-          ...updatedSensorStocks,
-          uss: {
-            ...updatedSensorStocks.uss,
-            sensors: updatedUssSensors!,
-          },
-        };
-        break;
-      case "lidar":
-        const updatedLidarSensors = sensorStocks?.lidar.sensors.map((sensor) =>
-          sensor.id === editedSensor.id ? editedSensor : sensor
-        );
-        updatedSensorStocks = {
-          ...updatedSensorStocks,
-          lidar: {
-            ...updatedSensorStocks.lidar,
-            sensors: updatedLidarSensors!,
-          },
-        };
-        break;
-      case "radar":
-        const updatedRadarSensors = sensorStocks?.radar.sensors.map((sensor) =>
-          sensor.id === editedSensor.id ? editedSensor : sensor
-        );
-        updatedSensorStocks = {
-          ...updatedSensorStocks,
-          radar: {
-            ...updatedSensorStocks.radar,
-            sensors: updatedRadarSensors!,
-          },
-        };
-        break;
-      case "camera":
-        const updatedCameraSensors = sensorStocks?.camera.sensors.map(
-          (sensor) => (sensor.id === editedSensor.id ? editedSensor : sensor)
-        );
-        updatedSensorStocks = {
-          ...updatedSensorStocks,
-          camera: {
-            ...updatedSensorStocks.camera,
-            sensors: updatedCameraSensors!,
-          },
-        };
-        break;
-      default:
-        break;
-    }
-
+  const handleEdit = (editedSensor: SensorItem) => {
+    const updatedSensorStocks = {
+      ...sensorStocks,
+      [editedSensor.id]: editedSensor,
+    };
     setSensorStocks(updatedSensorStocks);
     localStorage.setItem("sensorStocks", JSON.stringify(updatedSensorStocks));
   };
@@ -139,77 +77,34 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
     setDialogOpen(false);
   };
 
-  const handleCreateSensor = (newSensor: SensorConfig) => {
+  const handleCreateSensor = (newSensor: SensorItem) => {
     if (!sensorStocks) return;
 
-    let updatedSensorStocks: SensorStock = { ...sensorStocks };
-
-    switch (newSensor.profile.type) {
-      case "uss":
-        updatedSensorStocks.uss.sensors.push(newSensor);
-        break;
-      case "lidar":
-        updatedSensorStocks.lidar.sensors.push(newSensor);
-        break;
-      case "radar":
-        updatedSensorStocks.radar.sensors.push(newSensor);
-        break;
-      case "camera":
-        updatedSensorStocks.camera.sensors.push(newSensor);
-        break;
-      default:
-        break;
-    }
+    const updatedSensorStocks = {
+      ...sensorStocks,
+      [newSensor.id]: newSensor,
+    };
 
     setSensorStocks(updatedSensorStocks);
     localStorage.setItem("sensorStocks", JSON.stringify(updatedSensorStocks));
     handleDialogClose();
   };
 
-  const handleDelete = (id: string, type: string) => {
+  const handleDelete = (id: string) => {
     if (!sensorStocks) return;
 
-    let updatedSensorStocks: SensorStock = { ...sensorStocks };
+    const { [id]: _, ...remainingSensors } = sensorStocks;
 
-    switch (type) {
-      case "uss":
-        updatedSensorStocks.uss.sensors =
-          updatedSensorStocks.uss.sensors.filter((sensor) => sensor.id !== id);
-        break;
-      case "lidar":
-        updatedSensorStocks.lidar.sensors =
-          updatedSensorStocks.lidar.sensors.filter(
-            (sensor) => sensor.id !== id
-          );
-        break;
-      case "radar":
-        updatedSensorStocks.radar.sensors =
-          updatedSensorStocks.radar.sensors.filter(
-            (sensor) => sensor.id !== id
-          );
-        break;
-      case "camera":
-        updatedSensorStocks.camera.sensors =
-          updatedSensorStocks.camera.sensors.filter(
-            (sensor) => sensor.id !== id
-          );
-        break;
-      default:
-        break;
-    }
-
-    setSensorStocks(updatedSensorStocks);
-    localStorage.setItem("sensorStocks", JSON.stringify(updatedSensorStocks));
+    setSensorStocks(remainingSensors);
+    localStorage.setItem("sensorStocks", JSON.stringify(remainingSensors));
   };
 
-  const renderSensors = (sensorType: keyof SensorStock) => {
-    if (!sensorStocks || !sensorStocks[sensorType]) {
-      return null;
-    }
+  const renderSensors = () => {
+    if (!sensorStocks) return null;
 
-    return sensorStocks[sensorType].sensors.map((sensor) => {
+    return Object.values(sensorStocks).map((sensor) => {
       let icon;
-      switch (sensor.profile.type) {
+      switch (sensor.type) {
         case "uss":
           icon = <SensorsIcon sx={{ fontSize: "40px" }} />;
           break;
@@ -230,10 +125,10 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
         <SensorStockItem
           key={sensor.id}
           icon={icon}
-          sensor={sensor as SensorConfig}
+          sensor={sensor}
           setSensorConfiguration={setSensorConfiguration}
           onEdit={handleEdit}
-          onDelete={() => handleDelete(sensor.id, sensor.profile.type)}
+          onDelete={() => handleDelete(sensor.id)}
         />
       );
     });
@@ -279,7 +174,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           sx: {
             borderRadius: "16px 16px 0 0",
             width: "50vw",
-            height: "230px",
+            height: "180px",
             margin: "0 auto",
             position: "fixed",
             bottom: 0,
@@ -288,61 +183,40 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           },
         }}
       >
-        <Tabs
-          value={selectedTab}
-          onChange={handleTabChange}
-          aria-label="sensor types"
-          variant="fullWidth"
-        >
-          {sensorStocks &&
-            Object.keys(sensorStocks).map((key, index) => (
-              <Tab
-                key={index}
-                label={sensorStocks[key as keyof SensorStock].title}
-              />
-            ))}
-        </Tabs>
-
-        {sensorStocks &&
-          Object.keys(sensorStocks).map((key, index) => (
-            <TabPanel key={index} value={selectedTab} index={index}>
-              <Box display="flex" flexWrap="wrap">
-                {renderSensors(key as keyof SensorStock)}
-                <Box
-                  sx={{
-                    width: "80px",
-                    height: "80px",
-                    backgroundColor: "#e0e0e0",
-                    borderRadius: "16px",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: "8px",
-                    cursor: "pointer",
-                    transition: "transform 0.2s, box-shadow 0.2s",
-                    "&:hover": {
-                      transform: "translateY(-5px)",
-                      boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-                    },
-                  }}
-                  onClick={handleDialogOpen}
-                >
-                  <IconButton>
-                    <AddIcon sx={{ fontSize: "40px" }} />
-                  </IconButton>
-                </Box>
-              </Box>
-            </TabPanel>
-          ))}
+        <Box display="flex" flexWrap="wrap">
+          {renderSensors()}
+          <Box
+            sx={{
+              width: "80px",
+              height: "80px",
+              backgroundColor: "#e0e0e0",
+              borderRadius: "16px",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              margin: "8px",
+              cursor: "pointer",
+              transition: "transform 0.2s, box-shadow 0.2s",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+              },
+            }}
+            onClick={handleDialogOpen}
+          >
+            <IconButton>
+              <AddIcon sx={{ fontSize: "40px" }} />
+            </IconButton>
+          </Box>
+        </Box>
       </Drawer>
 
-      <CreateSensorDialog
+      {/* <CreateSensorDialog
         open={dialogOpen}
         onClose={handleDialogClose}
         onCreate={handleCreateSensor}
         existingTypes={Object.keys(sensorStocks || {})} // 将现有类型传递给对话框
-        defaultType={currentType} // 传递当前选中的类型作为默认值
-      />
+      /> */}
     </>
   );
 };

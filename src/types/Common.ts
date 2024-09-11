@@ -35,24 +35,23 @@ export interface SensorConfig {
 
 export interface SensorItem {
   id: string;
+  type: string;
   name: string;
+  desc: string;
   brand: string;
+  image: "";
   spec: SensorSpec;
   attr: SensorAttr;
 }
 
 // 定义传感器类型的接口
-interface SensorType {
-  title: string;
-  sensors: SensorConfig[]; // 包含传感器列表
-}
+// interface SensorType {
+//   title: string;
+//   sensors: SensorItem[]; // 包含传感器列表
+// }
 
-// 定义sensorData接口，用于表示传感器的完整数据结构
-export interface SensorStock {
-  uss: SensorType;
-  lidar: SensorType;
-  radar: SensorType;
-  camera: SensorType;
+export interface SensorStocks {
+  [key: string]: SensorItem;
 }
 
 // ui configuration interface used in control panel
@@ -78,12 +77,14 @@ export class Sensor {
   mountPosition: MountPosition;
   options: string[];
   spec: SensorSpec;
+  attr: SensorAttr;
   constructor(
     id: string,
     profile: SensorProfile,
     sensorItemId: string,
     mountPosition: MountPosition,
-    spec: SensorSpec
+    spec: SensorSpec,
+    attr: SensorAttr
   ) {
     this.id = id;
     this.profile = profile;
@@ -91,5 +92,6 @@ export class Sensor {
     this.mountPosition = mountPosition;
     this.options = [];
     this.spec = spec;
+    this.attr = attr;
   }
 }

@@ -3,9 +3,9 @@ import { Grid, Box } from "@mui/material";
 import { Stage as KonvaStage, Layer, Rect } from "react-konva";
 import CarImage from "../components/carImage";
 import UssZones from "../components/UssZones";
-import { Sensor } from "../components/Sensors";
+import { SensorBlock } from "../components/Sensors";
 import useImage from "use-image";
-import { SensorConfig, SensorStock } from "../types/Common";
+import { Sensor, SensorStocks } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import BottomDrawer from "../components/BottomDrawer";
 import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
@@ -21,10 +21,8 @@ const SensorSetBuilderMain: React.FC = () => {
 
   const stageRef = useRef<Stage>(null);
 
-  const [sensorConfiguration, setSensorConfiguration] = useState<
-    SensorConfig[]
-  >([]);
-  const [sensorData, setSensorData] = useState<SensorStock>();
+  const [sensorConfiguration, setSensorConfiguration] = useState<Sensor[]>([]);
+  const [sensorData, setSensorData] = useState<SensorStocks>({});
 
   const [selectedSensorIndex, setSelectedSensorIndex] = useState<number | null>(
     null
@@ -70,16 +68,16 @@ const SensorSetBuilderMain: React.FC = () => {
     }
 
     if (storedSensorStocks) {
-      setSensorData(JSON.parse(storedSensorStocks) as SensorStock);
+      setSensorData(JSON.parse(storedSensorStocks) as SensorStocks);
     }
   }, []);
 
-  const handleSensorSetConfigImport = (data: SensorConfig[]) => {
+  const handleSensorSetConfigImport = (data: Sensor[]) => {
     setSensorConfiguration(data);
     localStorage.setItem("sensorConfig", JSON.stringify(data)); // 保存到 localStorage
   };
 
-  const handleSensorStockImport = (data: SensorStock) => {
+  const handleSensorStockImport = (data: SensorStocks) => {
     setSensorData(data);
     localStorage.setItem("sensorStocks", JSON.stringify(data)); // 保存到 localStorage
   };
@@ -190,8 +188,12 @@ const SensorSetBuilderMain: React.FC = () => {
                   <Marker key={index} position={position} fill="red" />
                 ))}
 
-              {sensorConfiguration.map((sensor, index) => (
-                <Sensor key={index} sensorConfig={sensor} uiConfig={uiConfig} />
+              {sensorConfiguration!.map((sensor, index) => (
+                <SensorBlock
+                  key={index}
+                  sensorConfig={sensor}
+                  uiConfig={uiConfig}
+                />
               ))}
             </Layer>
           </KonvaStage>

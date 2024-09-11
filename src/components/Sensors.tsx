@@ -19,7 +19,10 @@ interface SensorProp {
   uiConfig: UiConfig;
 }
 
-export const Sensor: React.FC<SensorProp> = ({ uiConfig, sensorConfig }) => {
+export const SensorBlock: React.FC<SensorProp> = ({
+  uiConfig,
+  sensorConfig,
+}) => {
   const type = sensorConfig.profile.type;
   const fov = sensorConfig.spec.fov;
   const range = sensorConfig.spec.range * SENSOR_RANGE_FACTOR;

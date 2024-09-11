@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { SensorConfig, SensorStock, SensorItem, Sensor } from "../types/Common";
+import { SensorStocks, Sensor } from "../types/Common";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 
 interface ProfileMenuProps {
@@ -70,9 +70,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
       reader.onload = (e) => {
         try {
           if (type === "sensorStocks") {
-            const data = JSON.parse(
-              e.target?.result as string
-            ) as SensorStock[];
+            const data = JSON.parse(e.target?.result as string) as SensorStocks;
             onImportSensorStock(data);
             showSnackbar("Sensor Stocks imported successfully!", "success");
           } else if (type === "sensorConfig") {
@@ -88,7 +86,8 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
                 sensor.profile,
                 sensor.sensorItemId,
                 sensor.mountPosition,
-                sensor.spec
+                sensor.spec,
+                sensor.attr
               );
             });
 

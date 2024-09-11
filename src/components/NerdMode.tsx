@@ -4,12 +4,12 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Box, Typography } from "@mui/material";
-import { SensorConfig, SensorStock } from "../types/Common";
+import { SensorConfig, SensorStocks } from "../types/Common";
 
 interface NerdModeProps {
   show: boolean;
   sensor_configuration: SensorConfig[];
-  sensor_stocks: SensorStock | undefined;
+  sensor_stocks: SensorStocks | undefined;
 }
 
 const NerdMode: React.FC<NerdModeProps> = ({

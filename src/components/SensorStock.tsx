@@ -18,14 +18,14 @@ import {
 import InstallConfigDialog from "./InstallConfigDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
-import { SensorConfig, SensorSpec } from "../types/Common";
+import { Sensor, SensorConfig, SensorItem, SensorSpec } from "../types/Common";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
-  sensor: SensorConfig;
+  sensor: SensorItem;
   onDelete: (id: number) => void; // 添加删除处理函数，使用 sensor ID 进行删除
-  setSensorConfiguration: React.Dispatch<React.SetStateAction<SensorConfig[]>>;
-  onEdit: (editedSensor: SensorConfig) => void;
+  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
+  onEdit: (editedSensor: SensorItem) => void;
 }
 
 const SensorStockItem: React.FC<SensorStockItemProps> = ({
@@ -112,11 +112,11 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       }}
     >
       <Badge
-        badgeContent={
-          sensor.attr.new ? (
-            <Chip label="New" color="primary" size="small" />
-          ) : null
-        }
+        // badgeContent={
+        //   sensor.attr.new ? (
+        //     <Chip label="New" color="primary" size="small" />
+        //   ) : null
+        // }
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         overlap="circular"
         sx={{
@@ -194,15 +194,15 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
         <Card sx={{ maxWidth: 300 }}>
           <CardContent>
             <Typography variant="subtitle1" component="span">
-              {sensor.profile.name}
+              {sensor.name}
             </Typography>
           </CardContent>
-          {sensor.profile.image ? (
+          {sensor.image ? (
             <CardMedia
               component="img"
               height="140"
-              image={sensor.profile.image}
-              alt={sensor.profile.name}
+              image={sensor.image}
+              alt={sensor.name}
               sx={{ objectFit: "contain" }}
             />
           ) : (
@@ -247,7 +247,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
         open={deleteDialogOpen}
         onClose={handleDeleteDialogClose}
         onConfirm={handleDeleteConfirm}
-        sensorName={sensor.profile.name}
+        sensorName={sensor.name}
       />
       {/* Sensor Info Dialog */}
       <SensorInfoDialog

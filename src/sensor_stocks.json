@@ -1,141 +1,107 @@
 {
-  "uss": {
-    "title": "USS",
-    "sensors": [
-      {
-        "id": 1,
-        "profile": {
-          "name": "USS Sensor",
-          "type": "uss",
-          "desc": "This is USS Sensor , suitable for close-range detection.",
-          "image": ""
-        },
-        "spec": {
-          "range": 15,
-          "fov": 120
-        },
-        "attr": {
-          "promotion": true,
-          "new": false
-        }
-      }
-    ]
+  "5e7c6755-86e7-4bde-bb98-2c5854ce5933": {
+    "name": "USS Sensor",
+    "type": "uss",
+    "brand": "unknown",
+    "desc": "This is USS Sensor , suitable for close-range detection.",
+    "image": "",
+    "spec": {
+      "range": 15,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": true,
+      "new": false
+    }
   },
-  "lidar": {
-    "title": "Lidar",
-    "sensors": [
-      {
-        "id": 4,
-        "profile": {
-          "name": "Lidar Sensor",
-          "type": "lidar",
-          "desc": "Lidar Sensor for high level automated driving",
-          "image": ""
-        },
-        "spec": {
-          "range": 100,
-          "fov": 120
-        },
-        "attr": {
-          "promotion": false,
-          "new": false
-        }
-      }
-    ]
+  "8ddaee8f-7a39-4227-be09-41c5d1ef0c84": {
+    "name": "Lidar Sensor",
+    "type": "lidar",
+    "brand": "unknown",
+    "desc": "Lidar Sensor for high level automated driving",
+    "image": "",
+    "spec": {
+      "range": 100,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": false,
+      "new": false
+    }
   },
-  "radar": {
-    "title": "Radar",
-    "sensors": [
-      {
-        "id": 6,
-        "profile": {
-          "name": "Radar Sensor",
-          "type": "radar",
-          "desc": "Radar Sensor  is designed for long-range object detection.",
-          "image": ""
-        },
-        "spec": {
-          "range": 100,
-          "fov": 60
-        },
-        "attr": {
-          "promotion": false,
-          "new": false
-        }
-      },
-      {
-        "id": 7,
-        "profile": {
-          "name": "Corner Radar",
-          "type": "radar",
-          "desc": "Corner for parking use case",
-          "image": ""
-        },
-        "spec": {
-          "range": 70,
-          "fov": 100
-        },
-        "attr": {
-          "promotion": false,
-          "new": true
-        }
-      }
-    ]
+  "0b583563-9bae-4070-a476-a5fa9c288c3b": {
+    "name": "Radar Sensor",
+    "type": "radar",
+    "brand": "unknown",
+    "desc": "Radar Sensor  is designed for long-range object detection.",
+    "image": "",
+    "spec": {
+      "range": 100,
+      "fov": 60
+    },
+    "attr": {
+      "promotion": false,
+      "new": false
+    }
   },
-  "camera": {
-    "title": "Camera",
-    "sensors": [
-      {
-        "id": 8,
-        "profile": {
-          "name": "Fish Eye Camera ",
-          "type": "camera",
-          "desc": "Camera Sensor  for surrounding view",
-          "image": ""
-        },
-        "spec": {
-          "range": 30,
-          "fov": 180
-        },
-        "attr": {
-          "promotion": false,
-          "new": false
-        }
-      },
-      {
-        "id": 9,
-        "profile": {
-          "name": "Tele Camera",
-          "type": "camera",
-          "desc": "Camera Sensor for lang range",
-          "image": ""
-        },
-        "spec": {
-          "range": 100,
-          "fov": 30
-        },
-        "attr": {
-          "promotion": false,
-          "new": true
-        }
-      },
-      {
-        "id": 10,
-        "profile": {
-          "name": "Wide Camera",
-          "type": "camera",
-          "desc": "Camera Sensor for sensing",
-          "image": ""
-        },
-        "spec": {
-          "range": 50,
-          "fov": 120
-        },
-        "attr": {
-          "promotion": false,
-          "new": true
-        }
-      }
-    ]
+  "92695783-7963-40a2-9bb8-dd22465c145c": {
+    "name": "Corner Radar",
+    "type": "radar",
+    "brand": "unknown",
+    "desc": "Corner for parking use case",
+    "image": "",
+    "spec": {
+      "range": 70,
+      "fov": 100
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    }
+  },
+  "98d29aae-86bb-424c-a60e-05ab5232885a": {
+    "name": "Fish Eye Camera",
+    "type": "camera",
+    "brand": "unknown",
+    "desc": "Camera Sensor  for surrounding view",
+    "image": "",
+    "spec": {
+      "range": 30,
+      "fov": 180
+    },
+    "attr": {
+      "promotion": false,
+      "new": false
+    }
+  },
+  "58c66d48-9f95-41f5-b7f3-9c2570b7cb33": {
+    "name": "Tele Camera",
+    "type": "camera",
+    "brand": "unknown",
+    "desc": "Camera Sensor for lang range",
+    "image": "",
+    "spec": {
+      "range": 100,
+      "fov": 30
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    }
+  },
+  "c84406bc-cb54-46ec-ab63-32e883399e6b": {
+    "name": "Wide Camera",
+    "type": "camera",
+    "brand": "unknown",
+    "desc": "Camera Sensor for sensing",
+    "image": "",
+    "spec": {
+      "range": 50,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    }
   }
 }

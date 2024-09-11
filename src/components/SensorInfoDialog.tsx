@@ -15,7 +15,7 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { SensorConfig, SensorSpec } from "../types/Common";
+import { Sensor, SensorConfig, SensorItem, SensorSpec } from "../types/Common";
 
 interface SensorInfoDialogProps {
   open: boolean;
@@ -23,8 +23,8 @@ interface SensorInfoDialogProps {
   onClose: () => void;
   onInstall: () => void;
   onRemove: () => void;
-  onEdit: (editedSensor: SensorConfig) => void;
-  sensor: SensorConfig;
+  onEdit: (editedSensor: SensorItem) => void;
+  sensor: SensorItem;
 }
 
 const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
@@ -95,14 +95,14 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
 
   return (
     <Dialog open={open} onClose={onClose} ref={dialogRef}>
-      <DialogTitle>{sensor.profile.name}</DialogTitle>
+      <DialogTitle>{sensor.name}</DialogTitle>
       <DialogContent>
-        {sensor.profile.image ? (
+        {sensor.image ? (
           <CardMedia
             component="img"
             height="140"
-            image={sensor.profile.image}
-            alt={sensor.profile.name}
+            image={sensor.image}
+            alt={sensor.name}
             sx={{ objectFit: "contain", marginBottom: "16px" }}
           />
         ) : (
@@ -120,7 +120,7 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
           </Box>
         )}
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {sensor.profile.desc}
+          {sensor.desc}
         </Typography>
         {editedSpecs && (
           <Table size="small" aria-label="sensor specs">
