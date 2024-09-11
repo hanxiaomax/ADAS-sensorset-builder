@@ -49,7 +49,10 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false); // 用于控制对话框的打开状态
   const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedType, setSelectedType] = useState("uss");
 
+  // 按type分类传感器
+  const sensorTypes = ["uss", "lidar", "radar", "camera"];
   useEffect(() => {
     if (sensorStocks) {
       setSelectedTab(0);
@@ -98,11 +101,20 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
     setSensorStocks(remainingSensors);
     localStorage.setItem("sensorStocks", JSON.stringify(remainingSensors));
   };
+  const categorizedSensors: { [key: string]: SensorItem[] } =
+    sensorTypes.reduce((acc, type) => {
+      acc[type] = Object.values(sensorStocks).filter(
+        (sensor) => sensor.type === type
+      );
+      return acc;
+    }, {} as { [key: string]: SensorItem[] });
 
-  const renderSensors = () => {
-    if (!sensorStocks) return null;
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedTab(newValue);
+  };
 
-    return Object.values(sensorStocks).map((sensor) => {
+  const renderSensors = (type: string) => {
+    return categorizedSensors[type].map((sensor) => {
       let icon;
       switch (sensor.type) {
         case "uss":
@@ -174,7 +186,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           sx: {
             borderRadius: "16px 16px 0 0",
             width: "50vw",
-            height: "180px",
+            height: "240px",
             margin: "0 auto",
             position: "fixed",
             bottom: 0,
@@ -183,40 +195,55 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
           },
         }}
       >
-        <Box display="flex" flexWrap="wrap">
-          {renderSensors()}
-          <Box
-            sx={{
-              width: "80px",
-              height: "80px",
-              backgroundColor: "#e0e0e0",
-              borderRadius: "16px",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              margin: "8px",
-              cursor: "pointer",
-              transition: "transform 0.2s, box-shadow 0.2s",
-              "&:hover": {
-                transform: "translateY(-5px)",
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-              },
-            }}
-            onClick={handleDialogOpen}
-          >
-            <IconButton>
-              <AddIcon sx={{ fontSize: "40px" }} />
-            </IconButton>
-          </Box>
-        </Box>
+        <Tabs
+          value={selectedTab}
+          onChange={handleTabChange}
+          aria-label="sensor types"
+          variant="fullWidth"
+        >
+          {sensorTypes.map((type, index) => (
+            <Tab key={index} label={type.toUpperCase()} />
+          ))}
+        </Tabs>
+        {sensorTypes.map((type, index) => (
+          <TabPanel key={index} value={selectedTab} index={index}>
+            <Box display="flex" flexWrap="wrap">
+              {renderSensors(type)}
+              <Box
+                sx={{
+                  width: "80px",
+                  height: "80px",
+                  backgroundColor: "#e0e0e0",
+                  borderRadius: "16px",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  margin: "8px",
+                  cursor: "pointer",
+                  transition: "transform 0.2s, box-shadow 0.2s",
+                  "&:hover": {
+                    transform: "translateY(-5px)",
+                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
+                  },
+                }}
+                onClick={handleDialogOpen}
+              >
+                <IconButton>
+                  <AddIcon sx={{ fontSize: "40px" }} />
+                </IconButton>
+              </Box>
+            </Box>
+          </TabPanel>
+        ))}
       </Drawer>
 
-      {/* <CreateSensorDialog
+      <CreateSensorDialog
         open={dialogOpen}
         onClose={handleDialogClose}
         onCreate={handleCreateSensor}
         existingTypes={Object.keys(sensorStocks || {})} // 将现有类型传递给对话框
-      /> */}
+        // defaultType={""}
+      />
     </>
   );
 };
