@@ -1,6 +1,6 @@
 import React from "react";
 import { Arc, Circle, Line } from "react-konva";
-import { UiConfig, MountPosition, SensorConfig } from "../types/Common";
+import { UiConfig, MountPosition, SensorConfig, Sensor } from "../types/Common";
 import { mountStringToPosition } from "./utils";
 
 const SENSOR_RANGE_FACTOR = 5;
@@ -15,21 +15,19 @@ const sensorStyles: {
 };
 
 interface SensorProp {
-  sensorConfig: SensorConfig;
+  sensor: Sensor;
   uiConfig: UiConfig;
 }
 
-export const SensorBlock: React.FC<SensorProp> = ({
-  uiConfig,
-  sensorConfig,
-}) => {
-  const type = sensorConfig.profile.type;
-  const fov = sensorConfig.spec.fov;
-  const range = sensorConfig.spec.range * SENSOR_RANGE_FACTOR;
+export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
+  const type = sensor.profile.type;
+  const fov = sensor.spec.fov;
+  const range = sensor.spec.range * SENSOR_RANGE_FACTOR;
   const mount_position = mountStringToPosition(
-    sensorConfig.mountPosition!.name
+    sensor.mountPosition!.name
   ) as MountPosition;
 
+  console.log(sensor);
   const { color, opacity } = sensorStyles[type] || {
     color: "#000",
     opacity: 1,
@@ -43,7 +41,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
     return false;
   })();
 
-  if (!visibility || sensorConfig.selectedOptions?.includes("hide")) {
+  if (!visibility || sensor.options?.includes("hide")) {
     return null;
   }
 
@@ -90,9 +88,9 @@ export const SensorBlock: React.FC<SensorProp> = ({
       };
     }
   };
-  const style = getStyle(sensorConfig.selectedOptions || []);
-  const sensor_style = getSensorStyle(sensorConfig.selectedOptions || []);
-
+  const style = getStyle(sensor.options || []);
+  const sensor_style = getSensorStyle(sensor.options || []);
+  console.log(sensor.options);
   return (
     <>
       <Arc
@@ -107,7 +105,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
         stroke={style.stroke}
         dash={style.dash}
       />
-      {sensorConfig.selectedOptions?.includes("broken") ? (
+      {sensor.options?.includes("broken") ? (
         <Line
           x={mount_position.position!.x}
           y={mount_position.position!.y}

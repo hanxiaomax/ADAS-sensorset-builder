@@ -74,10 +74,9 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     newOptions: string[] | null
   ) => {
     const updatedConfig = sensorConfiguration.map((sensor) =>
-      sensor.id === id
-        ? { ...sensor, selectedOptions: newOptions || [] }
-        : sensor
+      sensor.id === id ? { ...sensor, options: newOptions || [] } : sensor
     );
+
     setSensorConfiguration(updatedConfig);
   };
 
@@ -317,9 +316,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                       <Typography variant="body2" sx={{ fontSize: "12px" }}>
                         Position: {sensor.mountPosition!.name}
                       </Typography>
-                      <Typography variant="body2" sx={{ fontSize: "8px" }}>
-                        {sensor.id} {/* 显示 UUID */}
-                      </Typography>
                     </Grid>
                   </Grid>
 
@@ -367,14 +363,29 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                       <ToggleButton
                         value="highlight"
                         aria-label="highlight"
-                        sx={{ width: 28, height: 28 }}
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          "&.Mui-selected": {
+                            backgroundColor: "#efefef", // 激活时的背景色
+                            color: "black", // 激活时的文字颜色
+                          },
+                        }}
                       >
                         <HighlightIcon sx={{ fontSize: "16px" }} />
                       </ToggleButton>
+
                       <ToggleButton
                         value="hide"
                         aria-label="hide"
-                        sx={{ width: 28, height: 28 }}
+                        sx={{
+                          width: 28,
+                          height: 28,
+                          "&.Mui-selected": {
+                            backgroundColor: "#efefef", // 激活时的背景色
+                            color: "black", // 激活时的文字颜色
+                          },
+                        }}
                       >
                         <VisibilityOffIcon sx={{ fontSize: "16px" }} />
                       </ToggleButton>

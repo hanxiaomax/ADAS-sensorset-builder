@@ -189,11 +189,7 @@ const SensorSetBuilderMain: React.FC = () => {
                 ))}
 
               {sensorConfiguration!.map((sensor, index) => (
-                <SensorBlock
-                  key={index}
-                  sensorConfig={sensor}
-                  uiConfig={uiConfig}
-                />
+                <SensorBlock key={index} sensor={sensor} uiConfig={uiConfig} />
               ))}
             </Layer>
           </KonvaStage>

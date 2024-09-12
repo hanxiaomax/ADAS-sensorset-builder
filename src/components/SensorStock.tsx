@@ -18,7 +18,7 @@ import {
 import InstallConfigDialog from "./InstallConfigDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
-import { Sensor, SensorConfig, SensorItem, SensorSpec } from "../types/Common";
+import { Sensor, SensorItem } from "../types/Common";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
