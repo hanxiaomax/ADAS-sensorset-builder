@@ -23,7 +23,7 @@ import { Sensor, SensorConfig, SensorItem, SensorSpec } from "../types/Common";
 interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorItem;
-  onDelete: (id: number) => void; // 添加删除处理函数，使用 sensor ID 进行删除
+  onDelete: (id: string) => void; // 添加删除处理函数，使用 sensor ID 进行删除
   setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
   onEdit: (editedSensor: SensorItem) => void;
 }
@@ -91,9 +91,9 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
   };
 
   const handleDeleteConfirm = () => {
-    // if (onDelete) {
-    //   onDelete(sensor.id); // 删除使用 sensor ID
-    // }
+    if (onDelete) {
+      onDelete(sensor.id); // 删除使用 sensor ID
+    }
     setDeleteDialogOpen(false);
   };
 
