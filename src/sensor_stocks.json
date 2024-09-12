@@ -1,5 +1,6 @@
 {
   "5e7c6755-86e7-4bde-bb98-2c5854ce5933": {
+    "id":"5e7c6755-86e7-4bde-bb98-2c5854ce5933",
     "name": "USS Sensor",
     "type": "uss",
     "brand": "unknown",
@@ -15,6 +16,7 @@
     }
   },
   "8ddaee8f-7a39-4227-be09-41c5d1ef0c84": {
+    "id":"8ddaee8f-7a39-4227-be09-41c5d1ef0c84",
     "name": "Lidar Sensor",
     "type": "lidar",
     "brand": "unknown",
@@ -30,6 +32,7 @@
     }
   },
   "0b583563-9bae-4070-a476-a5fa9c288c3b": {
+    "id":"0b583563-9bae-4070-a476-a5fa9c288c3b",
     "name": "Radar Sensor",
     "type": "radar",
     "brand": "unknown",
@@ -45,6 +48,7 @@
     }
   },
   "92695783-7963-40a2-9bb8-dd22465c145c": {
+    "id":"92695783-7963-40a2-9bb8-dd22465c145c",
     "name": "Corner Radar",
     "type": "radar",
     "brand": "unknown",
@@ -60,6 +64,7 @@
     }
   },
   "98d29aae-86bb-424c-a60e-05ab5232885a": {
+    "id":"98d29aae-86bb-424c-a60e-05ab5232885a",
     "name": "Fish Eye Camera",
     "type": "camera",
     "brand": "unknown",
@@ -90,6 +95,7 @@
     }
   },
   "c84406bc-cb54-46ec-ab63-32e883399e6b": {
+    "id":"c84406bc-cb54-46ec-ab63-32e883399e6b",
     "name": "Wide Camera",
     "type": "camera",
     "brand": "unknown",

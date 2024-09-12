@@ -96,7 +96,15 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
   return (
     <Dialog open={open} onClose={onClose} ref={dialogRef}>
       <DialogTitle>{sensor.name}</DialogTitle>
+
       <DialogContent>
+        <Typography
+          variant="body2"
+          color="text.secondary"
+          sx={{ fontSize: 14 }}
+        >
+          ID:{sensor.id}
+        </Typography>
         {sensor.image ? (
           <CardMedia
             component="img"
@@ -109,6 +117,7 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
           <Box
             sx={{
               height: "140px",
+              minWidth: "360",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
@@ -122,6 +131,7 @@ const SensorInfoDialog: React.FC<SensorInfoDialogProps> = ({
         <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
           {sensor.desc}
         </Typography>
+
         {editedSpecs && (
           <Table size="small" aria-label="sensor specs">
             <TableBody>
