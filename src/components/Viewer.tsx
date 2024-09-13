@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Grid, Box, Menu, MenuItem } from "@mui/material";
-import { Stage, Layer } from "react-konva"; // 使用 react-konva 提供的 Stage
+import { Grid, Box, Menu, MenuItem, ListItemText } from "@mui/material";
+import { Stage, Layer } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
@@ -8,13 +8,14 @@ import Marker from "./utils";
 import { Sensor } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import Konva from "konva"; // 引入 Konva
+import { CenterFocusWeak, RestartAlt } from "@mui/icons-material";
 
 interface ViewerProps {
   stageSize: { width: number; height: number };
   vehicle: Vehicle;
   sensorConfiguration: Sensor[];
   uiConfig: any;
-  stageRef: React.RefObject<Konva.Stage>; // 修正类型为 react-konva 提供的 Stage
+  stageRef: React.RefObject<Konva.Stage>;
 }
 
 const Viewer: React.FC<ViewerProps> = ({
@@ -24,14 +25,13 @@ const Viewer: React.FC<ViewerProps> = ({
   uiConfig,
   stageRef,
 }) => {
-  const [scale, setScale] = useState(1); // 控制缩放比例
-  const [stagePos, setStagePos] = useState({ x: 0, y: 0 }); // 舞台位置，用于拖动
+  const [scale, setScale] = useState(1);
+  const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
   const [contextMenuPos, setContextMenuPos] = useState<null | {
     mouseX: number;
     mouseY: number;
-  }>(null); // 右键菜单位置
+  }>(null);
 
-  // 鼠标右键菜单处理
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
     setContextMenuPos({
@@ -46,13 +46,11 @@ const Viewer: React.FC<ViewerProps> = ({
 
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
-
     const stage = stageRef.current;
     if (!stage) return;
 
     const oldScale = stage.scaleX();
     const pointer = stage.getPointerPosition();
-
     const zoomFactor = e.evt.deltaY > 0 ? 0.9 : 1.1;
     const newScale = oldScale * zoomFactor;
 
@@ -71,9 +69,35 @@ const Viewer: React.FC<ViewerProps> = ({
   };
 
   const handleReset = () => {
-    setScale(1); // 重置缩放比例
-    setStagePos({ x: 0, y: 0 }); // 重置舞台位置
-    handleCloseContextMenu(); // 关闭右键菜单
+    setScale(1);
+    setStagePos({ x: 0, y: 0 });
+    handleCloseContextMenu();
+  };
+
+  const handleCenter = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    // 计算屏幕的中心点
+    const stageCenter = {
+      x: stage.width() / 2,
+      y: stage.height() / 2,
+    };
+
+    // 计算车辆的中心点
+    const vehicleCenter = {
+      x: vehicle.origin.x * scale + vehicle.width / 2,
+      y: vehicle.origin.y * scale + vehicle.length / 2,
+    };
+
+    // 调整舞台位置以将车辆居中
+    const newPos = {
+      x: stageCenter.x - vehicleCenter.x,
+      y: stageCenter.y - vehicleCenter.y,
+    };
+
+    setStagePos(newPos);
+    handleCloseContextMenu();
   };
 
   const handleDragMove = (e: any) => {
@@ -87,7 +111,7 @@ const Viewer: React.FC<ViewerProps> = ({
     <Grid
       container
       sx={{ width: "80vw", height: "100vh", margin: "auto", mt: 4, mb: 2 }}
-      onContextMenu={handleContextMenu} // 监听右键菜单
+      onContextMenu={handleContextMenu}
     >
       <Grid item xs={12} container justifyContent="center" alignItems="center">
         <Box
@@ -98,7 +122,7 @@ const Viewer: React.FC<ViewerProps> = ({
             width: "100%",
             height: "100%",
             zIndex: 1000,
-            position: "relative", // 为工具栏提供定位支持
+            position: "relative",
           }}
         >
           <Stage
@@ -110,10 +134,9 @@ const Viewer: React.FC<ViewerProps> = ({
             x={stagePos.x}
             y={stagePos.y}
             draggable
-            onDragMove={handleDragMove} // 允许拖动
-            onWheel={handleWheel} // 处理滚轮缩放
+            onDragMove={handleDragMove}
+            onWheel={handleWheel}
           >
-            {/* 车辆和传感器区域 */}
             <UssZones
               show={uiConfig.showUssZones}
               x={vehicle.origin.x}
@@ -139,7 +162,6 @@ const Viewer: React.FC<ViewerProps> = ({
                 Object.values(vehicle.refPoints).map((position, index) => (
                   <Marker key={index} position={position} fill="red" />
                 ))}
-
               {sensorConfiguration.map((sensor, index) => (
                 <SensorBlock key={index} sensor={sensor} uiConfig={uiConfig} />
               ))}
@@ -157,7 +179,14 @@ const Viewer: React.FC<ViewerProps> = ({
                 : undefined
             }
           >
-            <MenuItem onClick={handleReset}>Reset View</MenuItem>
+            <MenuItem onClick={handleReset}>
+              <RestartAlt />
+              <ListItemText sx={{ ml: 1 }}>Reset View</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={handleCenter}>
+              <CenterFocusWeak />
+              <ListItemText sx={{ ml: 1 }}>Centering</ListItemText>
+            </MenuItem>
           </Menu>
         </Box>
       </Grid>
