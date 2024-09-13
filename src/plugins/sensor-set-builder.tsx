@@ -127,7 +127,6 @@ const SensorSetBuilderMain: React.FC = () => {
         setUiConfig={setUiConfig}
         stageRef={stageRef}
       />
-
       <Grid item xs={12}>
         <Viewer
           stageSize={stageSize}
@@ -137,7 +136,6 @@ const SensorSetBuilderMain: React.FC = () => {
           stageRef={stageRef}
         />
       </Grid>
-
       <BottomDrawer
         sensorStocks={sensorData}
         setSensorStocks={setSensorData}
