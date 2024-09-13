@@ -112,7 +112,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   // 筛选传感器
   const filteredSensors = selectedTypes.length
     ? sensorConfiguration.filter((sensor) =>
-        selectedTypes.includes(sensor.profile.type)
+        selectedTypes.includes(sensor.sensorInfo.type)
       )
     : sensorConfiguration; // 如果未选中任何类型，显示所有传感器
 
@@ -297,21 +297,21 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                     }}
                   >
                     <Avatar
-                      src={sensor.profile.image || undefined}
-                      alt={sensor.profile.name}
+                      src={sensor.sensorInfo.image || undefined}
+                      alt={sensor.sensorInfo.name}
                       sx={{
                         width: 50,
                         height: 50,
                       }}
                     >
-                      {!sensor.profile.image && sensor.profile.name![0]}
+                      {!sensor.sensorInfo.image && sensor.sensorInfo.name![0]}
                     </Avatar>
                   </Box>
 
                   <Grid container alignItems="center" spacing={2}>
                     <Grid item xs sx={{ m: "8px" }}>
                       <Typography variant="h1" sx={{ fontSize: "20px" }}>
-                        {sensor.profile.name}
+                        {sensor.sensorInfo.name}
                       </Typography>
                       <Typography variant="body2" sx={{ fontSize: "12px" }}>
                         Position: {sensor.mountPosition!.name}

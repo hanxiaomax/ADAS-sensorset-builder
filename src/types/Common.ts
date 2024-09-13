@@ -24,15 +24,6 @@ export interface SensorProfile {
   image?: string;
 }
 
-// export interface SensorConfig {
-//   id: string;
-//   profile: SensorProfile;
-//   spec: SensorSpec;
-//   attr: SensorAttr;
-//   mountPosition?: MountPosition;
-//   selectedOptions?: string[]; // 添加这个属性
-// }
-
 export interface SensorItem {
   id: string;
   type: string;
@@ -43,12 +34,6 @@ export interface SensorItem {
   spec: SensorSpec;
   attr: SensorAttr;
 }
-
-// 定义传感器类型的接口
-// interface SensorType {
-//   title: string;
-//   sensors: SensorItem[]; // 包含传感器列表
-// }
 
 export interface SensorStocks {
   [key: string]: SensorItem;
@@ -72,26 +57,17 @@ export interface UiConfig {
 
 export class Sensor {
   id: string;
-  profile: SensorProfile;
-  sensorItemId: string;
+  sensorInfo: SensorItem;
   mountPosition: MountPosition;
   options: string[];
-  spec: SensorSpec;
-  attr: SensorAttr;
   constructor(
     id: string,
-    profile: SensorProfile,
-    sensorItemId: string,
-    mountPosition: MountPosition,
-    spec: SensorSpec,
-    attr: SensorAttr
+    sensorInfo: SensorItem,
+    mountPosition: MountPosition
   ) {
     this.id = id;
-    this.profile = profile;
-    this.sensorItemId = sensorItemId;
+    this.sensorInfo = sensorInfo;
     this.mountPosition = mountPosition;
     this.options = [];
-    this.spec = spec;
-    this.attr = attr;
   }
 }

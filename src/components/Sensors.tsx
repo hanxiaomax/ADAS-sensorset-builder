@@ -20,14 +20,14 @@ interface SensorProp {
 }
 
 export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
-  const type = sensor.profile.type;
-  const fov = sensor.spec.fov;
-  const range = sensor.spec.range * SENSOR_RANGE_FACTOR;
+  const type = sensor.sensorInfo.type;
+  const fov = sensor.sensorInfo.spec.fov;
+  const range = sensor.sensorInfo.spec.range * SENSOR_RANGE_FACTOR;
   const mount_position = mountStringToPosition(
     sensor.mountPosition!.name
   ) as MountPosition;
 
-  console.log(sensor);
+  // console.log(sensor);
   const { color, opacity } = sensorStyles[type] || {
     color: "#000",
     opacity: 1,
@@ -90,7 +90,7 @@ export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
   };
   const style = getStyle(sensor.options || []);
   const sensor_style = getSensorStyle(sensor.options || []);
-  console.log(sensor.options);
+  // console.log(sensor.options);
   return (
     <>
       <Arc

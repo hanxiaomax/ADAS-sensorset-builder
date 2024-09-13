@@ -83,11 +83,8 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
               // 实例化Sensor对象
               return new Sensor(
                 sensorId,
-                sensor.profile,
-                sensor.sensorItemId,
-                sensor.mountPosition,
-                sensor.spec,
-                sensor.attr
+                sensor.sensorInfo,
+                sensor.mountPosition
               );
             });
 

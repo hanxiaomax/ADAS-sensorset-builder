@@ -13,22 +13,31 @@ import {
   Typography,
   Slider,
   TextField,
+  FormHelperText,
 } from "@mui/material";
+import { SensorItem } from "../types/Common";
 
 interface InstallConfigDialogProps {
   open: boolean;
+  sensorItem: SensorItem;
   onClose: () => void;
-  onConfirm: (selectedPosition: string, orientation: number) => void;
+  onConfirm: (
+    selectedSensor: SensorItem,
+    selectedPosition: string,
+    orientation: number
+  ) => void;
 }
 
 const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
   open,
+  sensorItem,
   onClose,
   onConfirm,
 }) => {
   const [selectedPosition, setSelectedPosition] = useState("");
   const [orientation, setOrientation] = useState<number>(0); // 默认值设置为0度
   const [mountingPoints, setMountingPoints] = useState<string[]>([]);
+  const [positionError, setPositionError] = useState(false); // 用于管理是否显示位置选择错误
 
   useEffect(() => {
     const mountingPointsData = localStorage.getItem("mountingPoints");
@@ -39,8 +48,12 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
   }, []);
 
   const handleSave = () => {
-    onConfirm(selectedPosition, orientation);
-    onClose();
+    if (!selectedPosition) {
+      setPositionError(true); // 如果未选择位置，则显示错误提示
+    } else {
+      onConfirm(sensorItem, selectedPosition, orientation);
+      onClose();
+    }
   };
 
   const handleSliderChange = (event: Event, value: number | number[]) => {
@@ -67,14 +80,19 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
       <DialogTitle>Please Choose Installation Position</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2, mb: 2 }}>
-          <FormControl fullWidth>
+          <FormControl fullWidth error={positionError}>
+            {" "}
+            {/* 根据 positionError 显示错误 */}
             <InputLabel id="install-position-label">
               Install Position
             </InputLabel>
             <Select
               labelId="install-position-label"
               value={selectedPosition}
-              onChange={(e) => setSelectedPosition(e.target.value as string)}
+              onChange={(e) => {
+                setSelectedPosition(e.target.value as string);
+                setPositionError(false); // 当用户选择时，隐藏错误提示
+              }}
               label="Install Position"
             >
               {mountingPoints.map((point) => (
@@ -83,6 +101,11 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
                 </MenuItem>
               ))}
             </Select>
+            {positionError && ( // 如果未选择位置，显示错误提示
+              <FormHelperText error>
+                Please select an installation position.
+              </FormHelperText>
+            )}
           </FormControl>
         </Box>
         <Box sx={{ mt: 2, mb: 2 }}>

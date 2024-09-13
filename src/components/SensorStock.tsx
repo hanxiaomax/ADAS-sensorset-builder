@@ -19,7 +19,7 @@ import InstallConfigDialog from "./InstallConfigDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
 import { Sensor, SensorItem } from "../types/Common";
-
+import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorItem;
@@ -69,20 +69,22 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     setDialogOpen(false);
   };
 
-  const handleSave = (selectedPosition: string) => {
+  const handleInstallConfirm = (
+    selectedSensor: SensorItem,
+    selectedPosition: string,
+    orientation: number
+  ) => {
     const sensorConfig = JSON.parse(
       localStorage.getItem("sensorConfig") || "[]"
     );
-
-    const newSensorConfig = {
-      ...sensor,
-      mountPosition: { name: selectedPosition },
+    const position = {
+      name: selectedPosition,
     };
+    const newSensor = new Sensor(uuidv4(), selectedSensor, position);
 
-    sensorConfig.push(newSensorConfig);
+    sensorConfig.push(newSensor);
     setSensorConfiguration(sensorConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(sensorConfig));
-
     setDialogOpen(false);
   };
 
@@ -239,8 +241,9 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       {/* Install Config Dialog */}
       <InstallConfigDialog
         open={dialogOpen}
+        sensorItem={sensor}
         onClose={handleDialogClose}
-        onConfirm={handleSave}
+        onConfirm={handleInstallConfirm}
       />
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
