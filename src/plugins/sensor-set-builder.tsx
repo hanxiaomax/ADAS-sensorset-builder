@@ -1,17 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Grid, Box } from "@mui/material";
-import { Stage as KonvaStage, Layer, Rect } from "react-konva";
-import CarImage from "../components/carImage";
-import UssZones from "../components/UssZones";
-import { SensorBlock } from "../components/Sensors";
 import useImage from "use-image";
+import Viewer from "../components/Viewer"; // 引入 Viewer 组件
 import { Sensor, SensorStocks } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import BottomDrawer from "../components/BottomDrawer";
-import SensorPanel from "../components/SensorPanel"; // 导入新的 SensorPanel 组件
-import Marker from "../components/utils";
+import SensorPanel from "../components/SensorPanel";
 import MenuBar from "../components/MenuBar";
-import { Stage } from "konva/lib/Stage";
+import Konva from "konva"; // 引入 Konva
 
 const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -19,14 +15,10 @@ const SensorSetBuilderMain: React.FC = () => {
     height: window.innerHeight,
   });
 
-  const stageRef = useRef<Stage>(null);
+  const stageRef = useRef<Konva.Stage>(null);
 
   const [sensorConfiguration, setSensorConfiguration] = useState<Sensor[]>([]);
   const [sensorData, setSensorData] = useState<SensorStocks>({});
-
-  const [selectedSensorIndex, setSelectedSensorIndex] = useState<number | null>(
-    null
-  ); // 用于存储选中的传感器索引
 
   const [uiConfig, setUiConfig] = useState({
     showCarImage: true,
@@ -58,7 +50,6 @@ const SensorSetBuilderMain: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 在组件加载时从 localStorage 中加载数据
   useEffect(() => {
     const storedSensorConfig = localStorage.getItem("sensorConfig");
     const storedSensorStocks = localStorage.getItem("sensorStocks");
@@ -74,12 +65,12 @@ const SensorSetBuilderMain: React.FC = () => {
 
   const handleSensorSetConfigImport = (data: Sensor[]) => {
     setSensorConfiguration(data);
-    localStorage.setItem("sensorConfig", JSON.stringify(data)); // 保存到 localStorage
+    localStorage.setItem("sensorConfig", JSON.stringify(data));
   };
 
   const handleSensorStockImport = (data: SensorStocks) => {
     setSensorData(data);
-    localStorage.setItem("sensorStocks", JSON.stringify(data)); // 保存到 localStorage
+    localStorage.setItem("sensorStocks", JSON.stringify(data));
   };
 
   const handleExport = () => {
@@ -134,66 +125,17 @@ const SensorSetBuilderMain: React.FC = () => {
         handleExport={handleExport}
         uiConfig={uiConfig}
         setUiConfig={setUiConfig}
-        stageRef={stageRef} //
+        stageRef={stageRef}
       />
 
       <Grid item xs={12}>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          sx={{
-            width: "100%",
-            height: "100%",
-            transform: "scale(0.8)",
-            zIndex: 1000,
-          }}
-        >
-          <KonvaStage
-            width={stageSize.width}
-            height={stageSize.height}
-            ref={stageRef}
-          >
-            <Layer>
-              <Rect
-                width={stageSize.width}
-                height={stageSize.height}
-                fill="white"
-              />
-            </Layer>
-
-            <UssZones
-              show={uiConfig.showUssZones}
-              x={vehicle.origin.x}
-              y={vehicle.origin.y}
-              carWidth={vehicle.width}
-              carLength={vehicle.length}
-              frontOverhang={vehicle.frontOverhang}
-              rearOverhang={vehicle.rearOverhang}
-              frontZones={uiConfig.frontZones}
-              rearZones={uiConfig.rearZones}
-              sideZones={uiConfig.sideZones}
-            />
-            <CarImage
-              show={uiConfig.showCarImage}
-              x={vehicle.origin.x}
-              y={vehicle.origin.y}
-              width={vehicle.width}
-              height={vehicle.length}
-              image={vehicle.image}
-            />
-            <Layer>
-              {uiConfig.showVehicleRefPoint &&
-                Object.values(vehicle.refPoints).map((position, index) => (
-                  <Marker key={index} position={position} fill="red" />
-                ))}
-
-              {sensorConfiguration!.map((sensor, index) => (
-                <SensorBlock key={index} sensor={sensor} uiConfig={uiConfig} />
-              ))}
-            </Layer>
-          </KonvaStage>
-        </Box>
+        <Viewer
+          stageSize={stageSize}
+          vehicle={vehicle}
+          sensorConfiguration={sensorConfiguration}
+          uiConfig={uiConfig}
+          stageRef={stageRef}
+        />
       </Grid>
 
       <BottomDrawer
@@ -202,17 +144,9 @@ const SensorSetBuilderMain: React.FC = () => {
         setSensorConfiguration={setSensorConfiguration}
       />
 
-      {/* <NerdMode
-        show={uiConfig.showNerdMode}
-        sensor_configuration={sensorConfiguration}
-        sensor_stocks={sensorData}
-      /> */}
-
-      {/* 使用新的 SensorPanel 组件，并传递 onDelete 和 setSelectedSensorIndex 函数 */}
       <SensorPanel
         sensorConfiguration={sensorConfiguration}
         setSensorConfiguration={setSensorConfiguration}
-        onSelectSensor={(index) => setSelectedSensorIndex(index)} // 传递选择传感器的回调
       />
     </Grid>
   );

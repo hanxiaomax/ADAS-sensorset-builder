@@ -30,13 +30,11 @@ import { v4 as uuidv4 } from "uuid";
 interface SensorPanelProps {
   sensorConfiguration: Sensor[];
   setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
-  onSelectSensor: (index: number | null) => void;
 }
 
 const SensorPanel: React.FC<SensorPanelProps> = ({
   sensorConfiguration,
   setSensorConfiguration,
-  onSelectSensor,
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(true);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 用于控制筛选菜单的显示
