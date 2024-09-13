@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, Menu, MenuItem } from "@mui/material";
 import { Stage, Layer } from "react-konva"; // 使用 react-konva 提供的 Stage
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
@@ -26,6 +26,23 @@ const Viewer: React.FC<ViewerProps> = ({
 }) => {
   const [scale, setScale] = useState(1); // 控制缩放比例
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 }); // 舞台位置，用于拖动
+  const [contextMenuPos, setContextMenuPos] = useState<null | {
+    mouseX: number;
+    mouseY: number;
+  }>(null); // 右键菜单位置
+
+  // 鼠标右键菜单处理
+  const handleContextMenu = (event: React.MouseEvent) => {
+    event.preventDefault();
+    setContextMenuPos({
+      mouseX: event.clientX,
+      mouseY: event.clientY,
+    });
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenuPos(null);
+  };
 
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
@@ -36,7 +53,6 @@ const Viewer: React.FC<ViewerProps> = ({
     const oldScale = stage.scaleX();
     const pointer = stage.getPointerPosition();
 
-    // 根据滚轮方向调整缩放比例
     const zoomFactor = e.evt.deltaY > 0 ? 0.9 : 1.1;
     const newScale = oldScale * zoomFactor;
 
@@ -54,6 +70,12 @@ const Viewer: React.FC<ViewerProps> = ({
     setStagePos(newPos);
   };
 
+  const handleReset = () => {
+    setScale(1); // 重置缩放比例
+    setStagePos({ x: 0, y: 0 }); // 重置舞台位置
+    handleCloseContextMenu(); // 关闭右键菜单
+  };
+
   const handleDragMove = (e: any) => {
     setStagePos({
       x: e.target.x(),
@@ -65,6 +87,7 @@ const Viewer: React.FC<ViewerProps> = ({
     <Grid
       container
       sx={{ width: "80vw", height: "100vh", margin: "auto", mt: 4, mb: 2 }}
+      onContextMenu={handleContextMenu} // 监听右键菜单
     >
       <Grid item xs={12} container justifyContent="center" alignItems="center">
         <Box
@@ -122,6 +145,20 @@ const Viewer: React.FC<ViewerProps> = ({
               ))}
             </Layer>
           </Stage>
+
+          {/* 右键菜单 */}
+          <Menu
+            open={contextMenuPos !== null}
+            onClose={handleCloseContextMenu}
+            anchorReference="anchorPosition"
+            anchorPosition={
+              contextMenuPos !== null
+                ? { top: contextMenuPos.mouseY, left: contextMenuPos.mouseX }
+                : undefined
+            }
+          >
+            <MenuItem onClick={handleReset}>Reset View</MenuItem>
+          </Menu>
         </Box>
       </Grid>
     </Grid>
