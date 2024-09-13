@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid, Box } from "@mui/material";
-import { Stage, Layer, Rect, Line } from "react-konva"; // 使用 react-konva 提供的 Stage
+import { Stage, Layer, Line } from "react-konva"; // 使用 react-konva 提供的 Stage
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
@@ -31,12 +31,14 @@ const Viewer: React.FC<ViewerProps> = ({
   const [scale, setScale] = useState(1); // 控制缩放比例
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 }); // 舞台位置，用于拖动
 
+  // 添加固定网格背景，不随缩放变化
+
   const handleZoom = (zoomFactor: number) => {
     const stage = stageRef.current;
     if (!stage) return;
 
     const oldScale = stage.scaleX();
-    const newScale = Math.max(0.5, Math.min(3, oldScale * zoomFactor)); // 限制缩放比例
+    const newScale = oldScale * zoomFactor;
     const stageCenter = {
       x: stage.width() / 2,
       y: stage.height() / 2,
@@ -57,11 +59,11 @@ const Viewer: React.FC<ViewerProps> = ({
   };
 
   const handleZoomIn = () => {
-    handleZoom(1.2); // 放大
+    handleZoom(1.2); // 放大 1.2 倍
   };
 
   const handleZoomOut = () => {
-    handleZoom(0.8); // 缩小
+    handleZoom(0.8); // 缩小到 0.8 倍
   };
 
   const handleReset = () => {
@@ -104,9 +106,6 @@ const Viewer: React.FC<ViewerProps> = ({
             draggable
             onDragMove={handleDragMove} // 允许拖动
           >
-            {/* 绘制网格背景 */}
-            {/* <Layer>{renderGrid()}</Layer> */}
-
             {/* 车辆和传感器区域 */}
             <UssZones
               show={uiConfig.showUssZones}
@@ -145,7 +144,7 @@ const Viewer: React.FC<ViewerProps> = ({
             sx={{
               position: "absolute",
               top: 20,
-              right: 20,
+              right: 200,
               display: "flex",
               flexDirection: "column",
               backgroundColor: "#f5f5f5",
