@@ -35,7 +35,6 @@ const UssZones: React.FC<UssZonesProps> = ({
   const lineWidth = 2;
   const sideZoneWidth = 80;
   const sideoffset = 20;
-  console.log(x, y);
 
   if (!show) {
     return null;

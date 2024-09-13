@@ -25,7 +25,7 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
   existingTypes,
   defaultType,
 }) => {
-  console.log("defaultType:", defaultType);
+  // console.log("defaultType:", defaultType);
   const [newSensor, setNewSensor] = useState<SensorItem>({
     id: uuidv4(),
     name: "",

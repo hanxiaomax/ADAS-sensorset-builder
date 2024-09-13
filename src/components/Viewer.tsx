@@ -43,6 +43,8 @@ const Viewer: React.FC<ViewerProps> = ({
 }) => {
   const [scale, setScale] = useState(1);
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
+  const [girdMargin, setGirdMargin] = useState(10000);
+
   const [contextMenuPos, setContextMenuPos] = useState<null | {
     mouseX: number;
     mouseY: number;
@@ -82,6 +84,7 @@ const Viewer: React.FC<ViewerProps> = ({
 
     setScale(newScale);
     setStagePos(newPos);
+    getSensorCoverageBoundingBox();
   };
 
   const handleToggleGrid = () => {
@@ -94,22 +97,26 @@ const Viewer: React.FC<ViewerProps> = ({
   const renderGrid = () => {
     const gridSize = 50;
     const lines = [];
-    for (let i = -1000; i < stageSize.width + 1000; i += gridSize) {
+    for (let i = -girdMargin; i < stageSize.width + girdMargin; i += gridSize) {
       lines.push(
         <Line
           key={`v-${i}`}
-          points={[i, -1000, i, stageSize.height + 1000]}
+          points={[i, -girdMargin, i, stageSize.height + girdMargin]}
           stroke="#989898"
           strokeWidth={0.5}
         />
       );
     }
 
-    for (let i = -1000; i < stageSize.height + 1000; i += gridSize) {
+    for (
+      let i = -girdMargin;
+      i < stageSize.height + girdMargin;
+      i += gridSize
+    ) {
       lines.push(
         <Line
           key={`h-${i}`}
-          points={[-1000, i, stageSize.width + 1000, i]}
+          points={[-girdMargin, i, stageSize.width + girdMargin, i]}
           stroke="#989898"
           strokeWidth={0.5}
         />
@@ -146,7 +153,7 @@ const Viewer: React.FC<ViewerProps> = ({
       if (sensorMaxX > maxX) maxX = sensorMaxX;
       if (sensorMaxY > maxY) maxY = sensorMaxY;
     });
-
+    setGirdMargin(Math.max(maxX, maxY) * 5);
     return { minX, minY, maxX, maxY };
   };
 
