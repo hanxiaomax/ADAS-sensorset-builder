@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid, Box } from "@mui/material";
-import { Stage, Layer, Line } from "react-konva"; // 使用 react-konva 提供的 Stage
+import { Stage, Layer } from "react-konva"; // 使用 react-konva 提供的 Stage
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
@@ -8,10 +8,6 @@ import Marker from "./utils";
 import { Sensor } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import Konva from "konva"; // 引入 Konva
-import ZoomInIcon from "@mui/icons-material/ZoomIn";
-import ZoomOutIcon from "@mui/icons-material/ZoomOut";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import { IconButton } from "@mui/material";
 
 interface ViewerProps {
   stageSize: { width: number; height: number };
@@ -31,44 +27,31 @@ const Viewer: React.FC<ViewerProps> = ({
   const [scale, setScale] = useState(1); // 控制缩放比例
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 }); // 舞台位置，用于拖动
 
-  // 添加固定网格背景，不随缩放变化
+  const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
+    e.evt.preventDefault();
 
-  const handleZoom = (zoomFactor: number) => {
     const stage = stageRef.current;
     if (!stage) return;
 
     const oldScale = stage.scaleX();
+    const pointer = stage.getPointerPosition();
+
+    // 根据滚轮方向调整缩放比例
+    const zoomFactor = e.evt.deltaY > 0 ? 0.9 : 1.1;
     const newScale = oldScale * zoomFactor;
-    const stageCenter = {
-      x: stage.width() / 2,
-      y: stage.height() / 2,
-    };
 
     const mousePointTo = {
-      x: (stageCenter.x - stage.x()) / oldScale,
-      y: (stageCenter.y - stage.y()) / oldScale,
+      x: (pointer!.x - stage.x()) / oldScale,
+      y: (pointer!.y - stage.y()) / oldScale,
     };
 
     const newPos = {
-      x: stageCenter.x - mousePointTo.x * newScale,
-      y: stageCenter.y - mousePointTo.y * newScale,
+      x: pointer!.x - mousePointTo.x * newScale,
+      y: pointer!.y - mousePointTo.y * newScale,
     };
 
     setScale(newScale);
     setStagePos(newPos);
-  };
-
-  const handleZoomIn = () => {
-    handleZoom(1.2); // 放大 1.2 倍
-  };
-
-  const handleZoomOut = () => {
-    handleZoom(0.8); // 缩小到 0.8 倍
-  };
-
-  const handleReset = () => {
-    setScale(1); // 重置缩放比例
-    setStagePos({ x: 0, y: 0 }); // 重置舞台位置
   };
 
   const handleDragMove = (e: any) => {
@@ -105,6 +88,7 @@ const Viewer: React.FC<ViewerProps> = ({
             y={stagePos.y}
             draggable
             onDragMove={handleDragMove} // 允许拖动
+            onWheel={handleWheel} // 处理滚轮缩放
           >
             {/* 车辆和传感器区域 */}
             <UssZones
@@ -138,31 +122,6 @@ const Viewer: React.FC<ViewerProps> = ({
               ))}
             </Layer>
           </Stage>
-
-          {/* 右侧工具栏 */}
-          <Box
-            sx={{
-              position: "absolute",
-              top: 20,
-              right: 200,
-              display: "flex",
-              flexDirection: "column",
-              backgroundColor: "#f5f5f5",
-              padding: 2,
-              borderRadius: 1,
-              boxShadow: "0 0 5px rgba(0,0,0,0.3)",
-            }}
-          >
-            <IconButton onClick={handleZoomIn} sx={{ mb: 1 }}>
-              <ZoomInIcon fontSize="large" />
-            </IconButton>
-            <IconButton onClick={handleZoomOut} sx={{ mb: 1 }}>
-              <ZoomOutIcon fontSize="large" />
-            </IconButton>
-            <IconButton onClick={handleReset}>
-              <RefreshIcon fontSize="large" />
-            </IconButton>
-          </Box>
         </Box>
       </Grid>
     </Grid>

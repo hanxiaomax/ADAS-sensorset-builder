@@ -36,7 +36,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
   sensorConfiguration,
   setSensorConfiguration,
 }) => {
-  const [drawerOpen, setDrawerOpen] = useState(true);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 用于控制筛选菜单的显示
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // 记录当前筛选的类型
   const [currentPage, setCurrentPage] = useState(1); // 当前页
