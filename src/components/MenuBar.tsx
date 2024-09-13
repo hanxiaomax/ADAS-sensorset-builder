@@ -11,12 +11,17 @@ import {
   Typography,
   Link,
   Box,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Checkbox,
 } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import EmailIcon from "@mui/icons-material/Email";
 import ProfileMenu from "../components/ProfileMenu";
 import ViewMenu from "../components/ViewMenu";
 import { Stage } from "konva/lib/Stage";
+import Konva from "konva"; // 引入 Konva
 
 interface MenuBarProps {
   handleSensorSetConfigImport: (data: any) => void;
@@ -36,6 +41,9 @@ const MenuBar: React.FC<MenuBarProps> = ({
   stageRef, // 新增
 }) => {
   const [open, setOpen] = useState(false);
+  const [snapshotOpen, setSnapshotOpen] = useState(false); // 控制 Snapshot 对话框
+  const [format, setFormat] = useState("png"); // 默认导出格式为 PNG
+  const [includeBackground, setIncludeBackground] = useState(false); // 是否包含背景
 
   const handleAboutOpen = () => {
     setOpen(true);
@@ -45,15 +53,59 @@ const MenuBar: React.FC<MenuBarProps> = ({
     setOpen(false);
   };
 
-  const handleSnapshot = () => {
+  const handleSnapshotOpen = () => {
+    setSnapshotOpen(true); // 打开 Snapshot 对话框
+  };
+
+  const handleSnapshotClose = () => {
+    setSnapshotOpen(false); // 关闭 Snapshot 对话框
+  };
+
+  const handleFormatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormat((event.target as HTMLInputElement).value);
+  };
+
+  const handleSnapshotConfirm = () => {
     if (stageRef && stageRef.current) {
-      const uri = stageRef.current.toDataURL(); // 获取 Stage 的图像
-      const link = document.createElement("a");
-      link.download = "snapshot.png"; // 设置下载文件名
-      link.href = uri;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const stage = stageRef.current;
+      let backgroundLayer: Konva.Layer | null = null;
+
+      // 如果用户选择包含背景，我们手动添加一个背景矩形
+      if (includeBackground) {
+        backgroundLayer = new Konva.Layer();
+        const backgroundRect = new Konva.Rect({
+          x: 0,
+          y: 0,
+          width: stage.width(),
+          height: stage.height(),
+          fill: "#ffffff", // 背景颜色
+        });
+        backgroundLayer.add(backgroundRect);
+
+        // 将背景层添加到最底层
+        stage.add(backgroundLayer);
+        backgroundLayer.moveToBottom(); // 移动背景层到最底层
+        stage.draw(); // 确保背景立即渲染
+      }
+
+      // 导出 PNG
+      if (format === "png") {
+        const uri = stage.toDataURL({ pixelRatio: 2, mimeType: "image/png" });
+        const link = document.createElement("a");
+        link.download = "snapshot.png"; // 设置下载文件名
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      // 导出完成后移除背景层
+      if (backgroundLayer) {
+        backgroundLayer.remove();
+        stage.draw(); // 重新绘制舞台
+      }
+
+      handleSnapshotClose(); // 导出完成后关闭对话框
     }
   };
 
@@ -91,11 +143,49 @@ const MenuBar: React.FC<MenuBarProps> = ({
             onExport={handleExport}
           />
           <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
-          <Button>Tools</Button>
-          <Button onClick={handleSnapshot}>Snapshot</Button>
+          <Button onClick={handleSnapshotOpen}>Snapshot</Button>{" "}
+          {/* 修改为打开 Snapshot 对话框 */}
           <Button onClick={handleAboutOpen}>About</Button>
         </ButtonGroup>
       </AppBar>
+
+      {/* Snapshot Dialog */}
+      <Dialog open={snapshotOpen} onClose={handleSnapshotClose}>
+        <DialogTitle>Export Snapshot</DialogTitle>
+        <DialogContent>
+          <Typography variant="subtitle1" gutterBottom>
+            Choose file format:
+          </Typography>
+          <RadioGroup
+            aria-label="format"
+            name="format"
+            value={format}
+            onChange={handleFormatChange}
+          >
+            <FormControlLabel value="png" control={<Radio />} label="PNG" />
+          </RadioGroup>
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={includeBackground}
+                onChange={() => setIncludeBackground(!includeBackground)}
+              />
+            }
+            label="Include Background"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSnapshotClose}>Cancel</Button>
+          <Button
+            onClick={handleSnapshotConfirm}
+            variant="contained"
+            color="primary"
+          >
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Dialog for About information */}
       <Dialog open={open} onClose={handleAboutClose}>
