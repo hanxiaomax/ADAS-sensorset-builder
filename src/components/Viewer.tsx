@@ -4,11 +4,16 @@ import { Stage, Layer } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
-import Marker from "./utils";
-import { Sensor } from "../types/Common";
+import Marker, { mountStringToPosition } from "./utils";
+import { MountPosition, Sensor, SENSOR_RANGE_FACTOR } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import Konva from "konva"; // 引入 Konva
-import { CenterFocusWeak, RestartAlt } from "@mui/icons-material";
+import {
+  CenterFocusWeak,
+  DirectionsCarFilled,
+  RestartAlt,
+  Sensors,
+} from "@mui/icons-material";
 
 interface ViewerProps {
   stageSize: { width: number; height: number };
@@ -66,6 +71,111 @@ const Viewer: React.FC<ViewerProps> = ({
 
     setScale(newScale);
     setStagePos(newPos);
+  };
+
+  // 计算传感器的覆盖范围的边界框
+  const getSensorCoverageBoundingBox = () => {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    sensorConfiguration.forEach((sensor) => {
+      const mount_position = mountStringToPosition(
+        sensor.mountPosition!.name
+      ) as MountPosition;
+
+      const sensorX = mount_position.position!.x;
+      const sensorY = mount_position.position!.y;
+      const sensorRange =
+        sensor.sensorInfo.spec?.range * SENSOR_RANGE_FACTOR || 0;
+
+      // 计算传感器覆盖的边界
+      const sensorMinX = sensorX - sensorRange;
+      const sensorMinY = sensorY - sensorRange;
+      const sensorMaxX = sensorX + sensorRange;
+      const sensorMaxY = sensorY + sensorRange;
+
+      // 更新最小和最大坐标
+      if (sensorMinX < minX) minX = sensorMinX;
+      if (sensorMinY < minY) minY = sensorMinY;
+      if (sensorMaxX > maxX) maxX = sensorMaxX;
+      if (sensorMaxY > maxY) maxY = sensorMaxY;
+    });
+
+    return { minX, minY, maxX, maxY };
+  };
+
+  const handleAutoZoomToSensorCoverage = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const { minX, minY, maxX, maxY } = getSensorCoverageBoundingBox();
+    const contentWidth = maxX - minX;
+    const contentHeight = maxY - minY;
+
+    const scaleX = stageSize.width / contentWidth;
+    const scaleY = stageSize.height / contentHeight;
+    const newScale = Math.min(scaleX, scaleY) * 0.9; // 留一点边距
+
+    const newPos = {
+      x: (stageSize.width - contentWidth * newScale) / 2 - minX * newScale,
+      y: (stageSize.height - contentHeight * newScale) / 2 - minY * newScale,
+    };
+
+    setScale(newScale);
+    setStagePos(newPos);
+
+    handleCloseContextMenu(); // 关闭右键菜单
+  };
+
+  // 计算车辆和传感器的边界框
+  const getBoundingBox = () => {
+    let minX = vehicle.origin.x;
+    let minY = vehicle.origin.y;
+    let maxX = vehicle.origin.x + vehicle.width;
+    let maxY = vehicle.origin.y + vehicle.length;
+
+    sensorConfiguration.forEach((sensor) => {
+      const mount_position = mountStringToPosition(
+        sensor.mountPosition!.name
+      ) as MountPosition;
+
+      const sensorX = mount_position.position!.x;
+      const sensorY = mount_position.position!.y;
+
+      // 更新最小和最大坐标
+      if (sensorX < minX) minX = sensorX;
+      if (sensorY < minY) minY = sensorY;
+      if (sensorX > maxX) maxX = sensorX;
+      if (sensorY > maxY) maxY = sensorY;
+    });
+
+    return { minX, minY, maxX, maxY };
+  };
+
+  // 自动缩放到适合的大小
+  const handleAutoZoom = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const { minX, minY, maxX, maxY } = getBoundingBox();
+    const contentWidth = maxX - minX;
+    const contentHeight = maxY - minY;
+
+    const scaleX = stageSize.width / contentWidth;
+    const scaleY = stageSize.height / contentHeight;
+    const newScale = Math.min(scaleX, scaleY) * 0.9; // 留一点边距
+
+    const newPos = {
+      x: (stageSize.width - contentWidth * newScale) / 2 - minX * newScale,
+      y: (stageSize.height - contentHeight * newScale) / 2 - minY * newScale,
+    };
+
+    setScale(newScale);
+    setStagePos(newPos);
+
+    handleCloseContextMenu(); // 关闭右键菜单
   };
 
   const handleReset = () => {
@@ -185,7 +295,15 @@ const Viewer: React.FC<ViewerProps> = ({
             </MenuItem>
             <MenuItem onClick={handleCenter}>
               <CenterFocusWeak />
-              <ListItemText sx={{ ml: 1 }}>Centering</ListItemText>
+              <ListItemText sx={{ ml: 1 }}>Centering View</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={handleAutoZoom}>
+              <DirectionsCarFilled />
+              <ListItemText sx={{ ml: 1 }}>Fit Vehicle</ListItemText>
+            </MenuItem>
+            <MenuItem onClick={handleAutoZoomToSensorCoverage}>
+              <Sensors />
+              <ListItemText sx={{ ml: 1 }}>Fit Sensor Range</ListItemText>
             </MenuItem>
           </Menu>
         </Box>

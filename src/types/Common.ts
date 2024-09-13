@@ -71,3 +71,5 @@ export class Sensor {
     this.options = [];
   }
 }
+
+export const SENSOR_RANGE_FACTOR = 5;
