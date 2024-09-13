@@ -4,11 +4,11 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { Box, Typography } from "@mui/material";
-import { SensorConfig, SensorStocks } from "../types/Common";
+import { Sensor, SensorStocks } from "../types/Common";
 
 interface NerdModeProps {
   show: boolean;
-  sensor_configuration: SensorConfig[];
+  sensor_configuration: Sensor[];
   sensor_stocks: SensorStocks | undefined;
 }
 

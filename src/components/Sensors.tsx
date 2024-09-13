@@ -1,6 +1,6 @@
 import React from "react";
 import { Arc, Circle, Line } from "react-konva";
-import { UiConfig, MountPosition, SensorConfig, Sensor } from "../types/Common";
+import { UiConfig, MountPosition, Sensor } from "../types/Common";
 import { mountStringToPosition } from "./utils";
 
 const SENSOR_RANGE_FACTOR = 5;

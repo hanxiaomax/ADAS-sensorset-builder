@@ -24,14 +24,14 @@ export interface SensorProfile {
   image?: string;
 }
 
-export interface SensorConfig {
-  id: string;
-  profile: SensorProfile;
-  spec: SensorSpec;
-  attr: SensorAttr;
-  mountPosition?: MountPosition;
-  selectedOptions?: string[]; // 添加这个属性
-}
+// export interface SensorConfig {
+//   id: string;
+//   profile: SensorProfile;
+//   spec: SensorSpec;
+//   attr: SensorAttr;
+//   mountPosition?: MountPosition;
+//   selectedOptions?: string[]; // 添加这个属性
+// }
 
 export interface SensorItem {
   id: string;
