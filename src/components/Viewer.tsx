@@ -29,56 +29,51 @@ const Viewer: React.FC<ViewerProps> = ({
   stageRef,
 }) => {
   const [scale, setScale] = useState(1); // 控制缩放比例
+  const [stagePos, setStagePos] = useState({ x: 0, y: 0 }); // 舞台位置，用于拖动
 
-  // 添加网格背景，只绘制中间 8 列的区域
-  const renderGrid = () => {
-    const gridSize = 20;
-    const totalWidth = stageSize.width;
-    const totalHeight = stageSize.height;
+  const handleZoom = (zoomFactor: number) => {
+    const stage = stageRef.current;
+    if (!stage) return;
 
-    // 计算中间 8 列的宽度范围 (xs={8} 代表 8/12)
-    const middleWidthStart = (totalWidth / 12) * 2; // 左侧 2 列的宽度
-    const middleWidthEnd = (totalWidth / 12) * 10; // 右侧 2 列的宽度
+    const oldScale = stage.scaleX();
+    const newScale = Math.max(0.5, Math.min(3, oldScale * zoomFactor)); // 限制缩放比例
+    const stageCenter = {
+      x: stage.width() / 2,
+      y: stage.height() / 2,
+    };
 
-    const lines = [];
+    const mousePointTo = {
+      x: (stageCenter.x - stage.x()) / oldScale,
+      y: (stageCenter.y - stage.y()) / oldScale,
+    };
 
-    // 绘制垂直线（仅在中间 8 列范围内绘制）
-    for (let i = middleWidthStart; i < middleWidthEnd; i += gridSize) {
-      lines.push(
-        <Line
-          key={`v-${i}`}
-          points={[i, 0, i, totalHeight]}
-          stroke="#ddd"
-          strokeWidth={1}
-        />
-      );
-    }
+    const newPos = {
+      x: stageCenter.x - mousePointTo.x * newScale,
+      y: stageCenter.y - mousePointTo.y * newScale,
+    };
 
-    // 绘制水平线（全宽度绘制）
-    for (let i = 0; i < totalHeight; i += gridSize) {
-      lines.push(
-        <Line
-          key={`h-${i}`}
-          points={[middleWidthStart, i, middleWidthEnd, i]}
-          stroke="#ddd"
-          strokeWidth={1}
-        />
-      );
-    }
-
-    return lines;
+    setScale(newScale);
+    setStagePos(newPos);
   };
 
   const handleZoomIn = () => {
-    setScale((prevScale) => Math.min(prevScale + 0.1, 3));
+    handleZoom(1.2); // 放大
   };
 
   const handleZoomOut = () => {
-    setScale((prevScale) => Math.max(prevScale - 0.1, 0.5));
+    handleZoom(0.8); // 缩小
   };
 
   const handleReset = () => {
-    setScale(1);
+    setScale(1); // 重置缩放比例
+    setStagePos({ x: 0, y: 0 }); // 重置舞台位置
+  };
+
+  const handleDragMove = (e: any) => {
+    setStagePos({
+      x: e.target.x(),
+      y: e.target.y(),
+    });
   };
 
   return (
@@ -104,9 +99,13 @@ const Viewer: React.FC<ViewerProps> = ({
             ref={stageRef}
             scaleX={scale}
             scaleY={scale}
+            x={stagePos.x}
+            y={stagePos.y}
+            draggable
+            onDragMove={handleDragMove} // 允许拖动
           >
             {/* 绘制网格背景 */}
-            <Layer>{renderGrid()}</Layer>
+            {/* <Layer>{renderGrid()}</Layer> */}
 
             {/* 车辆和传感器区域 */}
             <UssZones

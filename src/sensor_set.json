@@ -323,7 +323,7 @@
       "image": "",
     
     "spec": {
-      "range": 100,
+      "range": 200,
       "fov": 30
     },
     "attr": {
