@@ -1,6 +1,14 @@
 import React, { useState } from "react";
-import { Grid, Box, Menu, MenuItem, ListItemText } from "@mui/material";
-import { Stage, Layer } from "react-konva";
+import {
+  Grid,
+  Box,
+  Menu,
+  MenuItem,
+  ListItemText,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
+import { Stage, Layer, Line } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
@@ -13,6 +21,7 @@ import {
   DirectionsCarFilled,
   RestartAlt,
   Sensors,
+  GridOn,
 } from "@mui/icons-material";
 
 interface ViewerProps {
@@ -20,6 +29,7 @@ interface ViewerProps {
   vehicle: Vehicle;
   sensorConfiguration: Sensor[];
   uiConfig: any;
+  setUiConfig: (config: any) => void;
   stageRef: React.RefObject<Konva.Stage>;
 }
 
@@ -28,6 +38,7 @@ const Viewer: React.FC<ViewerProps> = ({
   vehicle,
   sensorConfiguration,
   uiConfig,
+  setUiConfig,
   stageRef,
 }) => {
   const [scale, setScale] = useState(1);
@@ -73,6 +84,41 @@ const Viewer: React.FC<ViewerProps> = ({
     setStagePos(newPos);
   };
 
+  const handleToggleGrid = () => {
+    setUiConfig((prev: any) => ({
+      ...prev,
+      showGrid: !prev.showGrid,
+    }));
+  };
+
+  const renderGrid = () => {
+    const gridSize = 50;
+    const lines = [];
+    for (let i = -1000; i < stageSize.width + 1000; i += gridSize) {
+      lines.push(
+        <Line
+          key={`v-${i}`}
+          points={[i, -1000, i, stageSize.height + 1000]}
+          stroke="#989898"
+          strokeWidth={0.5}
+        />
+      );
+    }
+
+    for (let i = -1000; i < stageSize.height + 1000; i += gridSize) {
+      lines.push(
+        <Line
+          key={`h-${i}`}
+          points={[-1000, i, stageSize.width + 1000, i]}
+          stroke="#989898"
+          strokeWidth={0.5}
+        />
+      );
+    }
+
+    return lines;
+  };
+
   // 计算传感器的覆盖范围的边界框
   const getSensorCoverageBoundingBox = () => {
     let minX = Infinity;
@@ -90,13 +136,11 @@ const Viewer: React.FC<ViewerProps> = ({
       const sensorRange =
         sensor.sensorInfo.spec?.range * SENSOR_RANGE_FACTOR || 0;
 
-      // 计算传感器覆盖的边界
       const sensorMinX = sensorX - sensorRange;
       const sensorMinY = sensorY - sensorRange;
       const sensorMaxX = sensorX + sensorRange;
       const sensorMaxY = sensorY + sensorRange;
 
-      // 更新最小和最大坐标
       if (sensorMinX < minX) minX = sensorMinX;
       if (sensorMinY < minY) minY = sensorMinY;
       if (sensorMaxX > maxX) maxX = sensorMaxX;
@@ -244,9 +288,13 @@ const Viewer: React.FC<ViewerProps> = ({
             x={stagePos.x}
             y={stagePos.y}
             draggable
-            onDragMove={handleDragMove}
             onWheel={handleWheel}
           >
+            {/* 固定网格层 */}
+            <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
+              {uiConfig.showGrid && renderGrid()}
+            </Layer>
+
             <UssZones
               show={uiConfig.showUssZones}
               x={vehicle.origin.x}
@@ -289,6 +337,12 @@ const Viewer: React.FC<ViewerProps> = ({
                 : undefined
             }
           >
+            <MenuItem onClick={handleToggleGrid}>
+              <FormControlLabel
+                control={<Checkbox checked={uiConfig.showGrid} />}
+                label="Show Grid"
+              />
+            </MenuItem>
             <MenuItem onClick={handleReset}>
               <RestartAlt />
               <ListItemText sx={{ ml: 1 }}>Reset View</ListItemText>

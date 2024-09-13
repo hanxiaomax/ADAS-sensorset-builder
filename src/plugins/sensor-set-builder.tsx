@@ -133,6 +133,7 @@ const SensorSetBuilderMain: React.FC = () => {
           vehicle={vehicle}
           sensorConfiguration={sensorConfiguration}
           uiConfig={uiConfig}
+          setUiConfig={setUiConfig}
           stageRef={stageRef}
         />
       </Grid>
