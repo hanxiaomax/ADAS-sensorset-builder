@@ -60,39 +60,67 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
     return uuidRegex.test(id);
   };
 
+  // 验证SensorSet的结构
+  const isValidSensorSet = (data: any): data is Sensor[] => {
+    return Array.isArray(data) && data.every(isValidSensor);
+  };
+
+  // 验证SensorStocks的结构
+  const isValidSensorStock = (data: any): data is SensorStocks => {
+    return (
+      typeof data === "object" && data !== null && Object.keys(data).length > 0
+    );
+  };
+
+  // 验证单个Sensor的结构
+  const isValidSensor = (sensor: any): sensor is Sensor => {
+    return (
+      typeof sensor.id === "string" &&
+      typeof sensor.sensorInfo === "object" &&
+      typeof sensor.sensorInfo.name === "string" &&
+      typeof sensor.mountPosition === "object" &&
+      typeof sensor.mountPosition.name === "string"
+    );
+  };
+
   const handleFileUpload = (
     event: React.ChangeEvent<HTMLInputElement>,
-    type: "sensorConfig" | "sensorStocks"
+    type: "sensorSet" | "sensorDatabase"
   ) => {
     const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          if (type === "sensorStocks") {
-            const data = JSON.parse(e.target?.result as string) as SensorStocks;
-            onImportSensorStock(data);
-            showSnackbar("Sensor Stocks imported successfully!", "success");
-          } else if (type === "sensorConfig") {
-            const data = JSON.parse(e.target?.result as string) as Sensor[];
+          const data = JSON.parse(e.target?.result as string);
 
-            // 检查和生成UUID，并实例化Sensor对象
-            const sensorInstances = data.map((sensor) => {
-              const sensorId = isValidUUID(sensor.id) ? sensor.id : uuidv4();
-
-              // 实例化Sensor对象
-              return new Sensor(
-                sensorId,
-                sensor.sensorInfo,
-                sensor.mountPosition
+          if (type === "sensorDatabase") {
+            if (isValidSensorStock(data)) {
+              // 验证传入数据是否符合SensorStocks类型
+              onImportSensorStock(data);
+              showSnackbar("Sensor Stocks imported successfully!", "success");
+            } else {
+              throw new Error("Invalid Sensor Database format.");
+            }
+          } else if (type === "sensorSet") {
+            if (isValidSensorSet(data)) {
+              // 验证传入数据是否符合Sensor类型
+              const sensorInstances = data.map((sensor: any) => {
+                const sensorId = isValidUUID(sensor.id) ? sensor.id : uuidv4();
+                return new Sensor(
+                  sensorId,
+                  sensor.sensorInfo,
+                  sensor.mountPosition
+                );
+              });
+              onImportSensorSetConfigImport(sensorInstances);
+              showSnackbar(
+                "Sensor Set imported and instantiated successfully!",
+                "success"
               );
-            });
-
-            onImportSensorSetConfigImport(sensorInstances);
-            showSnackbar(
-              "Sensor Set imported and instantiated successfully!",
-              "success"
-            );
+            } else {
+              throw new Error("Invalid Sensor Set format.");
+            }
           }
         } catch (error) {
           const errorMessage = (error as Error).message.replace("Error: ", "");
@@ -135,17 +163,17 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
             type="file"
             accept=".json"
             style={{ display: "none" }}
-            onChange={(e) => handleFileUpload(e, "sensorConfig")}
+            onChange={(e) => handleFileUpload(e, "sensorSet")}
           />
         </MenuItem>
         <MenuItem component="label">
           <FileUploadIcon sx={{ mr: 1 }} />
-          Import Sensor Stocks
+          Import Sensor Database
           <input
             type="file"
             accept=".json"
             style={{ display: "none" }}
-            onChange={(e) => handleFileUpload(e, "sensorStocks")}
+            onChange={(e) => handleFileUpload(e, "sensorDatabase")}
           />
         </MenuItem>
         <MenuItem onClick={handleExportClick}>

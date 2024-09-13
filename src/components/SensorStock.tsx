@@ -114,11 +114,11 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       }}
     >
       <Badge
-        // badgeContent={
-        //   sensor.attr.new ? (
-        //     <Chip label="New" color="primary" size="small" />
-        //   ) : null
-        // }
+        badgeContent={
+          sensor.attr.new ? (
+            <Chip label="New" color="primary" size="small" />
+          ) : null
+        }
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         overlap="circular"
         sx={{
