@@ -65,24 +65,27 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    const oldScale = stage.scaleX();
+    const oldScale = scale; // 使用 Layer 的 scale
     const pointer = stage.getPointerPosition();
     const zoomFactor = e.evt.deltaY > 0 ? 0.9 : 1.1;
     const newScale = oldScale * zoomFactor;
 
+    // 计算鼠标相对于 Layer 的位置
     const mousePointTo = {
-      x: (pointer!.x - stage.x()) / oldScale,
-      y: (pointer!.y - stage.y()) / oldScale,
+      x: (pointer!.x - stagePos.x) / oldScale,
+      y: (pointer!.y - stagePos.y) / oldScale,
     };
 
+    // 更新 Layer 的位置，以确保缩放以鼠标为中心
     const newPos = {
       x: pointer!.x - mousePointTo.x * newScale,
       y: pointer!.y - mousePointTo.y * newScale,
     };
 
-    setScale(newScale);
-    setStagePos(newPos);
+    setScale(newScale); // 更新缩放比例
+    setStagePos(newPos); // 更新图层位置
 
+    // 计算并更新网格的边距
     const { minX, minY, maxX, maxY } =
       getSensorCoverageBoundingBox(sensorConfiguration);
     setGirdMargin(Math.max(maxX, maxY) * 5);
@@ -256,53 +259,63 @@ const Viewer: React.FC<ViewerProps> = ({
             width={stageSize.width}
             height={stageSize.height}
             ref={stageRef}
-            scaleX={scale}
-            scaleY={scale}
-            x={stagePos.x}
-            y={stagePos.y}
-            draggable
-            onWheel={handleWheel}
-            rotation={rotation}
-            onDragMove={handleDragMove}
+            scaleX={1} // 固定 Stage 不进行缩放
+            scaleY={1}
+            x={0} // 禁止 Stage 的拖动
+            y={0}
+            draggable={false} // 禁用 Stage 的拖动
+            onWheel={handleWheel} // 使用鼠标缩放
           >
             <Layer>{renderDebugOverlay(stageSize)}</Layer>
             <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
               {uiConfig.showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
-            <Layer>
-              <UssZones
-                show={uiConfig.showUssZones}
-                x={vehicle.origin.x}
-                y={vehicle.origin.y}
-                carWidth={vehicle.width}
-                carLength={vehicle.length}
-                frontOverhang={vehicle.frontOverhang}
-                rearOverhang={vehicle.rearOverhang}
-                frontZones={uiConfig.frontZones}
-                rearZones={uiConfig.rearZones}
-                sideZones={uiConfig.sideZones}
-              />
-              <CarImage
-                show={uiConfig.showCarImage}
-                x={vehicle.origin.x}
-                y={vehicle.origin.y}
-                width={vehicle.width}
-                height={vehicle.length}
-                image={vehicle.image}
-              />
-              {uiConfig.showVehicleRefPoint &&
-                Object.values(vehicle.refPoints).map((position, index) => (
-                  <Marker key={index} position={position} fill="red" />
-                ))}
-              {sensorConfiguration.map((sensor, index) => (
-                <SensorBlock
-                  key={index}
-                  sensor={sensor}
-                  uiConfig={uiConfig}
-                  onClick={() => handleSensorClick(sensor.id)}
-                  isSelected={selectedSensor === sensor.id}
+
+            {/* 允许缩放和拖动的图层 */}
+            <Layer
+              scaleX={scale}
+              scaleY={scale}
+              x={stagePos.x}
+              y={stagePos.y}
+              rotation={rotation}
+              draggable // 仅允许 Layer 拖动
+              onDragMove={handleDragMove} // 拖动事件
+            >
+              <Group>
+                <UssZones
+                  show={uiConfig.showUssZones}
+                  x={vehicle.origin.x}
+                  y={vehicle.origin.y}
+                  carWidth={vehicle.width}
+                  carLength={vehicle.length}
+                  frontOverhang={vehicle.frontOverhang}
+                  rearOverhang={vehicle.rearOverhang}
+                  frontZones={uiConfig.frontZones}
+                  rearZones={uiConfig.rearZones}
+                  sideZones={uiConfig.sideZones}
                 />
-              ))}
+                <CarImage
+                  show={uiConfig.showCarImage}
+                  x={vehicle.origin.x}
+                  y={vehicle.origin.y}
+                  width={vehicle.width}
+                  height={vehicle.length}
+                  image={vehicle.image}
+                />
+                {uiConfig.showVehicleRefPoint &&
+                  Object.values(vehicle.refPoints).map((position, index) => (
+                    <Marker key={index} position={position} fill="red" />
+                  ))}
+                {sensorConfiguration.map((sensor, index) => (
+                  <SensorBlock
+                    key={index}
+                    sensor={sensor}
+                    uiConfig={uiConfig}
+                    onClick={() => handleSensorClick(sensor.id)}
+                    isSelected={selectedSensor === sensor.id}
+                  />
+                ))}
+              </Group>
             </Layer>
           </Stage>
 
