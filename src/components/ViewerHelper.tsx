@@ -129,3 +129,21 @@ export const getBoundingBox = (sensors: Sensor[], vehicle: Vehicle) => {
 
   return { minX, minY, maxX, maxY };
 };
+
+export const renderBoundingBox = (sensor: Sensor[]) => {
+  const { minX, minY, maxX, maxY } = getSensorCoverageBoundingBox(sensor);
+
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  return (
+    <Rect
+      x={minX}
+      y={minY}
+      width={width}
+      height={height}
+      stroke="green"
+      strokeWidth={5}
+    />
+  );
+};

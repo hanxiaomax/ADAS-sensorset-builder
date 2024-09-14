@@ -17,6 +17,7 @@ import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
 import {
   getBoundingBox,
   getSensorCoverageBoundingBox,
+  renderBoundingBox,
   renderDebugOverlay,
   renderGrid,
 } from "./ViewerHelper";
@@ -167,23 +168,39 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    // 获取舞台中心点
-    const stageCenter = {
-      x: stage.width() / 2,
-      y: stage.height() / 2,
+    // 1. 获取车辆和传感器的包围框
+    const { minX, minY, maxX, maxY } =
+      getSensorCoverageBoundingBox(sensorConfiguration);
+
+    // 2. 计算包围框的中心点
+    const boundingBoxCenter = {
+      x: (minX + maxX) / 2,
+      y: (minY + maxY) / 2,
     };
 
-    // 获取当前舞台的偏移位置
-    const stagePosX = stage.x();
-    const stagePosY = stage.y();
+    // 3. 计算相对舞台中心的偏移
+    const offsetX = boundingBoxCenter.x - stageSize.width / 2;
+    const offsetY = boundingBoxCenter.y - stageSize.height / 2;
 
-    // 计算旋转后的偏移位置
-    const newPosX = stageCenter.x + (stagePosY - stageCenter.y);
-    const newPosY = stageCenter.y - (stagePosX - stageCenter.x);
-
+    // 4. 在车辆中心进行旋转
     setRotation((prevRotation) => prevRotation + 90); // 顺时针旋转90°
-    setStagePos({ x: newPosX, y: newPosY });
-    handleCenter();
+
+    // 5. 更新图层的位置，使得旋转后车辆仍保持在屏幕的中心
+    const newPosX =
+      stagePos.x -
+      offsetX * Math.cos(Math.PI / 2) +
+      offsetY * Math.sin(Math.PI / 2);
+    const newPosY =
+      stagePos.y -
+      offsetX * Math.sin(Math.PI / 2) -
+      offsetY * Math.cos(Math.PI / 2);
+
+    setStagePos({
+      x: newPosX,
+      y: newPosY,
+    });
+
+    handleCloseContextMenu(); // 关闭右键菜单
   };
 
   const handleRotateCounterClockwise = () => {
@@ -211,23 +228,29 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    const stageCenter = {
-      x: stage.width() / 2,
-      y: stage.height() / 2,
+    // 1. 计算舞台的中心点
+    const stageCenter = { x: 0, y: 0 };
+
+    // 2. 获取车辆和传感器的包围框
+    const { minX, minY, maxX, maxY } =
+      getSensorCoverageBoundingBox(sensorConfiguration);
+
+    // 3. 计算包围框的中心点
+    const boundingBoxCenter = {
+      x: (minX + maxX) / 2,
+      y: (minY + maxY) / 2,
     };
 
-    const vehicleCenter = {
-      x: vehicle.origin.x * scale + vehicle.width / 2,
-      y: vehicle.origin.y * scale + vehicle.length / 2,
-    };
-
+    // 4. 计算移动位置，将包围框的中心点移动到舞台的中心
     const newPos = {
-      x: stageCenter.x - vehicleCenter.x,
-      y: stageCenter.y - vehicleCenter.y,
+      x: stageCenter.x - boundingBoxCenter.x * scale, // 根据当前缩放比例调整位置
+      y: stageCenter.y - boundingBoxCenter.y * scale,
     };
 
+    // 5. 设置图层的位置
     setStagePos(newPos);
-    handleCloseContextMenu();
+
+    handleCloseContextMenu(); // 关闭右键菜单
   };
 
   const handleDragMove = (e: any) => {
@@ -277,11 +300,12 @@ const Viewer: React.FC<ViewerProps> = ({
               scaleY={scale}
               x={stagePos.x}
               y={stagePos.y}
-              rotation={rotation}
               draggable // 仅允许 Layer 拖动
               onDragMove={handleDragMove} // 拖动事件
             >
-              <Group>
+              {renderBoundingBox(sensorConfiguration)}
+
+              <Group rotation={rotation}>
                 <UssZones
                   show={uiConfig.showUssZones}
                   x={vehicle.origin.x}
