@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Grid,
-  Box,
-  Menu,
-  MenuItem,
-  ListItemText,
-  Checkbox,
-  FormControlLabel,
-} from "@mui/material";
+import { Grid, Box } from "@mui/material";
 import { Stage, Layer, Line } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
@@ -16,13 +8,7 @@ import Marker, { mountStringToPosition } from "./utils";
 import { MountPosition, Sensor, SENSOR_RANGE_FACTOR } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import Konva from "konva";
-import {
-  CenterFocusWeak,
-  DirectionsCarFilled,
-  RestartAlt,
-  Sensors,
-  GridOn,
-} from "@mui/icons-material";
+import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
 
 interface ViewerProps {
   stageSize: { width: number; height: number };
@@ -48,7 +34,8 @@ const Viewer: React.FC<ViewerProps> = ({
     mouseX: number;
     mouseY: number;
   }>(null);
-  const [selectedSensor, setSelectedSensor] = useState<string | null>(null); // 新增状态：存储被选中的传感器ID
+  const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
+  const [rotation, setRotation] = useState(0);
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -182,9 +169,9 @@ const Viewer: React.FC<ViewerProps> = ({
 
   const handleSensorClick = (sensorId: string) => {
     if (selectedSensor === sensorId) {
-      setSelectedSensor(null); // 如果再次点击相同传感器，则取消选中
+      setSelectedSensor(null);
     } else {
-      setSelectedSensor(sensorId); // 选中新的传感器
+      setSelectedSensor(sensorId);
     }
   };
 
@@ -243,6 +230,50 @@ const Viewer: React.FC<ViewerProps> = ({
     handleCloseContextMenu();
   };
 
+  const handleRotateClockwise = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    // 获取舞台中心点
+    const stageCenter = {
+      x: stage.width() / 2,
+      y: stage.height() / 2,
+    };
+
+    // 获取当前舞台的偏移位置
+    const stagePosX = stage.x();
+    const stagePosY = stage.y();
+
+    // 计算旋转后的偏移位置
+    const newPosX = stageCenter.x + (stagePosY - stageCenter.y);
+    const newPosY = stageCenter.y - (stagePosX - stageCenter.x);
+
+    setRotation((prevRotation) => prevRotation + 90); // 顺时针旋转90°
+    setStagePos({ x: newPosX, y: newPosY });
+    handleCenter();
+  };
+
+  const handleRotateCounterClockwise = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    // 获取舞台中心点
+    const stageCenter = {
+      x: stage.width() / 2,
+      y: stage.height() / 2,
+    };
+
+    // 获取当前舞台的偏移位置
+    const stagePosX = stage.x();
+    const stagePosY = stage.y();
+
+    // 计算逆时针旋转后的偏移位置
+    const newPosX = stageCenter.x - (stagePosY - stageCenter.y);
+    const newPosY = stageCenter.y + (stagePosX - stageCenter.x);
+
+    setRotation((prevRotation) => prevRotation - 90); // 逆时针旋转90°
+    setStagePos({ x: newPosX, y: newPosY });
+  };
   const handleCenter = () => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -301,8 +332,8 @@ const Viewer: React.FC<ViewerProps> = ({
             y={stagePos.y}
             draggable
             onWheel={handleWheel}
+            rotation={rotation}
           >
-            {/* 固定网格层 */}
             <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
               {uiConfig.showGrid && renderGrid()}
             </Layer>
@@ -337,47 +368,26 @@ const Viewer: React.FC<ViewerProps> = ({
                   key={index}
                   sensor={sensor}
                   uiConfig={uiConfig}
-                  onClick={() => handleSensorClick(sensor.id)} // 添加点击事件
-                  isSelected={selectedSensor === sensor.id} // 判断是否高亮
+                  onClick={() => handleSensorClick(sensor.id)}
+                  isSelected={selectedSensor === sensor.id}
                 />
               ))}
             </Layer>
           </Stage>
 
-          {/* 右键菜单 */}
-          <Menu
-            open={contextMenuPos !== null}
-            onClose={handleCloseContextMenu}
-            anchorReference="anchorPosition"
-            anchorPosition={
-              contextMenuPos !== null
-                ? { top: contextMenuPos.mouseY, left: contextMenuPos.mouseX }
-                : undefined
-            }
-          >
-            <MenuItem onClick={handleToggleGrid}>
-              <FormControlLabel
-                control={<Checkbox checked={uiConfig.showGrid} />}
-                label="Show Grid"
-              />
-            </MenuItem>
-            <MenuItem onClick={handleReset}>
-              <RestartAlt />
-              <ListItemText sx={{ ml: 1 }}>Reset View</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleCenter}>
-              <CenterFocusWeak />
-              <ListItemText sx={{ ml: 1 }}>Centering View</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleAutoZoom}>
-              <DirectionsCarFilled />
-              <ListItemText sx={{ ml: 1 }}>Fit Vehicle</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleAutoZoomToSensorCoverage}>
-              <Sensors />
-              <ListItemText sx={{ ml: 1 }}>Fit Sensor Range</ListItemText>
-            </MenuItem>
-          </Menu>
+          {/* 独立的右键菜单 */}
+          <ViewerContextMenu
+            contextMenuPos={contextMenuPos}
+            handleCloseContextMenu={handleCloseContextMenu}
+            handleToggleGrid={handleToggleGrid}
+            handleReset={handleReset}
+            handleCenter={handleCenter}
+            handleAutoZoom={handleAutoZoom}
+            handleAutoZoomToSensorCoverage={handleAutoZoomToSensorCoverage}
+            handleRotateClockwise={handleRotateClockwise}
+            handleRotateCounterClockwise={handleRotateCounterClockwise}
+            uiConfig={uiConfig}
+          />
         </Box>
       </Grid>
     </Grid>
