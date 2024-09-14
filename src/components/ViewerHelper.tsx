@@ -102,48 +102,72 @@ export const getSensorCoverageBoundingBox = (sensors: Sensor[]) => {
     if (sensorMaxY > maxY) maxY = sensorMaxY;
   });
 
-  return { minX, minY, maxX, maxY };
+  // 计算包围框的中心点
+  const centerX = (minX + maxX) / 2;
+  const centerY = (minY + maxY) / 2;
+  const width = maxX - minX;
+  const height = maxY - minY;
+
+  const center = { x: centerX, y: centerY };
+  const bbox = {
+    origin: { x: centerX - width / 2, y: centerY - height / 2 },
+    center: center,
+    width: width,
+    height: height,
+  };
+  return bbox;
 };
 
 // 计算车辆和传感器的边界框
-export const getBoundingBox = (sensors: Sensor[], vehicle: Vehicle) => {
+export const getBoundingBox = (vehicle: Vehicle) => {
   let minX = vehicle.origin.x;
   let minY = vehicle.origin.y;
   let maxX = vehicle.origin.x + vehicle.width;
   let maxY = vehicle.origin.y + vehicle.length;
 
-  sensors.forEach((sensor) => {
-    const mount_position = mountStringToPosition(
-      sensor.mountPosition!.name
-    ) as MountPosition;
-
-    const sensorX = mount_position.position!.x;
-    const sensorY = mount_position.position!.y;
-
-    // 更新最小和最大坐标
-    if (sensorX < minX) minX = sensorX;
-    if (sensorY < minY) minY = sensorY;
-    if (sensorX > maxX) maxX = sensorX;
-    if (sensorY > maxY) maxY = sensorY;
-  });
-
-  return { minX, minY, maxX, maxY };
-};
-
-export const renderBoundingBox = (sensor: Sensor[]) => {
-  const { minX, minY, maxX, maxY } = getSensorCoverageBoundingBox(sensor);
-
+  const centerX = (minX + maxX) / 2;
+  const centerY = (minY + maxY) / 2;
   const width = maxX - minX;
   const height = maxY - minY;
 
+  const center = { x: centerX, y: centerY };
+  const bbox = {
+    origin: { x: centerX - width / 2, y: centerY - height / 2 },
+    center: center,
+    width: width,
+    height: height,
+  };
+
+  return bbox;
+};
+
+export const renderBoundingBox = (sensor: Sensor[]) => {
+  const { origin, center, width, height } =
+    getSensorCoverageBoundingBox(sensor);
   return (
     <Rect
-      x={minX}
-      y={minY}
+      x={origin.x}
+      y={origin.y}
       width={width}
       height={height}
-      stroke="green"
+      stroke="red"
       strokeWidth={5}
     />
   );
+};
+
+// 计算给定包围框或图层的原点在stage坐标系中的坐标
+// 计算图层的新原点位置，使其中心与stage的中心对齐
+export const calculateNewOrigin = (
+  boundingBoxCenter: { x: number; y: number }, // 图层或包围框的中心点
+  scale: number, // 当前缩放比例
+  stageSize: { width: number; height: number } // Stage 的大小
+) => {
+  // 计算图层的新原点
+  const newOrigin = {
+    x: stageSize.width / 2 - boundingBoxCenter.x * scale,
+    y: stageSize.height / 2 - boundingBoxCenter.y * scale,
+  };
+
+  return newOrigin;
 };

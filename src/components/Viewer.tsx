@@ -15,6 +15,7 @@ import { Vehicle } from "../types/Vehicle";
 import Konva from "konva";
 import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
 import {
+  calculateNewOrigin,
   getBoundingBox,
   getSensorCoverageBoundingBox,
   renderBoundingBox,
@@ -85,11 +86,6 @@ const Viewer: React.FC<ViewerProps> = ({
 
     setScale(newScale); // 更新缩放比例
     setStagePos(newPos); // 更新图层位置
-
-    // 计算并更新网格的边距
-    const { minX, minY, maxX, maxY } =
-      getSensorCoverageBoundingBox(sensorConfiguration);
-    setGirdMargin(Math.max(maxX, maxY) * 5);
   };
 
   const handleToggleGrid = () => {
@@ -103,19 +99,14 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    const { minX, minY, maxX, maxY } =
-      getSensorCoverageBoundingBox(sensorConfiguration);
-    const contentWidth = maxX - minX;
-    const contentHeight = maxY - minY;
+    const bbox = getSensorCoverageBoundingBox(sensorConfiguration);
 
-    const scaleX = stageSize.width / contentWidth;
-    const scaleY = stageSize.height / contentHeight;
-    const newScale = Math.min(scaleX, scaleY) * 0.9; // 留一点边距
+    const scaleX = stageSize.width / bbox.width;
+    const scaleY = stageSize.height / bbox.height;
+    const newScale = Math.min(scaleX, scaleY) * 0.95; // 留一点边距
 
-    const newPos = {
-      x: (stageSize.width - contentWidth * newScale) / 2 - minX * newScale,
-      y: (stageSize.height - contentHeight * newScale) / 2 - minY * newScale,
-    };
+    // 计算图层的新原点，确保包围框的中心与stage中心对齐
+    const newPos = calculateNewOrigin(bbox.center, newScale, stageSize);
 
     setScale(newScale);
     setStagePos(newPos);
@@ -136,21 +127,13 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    const { minX, minY, maxX, maxY } = getBoundingBox(
-      sensorConfiguration,
-      vehicle
-    );
-    const contentWidth = maxX - minX;
-    const contentHeight = maxY - minY;
+    const bbox = getBoundingBox(vehicle);
 
-    const scaleX = stageSize.width / contentWidth;
-    const scaleY = stageSize.height / contentHeight;
+    const scaleX = stageSize.width / bbox.width;
+    const scaleY = stageSize.height / bbox.height;
+
     const newScale = Math.min(scaleX, scaleY) * 0.9; // 留一点边距
-
-    const newPos = {
-      x: (stageSize.width - contentWidth * newScale) / 2 - minX * newScale,
-      y: (stageSize.height - contentHeight * newScale) / 2 - minY * newScale,
-    };
+    const newPos = calculateNewOrigin(bbox.center, newScale, stageSize);
 
     setScale(newScale);
     setStagePos(newPos);
@@ -168,24 +151,13 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    // 1. 获取车辆和传感器的包围框
-    const { minX, minY, maxX, maxY } =
-      getSensorCoverageBoundingBox(sensorConfiguration);
+    const bbox = getBoundingBox(vehicle);
 
-    // 2. 计算包围框的中心点
-    const boundingBoxCenter = {
-      x: (minX + maxX) / 2,
-      y: (minY + maxY) / 2,
-    };
+    const offsetX = bbox.center.x - stageSize.width / 2;
+    const offsetY = bbox.center.y - stageSize.height / 2;
 
-    // 3. 计算相对舞台中心的偏移
-    const offsetX = boundingBoxCenter.x - stageSize.width / 2;
-    const offsetY = boundingBoxCenter.y - stageSize.height / 2;
-
-    // 4. 在车辆中心进行旋转
     setRotation((prevRotation) => prevRotation + 90); // 顺时针旋转90°
 
-    // 5. 更新图层的位置，使得旋转后车辆仍保持在屏幕的中心
     const newPosX =
       stagePos.x -
       offsetX * Math.cos(Math.PI / 2) +
@@ -228,24 +200,9 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    // 1. 计算舞台的中心点
-    const stageCenter = { x: 0, y: 0 };
+    const bbox = getBoundingBox(vehicle);
 
-    // 2. 获取车辆和传感器的包围框
-    const { minX, minY, maxX, maxY } =
-      getSensorCoverageBoundingBox(sensorConfiguration);
-
-    // 3. 计算包围框的中心点
-    const boundingBoxCenter = {
-      x: (minX + maxX) / 2,
-      y: (minY + maxY) / 2,
-    };
-
-    // 4. 计算移动位置，将包围框的中心点移动到舞台的中心
-    const newPos = {
-      x: stageCenter.x - boundingBoxCenter.x * scale, // 根据当前缩放比例调整位置
-      y: stageCenter.y - boundingBoxCenter.y * scale,
-    };
+    const newPos = calculateNewOrigin(bbox.center, scale, stageSize);
 
     // 5. 设置图层的位置
     setStagePos(newPos);
