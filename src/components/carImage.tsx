@@ -23,7 +23,7 @@ const CarImage: React.FC<CarImageProps> = ({
   }
 
   return (
-    <Layer>
+    <>
       {image && (
         <KonvaImage
           image={image}
@@ -33,7 +33,7 @@ const CarImage: React.FC<CarImageProps> = ({
           height={height}
         />
       )}
-    </Layer>
+    </>
   );
 };
 

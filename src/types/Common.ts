@@ -73,3 +73,8 @@ export class Sensor {
 }
 
 export const SENSOR_RANGE_FACTOR = 5;
+
+export interface StageSize {
+  width: number;
+  height: number;
+}

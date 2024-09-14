@@ -40,7 +40,7 @@ const UssZones: React.FC<UssZonesProps> = ({
     return null;
   }
   return (
-    <Layer>
+    <>
       {/* 绘制左右两侧分区 */}
       {Array.from({ length: sideZones }).map((_, index) => (
         <React.Fragment key={index}>
@@ -102,7 +102,7 @@ const UssZones: React.FC<UssZonesProps> = ({
           />
         );
       })}
-    </Layer>
+    </>
   );
 };
 

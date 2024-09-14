@@ -5,13 +5,24 @@ import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
 import Marker, { mountStringToPosition } from "./utils";
-import { MountPosition, Sensor, SENSOR_RANGE_FACTOR } from "../types/Common";
+import {
+  MountPosition,
+  Sensor,
+  SENSOR_RANGE_FACTOR,
+  StageSize,
+} from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import Konva from "konva";
 import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
+import {
+  getBoundingBox,
+  getSensorCoverageBoundingBox,
+  renderDebugOverlay,
+  renderGrid,
+} from "./ViewerHelper";
 
 interface ViewerProps {
-  stageSize: { width: number; height: number };
+  stageSize: StageSize;
   vehicle: Vehicle;
   sensorConfiguration: Sensor[];
   uiConfig: any;
@@ -71,7 +82,10 @@ const Viewer: React.FC<ViewerProps> = ({
 
     setScale(newScale);
     setStagePos(newPos);
-    getSensorCoverageBoundingBox();
+
+    const { minX, minY, maxX, maxY } =
+      getSensorCoverageBoundingBox(sensorConfiguration);
+    setGirdMargin(Math.max(maxX, maxY) * 5);
   };
 
   const handleToggleGrid = () => {
@@ -81,74 +95,12 @@ const Viewer: React.FC<ViewerProps> = ({
     }));
   };
 
-  const renderGrid = () => {
-    const gridSize = 50;
-    const lines = [];
-    for (let i = -girdMargin; i < stageSize.width + girdMargin; i += gridSize) {
-      lines.push(
-        <Line
-          key={`v-${i}`}
-          points={[i, -girdMargin, i, stageSize.height + girdMargin]}
-          stroke="#989898"
-          strokeWidth={0.5}
-        />
-      );
-    }
-
-    for (
-      let i = -girdMargin;
-      i < stageSize.height + girdMargin;
-      i += gridSize
-    ) {
-      lines.push(
-        <Line
-          key={`h-${i}`}
-          points={[-girdMargin, i, stageSize.width + girdMargin, i]}
-          stroke="#989898"
-          strokeWidth={0.5}
-        />
-      );
-    }
-
-    return lines;
-  };
-
-  // 计算传感器的覆盖范围的边界框
-  const getSensorCoverageBoundingBox = () => {
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-
-    sensorConfiguration.forEach((sensor) => {
-      const mount_position = mountStringToPosition(
-        sensor.mountPosition!.name
-      ) as MountPosition;
-
-      const sensorX = mount_position.position!.x;
-      const sensorY = mount_position.position!.y;
-      const sensorRange =
-        sensor.sensorInfo.spec?.range * SENSOR_RANGE_FACTOR || 0;
-
-      const sensorMinX = sensorX - sensorRange;
-      const sensorMinY = sensorY - sensorRange;
-      const sensorMaxX = sensorX + sensorRange;
-      const sensorMaxY = sensorY + sensorRange;
-
-      if (sensorMinX < minX) minX = sensorMinX;
-      if (sensorMinY < minY) minY = sensorMinY;
-      if (sensorMaxX > maxX) maxX = sensorMaxX;
-      if (sensorMaxY > maxY) maxY = sensorMaxY;
-    });
-    setGirdMargin(Math.max(maxX, maxY) * 5);
-    return { minX, minY, maxX, maxY };
-  };
-
   const handleAutoZoomToSensorCoverage = () => {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const { minX, minY, maxX, maxY } = getSensorCoverageBoundingBox();
+    const { minX, minY, maxX, maxY } =
+      getSensorCoverageBoundingBox(sensorConfiguration);
     const contentWidth = maxX - minX;
     const contentHeight = maxY - minY;
 
@@ -175,37 +127,15 @@ const Viewer: React.FC<ViewerProps> = ({
     }
   };
 
-  // 计算车辆和传感器的边界框
-  const getBoundingBox = () => {
-    let minX = vehicle.origin.x;
-    let minY = vehicle.origin.y;
-    let maxX = vehicle.origin.x + vehicle.width;
-    let maxY = vehicle.origin.y + vehicle.length;
-
-    sensorConfiguration.forEach((sensor) => {
-      const mount_position = mountStringToPosition(
-        sensor.mountPosition!.name
-      ) as MountPosition;
-
-      const sensorX = mount_position.position!.x;
-      const sensorY = mount_position.position!.y;
-
-      // 更新最小和最大坐标
-      if (sensorX < minX) minX = sensorX;
-      if (sensorY < minY) minY = sensorY;
-      if (sensorX > maxX) maxX = sensorX;
-      if (sensorY > maxY) maxY = sensorY;
-    });
-
-    return { minX, minY, maxX, maxY };
-  };
-
   // 自动缩放到适合的大小
   const handleAutoZoom = () => {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const { minX, minY, maxX, maxY } = getBoundingBox();
+    const { minX, minY, maxX, maxY } = getBoundingBox(
+      sensorConfiguration,
+      vehicle
+    );
     const contentWidth = maxX - minX;
     const contentHeight = maxY - minY;
 
@@ -304,44 +234,6 @@ const Viewer: React.FC<ViewerProps> = ({
     });
   };
 
-  const renderDebugOverlay = () => {
-    const centerX = stageSize.width / 2;
-    const centerY = stageSize.height / 2;
-
-    return (
-      <>
-        {/* 边界矩形 */}
-        <Rect
-          x={0}
-          y={0}
-          width={stageSize.width}
-          height={stageSize.height}
-          stroke="blue"
-          strokeWidth={2}
-          dash={[10, 5]} // 边界线设置为虚线
-        />
-
-        {/* 中心点 */}
-        <Circle x={centerX} y={centerY} radius={5} fill="red" />
-
-        {/* X轴 (虚线) */}
-        <Line
-          points={[0, centerY, stageSize.width, centerY]}
-          stroke="green"
-          strokeWidth={1}
-          dash={[10, 5]} // X轴设置为虚线
-        />
-
-        {/* Y轴 (虚线) */}
-        <Line
-          points={[centerX, 0, centerX, stageSize.height]}
-          stroke="green"
-          strokeWidth={1}
-          dash={[10, 5]} // Y轴设置为虚线
-        />
-      </>
-    );
-  };
   return (
     <Grid
       container
@@ -373,9 +265,9 @@ const Viewer: React.FC<ViewerProps> = ({
             rotation={rotation}
             onDragMove={handleDragMove}
           >
-            <Layer>{renderDebugOverlay()}</Layer>
+            <Layer>{renderDebugOverlay(stageSize)}</Layer>
             <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
-              {uiConfig.showGrid && renderGrid()}
+              {uiConfig.showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
             <Layer>
               <UssZones
@@ -390,18 +282,14 @@ const Viewer: React.FC<ViewerProps> = ({
                 rearZones={uiConfig.rearZones}
                 sideZones={uiConfig.sideZones}
               />
-            </Layer>
-
-            <CarImage
-              show={uiConfig.showCarImage}
-              x={vehicle.origin.x}
-              y={vehicle.origin.y}
-              width={vehicle.width}
-              height={vehicle.length}
-              image={vehicle.image}
-            />
-
-            <Layer>
+              <CarImage
+                show={uiConfig.showCarImage}
+                x={vehicle.origin.x}
+                y={vehicle.origin.y}
+                width={vehicle.width}
+                height={vehicle.length}
+                image={vehicle.image}
+              />
               {uiConfig.showVehicleRefPoint &&
                 Object.values(vehicle.refPoints).map((position, index) => (
                   <Marker key={index} position={position} fill="red" />
