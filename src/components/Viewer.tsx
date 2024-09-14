@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid, Box } from "@mui/material";
-import { Stage, Layer, Line } from "react-konva";
+import { Stage, Layer, Line, Circle, Rect } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
@@ -304,6 +304,44 @@ const Viewer: React.FC<ViewerProps> = ({
     });
   };
 
+  const renderDebugOverlay = () => {
+    const centerX = stageSize.width / 2;
+    const centerY = stageSize.height / 2;
+
+    return (
+      <>
+        {/* 边界矩形 */}
+        <Rect
+          x={0}
+          y={0}
+          width={stageSize.width}
+          height={stageSize.height}
+          stroke="blue"
+          strokeWidth={2}
+          dash={[10, 5]} // 边界线设置为虚线
+        />
+
+        {/* 中心点 */}
+        <Circle x={centerX} y={centerY} radius={5} fill="red" />
+
+        {/* X轴 (虚线) */}
+        <Line
+          points={[0, centerY, stageSize.width, centerY]}
+          stroke="green"
+          strokeWidth={1}
+          dash={[10, 5]} // X轴设置为虚线
+        />
+
+        {/* Y轴 (虚线) */}
+        <Line
+          points={[centerX, 0, centerX, stageSize.height]}
+          stroke="green"
+          strokeWidth={1}
+          dash={[10, 5]} // Y轴设置为虚线
+        />
+      </>
+    );
+  };
   return (
     <Grid
       container
@@ -333,7 +371,9 @@ const Viewer: React.FC<ViewerProps> = ({
             draggable
             onWheel={handleWheel}
             rotation={rotation}
+            onDragMove={handleDragMove}
           >
+            <Layer>{renderDebugOverlay()}</Layer>
             <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
               {uiConfig.showGrid && renderGrid()}
             </Layer>
