@@ -15,7 +15,7 @@ import { SensorBlock } from "./Sensors";
 import Marker, { mountStringToPosition } from "./utils";
 import { MountPosition, Sensor, SENSOR_RANGE_FACTOR } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
-import Konva from "konva"; // 引入 Konva
+import Konva from "konva";
 import {
   CenterFocusWeak,
   DirectionsCarFilled,
@@ -44,11 +44,11 @@ const Viewer: React.FC<ViewerProps> = ({
   const [scale, setScale] = useState(1);
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
   const [girdMargin, setGirdMargin] = useState(10000);
-
   const [contextMenuPos, setContextMenuPos] = useState<null | {
     mouseX: number;
     mouseY: number;
   }>(null);
+  const [selectedSensor, setSelectedSensor] = useState<string | null>(null); // 新增状态：存储被选中的传感器ID
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -180,6 +180,14 @@ const Viewer: React.FC<ViewerProps> = ({
     handleCloseContextMenu(); // 关闭右键菜单
   };
 
+  const handleSensorClick = (sensorId: string) => {
+    if (selectedSensor === sensorId) {
+      setSelectedSensor(null); // 如果再次点击相同传感器，则取消选中
+    } else {
+      setSelectedSensor(sensorId); // 选中新的传感器
+    }
+  };
+
   // 计算车辆和传感器的边界框
   const getBoundingBox = () => {
     let minX = vehicle.origin.x;
@@ -239,19 +247,16 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    // 计算屏幕的中心点
     const stageCenter = {
       x: stage.width() / 2,
       y: stage.height() / 2,
     };
 
-    // 计算车辆的中心点
     const vehicleCenter = {
       x: vehicle.origin.x * scale + vehicle.width / 2,
       y: vehicle.origin.y * scale + vehicle.length / 2,
     };
 
-    // 调整舞台位置以将车辆居中
     const newPos = {
       x: stageCenter.x - vehicleCenter.x,
       y: stageCenter.y - vehicleCenter.y,
@@ -328,7 +333,13 @@ const Viewer: React.FC<ViewerProps> = ({
                   <Marker key={index} position={position} fill="red" />
                 ))}
               {sensorConfiguration.map((sensor, index) => (
-                <SensorBlock key={index} sensor={sensor} uiConfig={uiConfig} />
+                <SensorBlock
+                  key={index}
+                  sensor={sensor}
+                  uiConfig={uiConfig}
+                  onClick={() => handleSensorClick(sensor.id)} // 添加点击事件
+                  isSelected={selectedSensor === sensor.id} // 判断是否高亮
+                />
               ))}
             </Layer>
           </Stage>

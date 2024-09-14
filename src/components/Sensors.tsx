@@ -21,9 +21,16 @@ const sensorStyles: {
 interface SensorProp {
   sensor: Sensor;
   uiConfig: UiConfig;
+  onClick: () => void; // 点击事件处理程序
+  isSelected: boolean; // 是否选中状态
 }
 
-export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
+export const SensorBlock: React.FC<SensorProp> = ({
+  uiConfig,
+  sensor,
+  onClick,
+  isSelected,
+}) => {
   const type = sensor.sensorInfo.type;
   const fov = sensor.sensorInfo.spec.fov;
   const range = sensor.sensorInfo.spec.range * SENSOR_RANGE_FACTOR;
@@ -31,7 +38,6 @@ export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
     sensor.mountPosition!.name
   ) as MountPosition;
 
-  // console.log(sensor);
   const { color, opacity } = sensorStyles[type] || {
     color: "#000",
     opacity: 1,
@@ -49,36 +55,14 @@ export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
     return null;
   }
 
-  const getStyle = (options: string[]) => {
-    if (options.includes("broken")) {
-      return {
-        fill: "rgba(252, 68, 0, 0.8)", // 半透明红色用于表示损坏状态
-        strokeWidth: 2, // 更粗的边框表示高亮状态
-        stroke: "#fc4400",
-        dash: [8, 5],
-      };
-    } else if (options.includes("highlight")) {
-      return {
-        fill: `${color}${Math.floor(opacity * 1.5 * 255)
-          .toString(16)
-          .padStart(2, "0")}`,
-        strokeWidth: 2, // 更粗的边框表示高亮状态
-        stroke: "#black",
-      };
-    } else {
-      return {
-        fill: `${color}${Math.floor(opacity * 255)
-          .toString(16)
-          .padStart(2, "0")}`,
-        strokeWidth: 0,
-        stroke: color,
-        dash: undefined,
-      };
-    }
-  };
-
   const getSensorStyle = (options: string[]) => {
-    if (options.includes("highlight_sensor")) {
+    if (isSelected) {
+      return {
+        width: 15,
+        height: 15,
+        fill: "#ff9c2d", // 选中时高亮的颜色
+      };
+    } else if (options.includes("highlight_sensor")) {
       return {
         width: 15,
         height: 15,
@@ -92,11 +76,12 @@ export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
       };
     }
   };
-  const style = getStyle(sensor.options || []);
+
   const sensor_style = getSensorStyle(sensor.options || []);
-  // console.log(sensor.options);
+
   return (
     <>
+      {/* 渲染 FOV，但不监听点击事件 */}
       <Arc
         x={mount_position.position!.x}
         y={mount_position.position!.y}
@@ -104,18 +89,20 @@ export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
         outerRadius={range}
         angle={fov}
         rotation={mount_position.orientation! - fov / 2}
-        fill={style.fill} // 使用getStyle生成的fill颜色
-        strokeWidth={style.strokeWidth}
-        stroke={style.stroke}
-        dash={style.dash}
+        fill={`${color}${Math.floor(opacity * 255)
+          .toString(16)
+          .padStart(2, "0")}`}
+        strokeWidth={0}
+        listening={false} // 禁止FOV响应点击事件
       />
+      {/* 渲染传感器本身，允许点击 */}
       {sensor.options?.includes("broken") ? (
         <Line
           x={mount_position.position!.x}
           y={mount_position.position!.y}
           points={[-10, -10, 10, 10, 0, 0, 10, -10, -10, 10]} // 绘制一个 "X" 形状
-          stroke={style.stroke}
-          strokeWidth={style.strokeWidth}
+          stroke="#fc4400"
+          strokeWidth={2}
         />
       ) : (
         <Circle
@@ -123,7 +110,8 @@ export const SensorBlock: React.FC<SensorProp> = ({ uiConfig, sensor }) => {
           y={mount_position.position!.y}
           width={sensor_style.width}
           height={sensor_style.height}
-          fill={sensor_style.fill} // 使用getStyle生成的fill颜色
+          fill={sensor_style.fill}
+          onClick={onClick} // 点击事件只在 Circle 上生效
         />
       )}
     </>
