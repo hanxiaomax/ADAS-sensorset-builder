@@ -11,7 +11,6 @@ import {
   DirectionsCarFilled,
   RestartAlt,
   Sensors,
-  RotateLeft,
   RotateRight, // 引入旋转图标
 } from "@mui/icons-material";
 
@@ -24,7 +23,6 @@ interface ViewerContextMenuProps {
   handleAutoZoom: () => void;
   handleAutoZoomToSensorCoverage: () => void;
   handleRotateClockwise: () => void; // 顺时针旋转回调
-  handleRotateCounterClockwise: () => void; // 逆时针旋转回调
   uiConfig: any;
 }
 
@@ -37,7 +35,6 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
   handleAutoZoom,
   handleAutoZoomToSensorCoverage,
   handleRotateClockwise,
-  handleRotateCounterClockwise,
   uiConfig,
 }) => {
   return (
@@ -76,11 +73,7 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
       {/* 新增旋转功能 */}
       <MenuItem onClick={handleRotateClockwise}>
         <RotateRight />
-        <ListItemText sx={{ ml: 1 }}>Rotate Clockwise</ListItemText>
-      </MenuItem>
-      <MenuItem onClick={handleRotateCounterClockwise}>
-        <RotateLeft />
-        <ListItemText sx={{ ml: 1 }}>Rotate Counter-Clockwise</ListItemText>
+        <ListItemText sx={{ ml: 1 }}>Rotate</ListItemText>
       </MenuItem>
     </Menu>
   );

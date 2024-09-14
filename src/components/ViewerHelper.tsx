@@ -7,6 +7,7 @@ import {
 } from "../types/Common";
 import { mountStringToPosition } from "./utils";
 import { Vehicle } from "../types/Vehicle";
+import Konva from "konva";
 
 export const renderDebugOverlay = (stageSize: StageSize) => {
   const centerX = stageSize.width / 2;
@@ -150,6 +151,22 @@ export const renderBoundingBox = (sensor: Sensor[]) => {
       y={origin.y}
       width={width}
       height={height}
+      stroke="red"
+      strokeWidth={5}
+    />
+  );
+};
+
+export const renderLayerBoundary = (layerSize: {
+  width: number;
+  height: number;
+}) => {
+  return (
+    <Rect
+      x={0}
+      y={0}
+      width={layerSize.width}
+      height={layerSize.height}
       stroke="red"
       strokeWidth={5}
     />

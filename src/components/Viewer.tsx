@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Grid, Box } from "@mui/material";
 import { Stage, Layer, Line, Circle, Rect, Group } from "react-konva";
 import CarImage from "./carImage";
@@ -21,6 +21,7 @@ import {
   renderBoundingBox,
   renderDebugOverlay,
   renderGrid,
+  renderLayerBoundary,
 } from "./ViewerHelper";
 
 interface ViewerProps {
@@ -49,6 +50,18 @@ const Viewer: React.FC<ViewerProps> = ({
   }>(null);
   const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
   const [rotation, setRotation] = useState(0);
+
+  const layerRef = useRef<Konva.Layer>(null);
+  const [layerSize, setLayerSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    if (layerRef.current) {
+      const layer = layerRef.current;
+      const width = layer.width(); // 获取Layer的宽度
+      const height = layer.height(); // 获取Layer的高度
+      setLayerSize({ width, height });
+    }
+  }, []);
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -153,8 +166,8 @@ const Viewer: React.FC<ViewerProps> = ({
 
     const bbox = getBoundingBox(vehicle);
 
-    const offsetX = bbox.center.x - stageSize.width / 2;
-    const offsetY = bbox.center.y - stageSize.height / 2;
+    const offsetX = bbox.center.x;
+    const offsetY = bbox.center.y;
 
     setRotation((prevRotation) => prevRotation + 90); // 顺时针旋转90°
 
@@ -247,6 +260,7 @@ const Viewer: React.FC<ViewerProps> = ({
             onWheel={handleWheel} // 使用鼠标缩放
           >
             <Layer>{renderDebugOverlay(stageSize)}</Layer>
+            <Layer>{renderLayerBoundary(layerSize)}</Layer>
             <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
               {uiConfig.showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
@@ -259,6 +273,7 @@ const Viewer: React.FC<ViewerProps> = ({
               y={stagePos.y}
               draggable // 仅允许 Layer 拖动
               onDragMove={handleDragMove} // 拖动事件
+              ref={layerRef}
             >
               {renderBoundingBox(sensorConfiguration)}
 
@@ -310,7 +325,6 @@ const Viewer: React.FC<ViewerProps> = ({
             handleAutoZoom={handleAutoZoom}
             handleAutoZoomToSensorCoverage={handleAutoZoomToSensorCoverage}
             handleRotateClockwise={handleRotateClockwise}
-            handleRotateCounterClockwise={handleRotateCounterClockwise}
             uiConfig={uiConfig}
           />
         </Box>
