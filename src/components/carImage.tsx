@@ -1,5 +1,5 @@
 import React from "react";
-import { Layer, Image } from "react-konva";
+import { Layer, Image as KonvaImage } from "react-konva";
 
 interface CarImageProps {
   show: boolean;
@@ -21,15 +21,16 @@ const CarImage: React.FC<CarImageProps> = ({
   if (!show) {
     return null;
   }
+
   return (
     <Layer>
       {image && (
-        <Image
+        <KonvaImage
           image={image}
           x={x}
           y={y}
-          width={image?.width!}
-          height={image?.height}
+          width={width} // 使用传入的宽度和高度，而不是 image 的原始大小
+          height={height}
         />
       )}
     </Layer>

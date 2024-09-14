@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Grid, Box } from "@mui/material";
-import { Stage, Layer, Line, Circle, Rect } from "react-konva";
+import { Stage, Layer, Line, Circle, Rect, Group } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
@@ -377,19 +377,21 @@ const Viewer: React.FC<ViewerProps> = ({
             <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
               {uiConfig.showGrid && renderGrid()}
             </Layer>
+            <Layer>
+              <UssZones
+                show={uiConfig.showUssZones}
+                x={vehicle.origin.x}
+                y={vehicle.origin.y}
+                carWidth={vehicle.width}
+                carLength={vehicle.length}
+                frontOverhang={vehicle.frontOverhang}
+                rearOverhang={vehicle.rearOverhang}
+                frontZones={uiConfig.frontZones}
+                rearZones={uiConfig.rearZones}
+                sideZones={uiConfig.sideZones}
+              />
+            </Layer>
 
-            <UssZones
-              show={uiConfig.showUssZones}
-              x={vehicle.origin.x}
-              y={vehicle.origin.y}
-              carWidth={vehicle.width}
-              carLength={vehicle.length}
-              frontOverhang={vehicle.frontOverhang}
-              rearOverhang={vehicle.rearOverhang}
-              frontZones={uiConfig.frontZones}
-              rearZones={uiConfig.rearZones}
-              sideZones={uiConfig.sideZones}
-            />
             <CarImage
               show={uiConfig.showCarImage}
               x={vehicle.origin.x}
@@ -398,6 +400,7 @@ const Viewer: React.FC<ViewerProps> = ({
               height={vehicle.length}
               image={vehicle.image}
             />
+
             <Layer>
               {uiConfig.showVehicleRefPoint &&
                 Object.values(vehicle.refPoints).map((position, index) => (
