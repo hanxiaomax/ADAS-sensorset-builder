@@ -5,8 +5,8 @@ import {
   MountPosition,
   Sensor,
   SENSOR_RANGE_FACTOR,
-} from "../types/Common";
-import { mountStringToPosition } from "./utils";
+} from "../../types/Common";
+import { mountStringToPosition } from "../utils";
 
 const sensorStyles: {
   [key: string]: { color: string; opacity: number };

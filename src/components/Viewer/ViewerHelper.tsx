@@ -4,9 +4,9 @@ import {
   Sensor,
   SENSOR_RANGE_FACTOR,
   StageSize,
-} from "../types/Common";
-import { mountStringToPosition } from "./utils";
-import { Vehicle } from "../types/Vehicle";
+} from "../../types/Common";
+import { mountStringToPosition } from "../utils";
+import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
 
 export const renderDebugOverlay = (stageSize: StageSize) => {

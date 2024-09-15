@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Grid, Box } from "@mui/material";
-import { Stage, Layer, Line, Circle, Rect, Group } from "react-konva";
+import { Stage, Layer, Group } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
-import Marker from "./utils";
-import { Sensor, StageSize } from "../types/Common";
-import { Vehicle } from "../types/Vehicle";
+import Marker from "../utils";
+import { Sensor, StageSize } from "../../types/Common";
+import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
 import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
 import {

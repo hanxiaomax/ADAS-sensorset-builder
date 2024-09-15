@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Grid, Box } from "@mui/material";
 import useImage from "use-image";
-import Viewer from "../components/Viewer"; // 引入 Viewer 组件
+import Viewer from "../components/Viewer/Viewer"; // 引入 Viewer 组件
 import { Sensor, SensorStocks } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import BottomDrawer from "../components/BottomDrawer";
@@ -28,7 +28,8 @@ const SensorSetBuilderMain: React.FC = () => {
     showRadarSensors: true,
     showCameraSensors: true,
     showVehicleRefPoint: false,
-    showDebugMode: true,
+    showDebugMode: false,
+    showGrid: true,
     frontZones: 6,
     rearZones: 4,
     sideZones: 6,
