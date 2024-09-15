@@ -113,12 +113,66 @@ export default function EnhancedTable({
                     onChange={handleSelectAllClick}
                   />
                 </TableCell>
-                <TableCell width={"100px"}>Name</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Range (m)</TableCell>
-                <TableCell>Fov (°)</TableCell>
-                <TableCell>Brand</TableCell>
-                <TableCell>Description</TableCell>
+                <TableCell
+                  sx={{
+                    width: 150,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Name
+                </TableCell>
+                <TableCell
+                  sx={{
+                    width: 100,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Type
+                </TableCell>
+                <TableCell
+                  sx={{
+                    width: 100,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Range (m)
+                </TableCell>
+                <TableCell
+                  sx={{
+                    width: 100,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Fov (°)
+                </TableCell>
+                <TableCell
+                  sx={{
+                    width: 150,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Brand
+                </TableCell>
+                <TableCell
+                  sx={{
+                    width: 200,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Description
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -145,12 +199,60 @@ export default function EnhancedTable({
                         }}
                       />
                     </TableCell>
-                    <TableCell>{sensor.sensorInfo.name}</TableCell>
-                    <TableCell>{sensor.sensorInfo.type}</TableCell>
-                    <TableCell>{sensor.sensorInfo.spec.range}</TableCell>
-                    <TableCell>{sensor.sensorInfo.spec.fov}</TableCell>
-                    <TableCell>{sensor.sensorInfo.brand}</TableCell>
-                    <TableCell>{sensor.sensorInfo.desc}</TableCell>
+                    <TableCell
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {sensor.sensorInfo.name}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {sensor.sensorInfo.type}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {sensor.sensorInfo.spec.range}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {sensor.sensorInfo.spec.fov}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {sensor.sensorInfo.brand}
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {sensor.sensorInfo.desc}
+                    </TableCell>
                   </TableRow>
                 );
               })}
