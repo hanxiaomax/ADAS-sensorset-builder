@@ -115,6 +115,13 @@ const ToolMenu: React.FC<ToolMenuProps> = ({}) => {
           )}
         </DialogContent>
         <DialogActions>
+          <Button
+            size="small"
+            variant="contained"
+            onClick={handleSpecPageClose}
+          >
+            Create
+          </Button>
           <Button onClick={handleSpecPageClose}>Close</Button>
         </DialogActions>
       </Dialog>
