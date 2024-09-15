@@ -217,8 +217,8 @@ const Viewer: React.FC<ViewerProps> = ({
               listening={false}
               scaleX={scale}
               scaleY={scale}
-              x={stagePos.x}
-              y={stagePos.y}
+              x={stageCenter.x}
+              y={stageCenter.y}
               offsetX={stageSize.width / 2}
               offsetY={stageSize.height / 2}
             >
