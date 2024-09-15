@@ -6,7 +6,7 @@ import { Sensor, SensorStocks } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import BottomDrawer from "../components/BottomDrawer";
 import SensorPanel from "../components/SensorPanel";
-import MenuBar from "../components/MenuBar";
+import MenuBar from "../components/Menu/MenuBar";
 import Konva from "konva"; // 引入 Konva
 
 const SensorSetBuilderMain: React.FC = () => {

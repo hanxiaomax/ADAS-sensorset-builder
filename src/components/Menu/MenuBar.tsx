@@ -18,10 +18,11 @@ import {
 } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import EmailIcon from "@mui/icons-material/Email";
-import ProfileMenu from "../components/ProfileMenu";
-import ViewMenu from "../components/ViewMenu";
+import ProfileMenu from "./ProfileMenu";
+import ViewMenu from "./ViewMenu";
 import { Stage } from "konva/lib/Stage";
 import Konva from "konva"; // 引入 Konva
+import ToolMenu from "./ToolMenu";
 
 interface MenuBarProps {
   handleSensorSetConfigImport: (data: any) => void;
@@ -143,8 +144,8 @@ const MenuBar: React.FC<MenuBarProps> = ({
             onExport={handleExport}
           />
           <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
-          <Button onClick={handleSnapshotOpen}>Snapshot</Button>{" "}
-          {/* 修改为打开 Snapshot 对话框 */}
+          <Button onClick={handleSnapshotOpen}>Snapshot</Button>
+          <ToolMenu />
           <Button onClick={handleAboutOpen}>About</Button>
         </ButtonGroup>
       </AppBar>

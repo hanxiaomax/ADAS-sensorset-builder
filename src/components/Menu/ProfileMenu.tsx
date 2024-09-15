@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import { SensorStocks, Sensor } from "../types/Common";
+import { SensorStocks, Sensor } from "../../types/Common";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 
 interface ProfileMenuProps {
