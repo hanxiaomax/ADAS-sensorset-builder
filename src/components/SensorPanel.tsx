@@ -26,6 +26,7 @@ import {
 import HighlightIcon from "@mui/icons-material/Highlight";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { v4 as uuidv4 } from "uuid";
+import Sensors from "@mui/icons-material/Sensors";
 
 interface SensorPanelProps {
   sensorConfiguration: Sensor[];
@@ -147,7 +148,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
         {drawerOpen ? (
           <ArrowForwardIosOutlined sx={{ fontSize: "40px", color: "white" }} />
         ) : (
-          <TableRows sx={{ fontSize: "40px" }} />
+          <Sensors sx={{ fontSize: "40px" }} />
         )}
       </IconButton>
 
