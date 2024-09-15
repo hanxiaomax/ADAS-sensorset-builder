@@ -3,8 +3,11 @@ import {
   Menu,
   MenuItem,
   ListItemText,
+  ListItemIcon,
   Checkbox,
-  FormControlLabel,
+  Divider,
+  Paper,
+  ListItemSecondaryAction,
 } from "@mui/material";
 import {
   CenterFocusWeak,
@@ -12,6 +15,8 @@ import {
   RestartAlt,
   Sensors,
   RotateRight, // 引入旋转图标
+  GridOn,
+  BugReport,
 } from "@mui/icons-material";
 
 interface ViewerContextMenuProps {
@@ -23,6 +28,7 @@ interface ViewerContextMenuProps {
   handleAutoZoom: () => void;
   handleAutoZoomToSensorCoverage: () => void;
   handleRotateClockwise: () => void; // 顺时针旋转回调
+  handleToggleDebugMode: () => void;
   uiConfig: any;
 }
 
@@ -35,47 +41,85 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
   handleAutoZoom,
   handleAutoZoomToSensorCoverage,
   handleRotateClockwise,
+  handleToggleDebugMode,
   uiConfig,
 }) => {
   return (
-    <Menu
-      open={contextMenuPos !== null}
-      onClose={handleCloseContextMenu}
-      anchorReference="anchorPosition"
-      anchorPosition={
-        contextMenuPos !== null
-          ? { top: contextMenuPos.mouseY, left: contextMenuPos.mouseX }
-          : undefined
-      }
-    >
-      <MenuItem onClick={handleToggleGrid}>
-        <FormControlLabel
-          control={<Checkbox checked={uiConfig.showGrid} />}
-          label="Show Grid"
-        />
-      </MenuItem>
-      <MenuItem onClick={handleReset}>
-        <RestartAlt />
-        <ListItemText sx={{ ml: 1 }}>Reset View</ListItemText>
-      </MenuItem>
-      <MenuItem onClick={handleCenter}>
-        <CenterFocusWeak />
-        <ListItemText sx={{ ml: 1 }}>Centering View</ListItemText>
-      </MenuItem>
-      <MenuItem onClick={handleAutoZoom}>
-        <DirectionsCarFilled />
-        <ListItemText sx={{ ml: 1 }}>Fit Vehicle</ListItemText>
-      </MenuItem>
-      <MenuItem onClick={handleAutoZoomToSensorCoverage}>
-        <Sensors />
-        <ListItemText sx={{ ml: 1 }}>Fit Sensor Range</ListItemText>
-      </MenuItem>
-      {/* 新增旋转功能 */}
-      <MenuItem onClick={handleRotateClockwise}>
-        <RotateRight />
-        <ListItemText sx={{ ml: 1 }}>Rotate</ListItemText>
-      </MenuItem>
-    </Menu>
+    <Paper sx={{ width: 320, maxWidth: "100%" }}>
+      <Menu
+        open={contextMenuPos !== null}
+        onClose={handleCloseContextMenu}
+        anchorReference="anchorPosition"
+        anchorPosition={
+          contextMenuPos !== null
+            ? { top: contextMenuPos.mouseY, left: contextMenuPos.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem onClick={handleReset}>
+          <ListItemIcon>
+            <RestartAlt fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Reset View</ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={handleCenter}>
+          <ListItemIcon>
+            <CenterFocusWeak fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Centering View</ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={handleAutoZoom}>
+          <ListItemIcon>
+            <DirectionsCarFilled fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Fit Vehicle</ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={handleAutoZoomToSensorCoverage}>
+          <ListItemIcon>
+            <Sensors fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Fit Sensor Range</ListItemText>
+        </MenuItem>
+
+        <MenuItem onClick={handleRotateClockwise}>
+          <ListItemIcon>
+            <RotateRight fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Rotate</ListItemText>
+        </MenuItem>
+        <Divider />
+        <MenuItem onClick={handleToggleGrid}>
+          <ListItemIcon>
+            <GridOn fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Show Grid</ListItemText>
+          <ListItemSecondaryAction>
+            <Checkbox
+              edge="end"
+              checked={uiConfig.showGrid}
+              onChange={handleToggleGrid}
+            />
+          </ListItemSecondaryAction>
+        </MenuItem>
+
+        <MenuItem onClick={handleToggleDebugMode}>
+          <ListItemIcon>
+            <BugReport fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Debug Mode</ListItemText>
+          <ListItemSecondaryAction>
+            <Checkbox
+              edge="end"
+              checked={uiConfig.showDebugMode}
+              onChange={handleToggleDebugMode}
+            />
+          </ListItemSecondaryAction>
+        </MenuItem>
+      </Menu>
+    </Paper>
   );
 };
 

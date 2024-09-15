@@ -10,7 +10,6 @@ import { Vehicle } from "../types/Vehicle";
 import Konva from "konva";
 import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
 import {
-  calculateNewOrigin,
   getBoundingBox,
   getSensorCoverageBoundingBox,
   renderBoundingBox,
@@ -104,6 +103,13 @@ const Viewer: React.FC<ViewerProps> = ({
     setUiConfig((prev: any) => ({
       ...prev,
       showGrid: !prev.showGrid,
+    }));
+  };
+
+  const handelToggleDebugMode = () => {
+    setUiConfig((prev: any) => ({
+      ...prev,
+      showDebugMode: !prev.showDebugMode,
     }));
   };
 
@@ -204,7 +210,9 @@ const Viewer: React.FC<ViewerProps> = ({
             draggable={false} // 禁用 Stage 的拖动
             onWheel={handleWheel} // 使用鼠标缩放
           >
-            <Layer>{renderDebugOverlay(stageSize)}</Layer>
+            <Layer>
+              {uiConfig.showDebugMode && renderDebugOverlay(stageSize)}
+            </Layer>
             <Layer
               listening={false}
               scaleX={scale}
@@ -234,8 +242,8 @@ const Viewer: React.FC<ViewerProps> = ({
               offsetX={stageSize.width / 2}
               offsetY={stageSize.height / 2}
             >
-              {renderBoundingBox(sensorConfiguration)}
-              {renderLayerBoundary(layerSize)}
+              {uiConfig.showDebugMode && renderBoundingBox(sensorConfiguration)}
+              {uiConfig.showDebugMode && renderLayerBoundary(layerSize)}
 
               <Group>
                 <UssZones
@@ -285,6 +293,7 @@ const Viewer: React.FC<ViewerProps> = ({
             handleAutoZoom={handleAutoZoom}
             handleAutoZoomToSensorCoverage={handleAutoZoomToSensorCoverage}
             handleRotateClockwise={handleRotateClockwise}
+            handleToggleDebugMode={handelToggleDebugMode}
             uiConfig={uiConfig}
           />
         </Box>

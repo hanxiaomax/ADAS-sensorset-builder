@@ -28,7 +28,7 @@ const SensorSetBuilderMain: React.FC = () => {
     showRadarSensors: true,
     showCameraSensors: true,
     showVehicleRefPoint: false,
-    showNerdMode: false,
+    showDebugMode: true,
     frontZones: 6,
     rearZones: 4,
     sideZones: 6,
