@@ -4,13 +4,8 @@ import { Stage, Layer, Line, Circle, Rect, Group } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
-import Marker, { mountStringToPosition } from "./utils";
-import {
-  MountPosition,
-  Sensor,
-  SENSOR_RANGE_FACTOR,
-  StageSize,
-} from "../types/Common";
+import Marker from "./utils";
+import { Sensor, StageSize } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import Konva from "konva";
 import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
@@ -41,11 +36,11 @@ const Viewer: React.FC<ViewerProps> = ({
   setUiConfig,
   stageRef,
 }) => {
-  const [scale, setScale] = useState(1);
-  const [stagePos, setStagePos] = useState({
+  const stageCenter = {
     x: stageSize.width / 2,
     y: stageSize.height / 2,
-  });
+  };
+  const [scale, setScale] = useState(1);
   const [girdMargin, setGirdMargin] = useState(10000);
   const [contextMenuPos, setContextMenuPos] = useState<null | {
     mouseX: number;
@@ -53,9 +48,10 @@ const Viewer: React.FC<ViewerProps> = ({
   }>(null);
   const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
   const [rotation, setRotation] = useState(0);
-
   const layerRef = useRef<Konva.Layer>(null);
   const [layerSize, setLayerSize] = useState({ width: 0, height: 0 });
+
+  const [stagePos, setStagePos] = useState(stageCenter);
 
   useEffect(() => {
     if (layerRef.current) {
@@ -120,12 +116,8 @@ const Viewer: React.FC<ViewerProps> = ({
     const scaleX = stageSize.width / bbox.width;
     const scaleY = stageSize.height / bbox.height;
     const newScale = Math.min(scaleX, scaleY) * 0.95; // 留一点边距
-
-    // 计算图层的新原点，确保包围框的中心与stage中心对齐
-    const newPos = calculateNewOrigin(bbox.center, newScale, stageSize);
-
     setScale(newScale);
-    setStagePos(newPos);
+    setStagePos(stageCenter);
 
     handleCloseContextMenu(); // 关闭右键菜单
   };
@@ -151,14 +143,14 @@ const Viewer: React.FC<ViewerProps> = ({
     const newScale = Math.min(scaleX, scaleY) * 0.9; // 留一点边距
 
     setScale(newScale);
-    setStagePos({ x: stageSize.width / 2, y: stageSize.height / 2 });
+    setStagePos(stageCenter);
 
     handleCloseContextMenu(); // 关闭右键菜单
   };
 
   const handleReset = () => {
     setScale(1);
-    setStagePos({ x: stageSize.width / 2, y: stageSize.height / 2 });
+    setStagePos(stageCenter);
     handleCloseContextMenu();
   };
 
@@ -172,7 +164,7 @@ const Viewer: React.FC<ViewerProps> = ({
   const handleCenter = () => {
     const stage = stageRef.current;
     if (!stage) return;
-    setStagePos({ x: stageSize.width / 2, y: stageSize.height / 2 });
+    setStagePos(stageCenter);
     handleCloseContextMenu(); // 关闭右键菜单
   };
 
@@ -213,7 +205,15 @@ const Viewer: React.FC<ViewerProps> = ({
             onWheel={handleWheel} // 使用鼠标缩放
           >
             <Layer>{renderDebugOverlay(stageSize)}</Layer>
-            <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
+            <Layer
+              listening={false}
+              scaleX={scale}
+              scaleY={scale}
+              x={stagePos.x}
+              y={stagePos.y}
+              offsetX={stageSize.width / 2}
+              offsetY={stageSize.height / 2}
+            >
               {uiConfig.showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
             {/* 

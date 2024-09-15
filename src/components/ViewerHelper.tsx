@@ -151,7 +151,7 @@ export const renderBoundingBox = (sensor: Sensor[]) => {
       y={origin.y}
       width={width}
       height={height}
-      stroke="red"
+      stroke="blue"
       strokeWidth={5}
     />
   );
@@ -169,7 +169,7 @@ export const renderLayerBoundary = (layerSize: {
       width={layerSize.width}
       height={layerSize.height}
       stroke="black"
-      strokeWidth={10}
+      dash={[10, 5]}
     />
   );
 };
