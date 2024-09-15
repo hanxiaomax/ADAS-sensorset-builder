@@ -42,7 +42,10 @@ const Viewer: React.FC<ViewerProps> = ({
   stageRef,
 }) => {
   const [scale, setScale] = useState(1);
-  const [stagePos, setStagePos] = useState({ x: 0, y: 0 });
+  const [stagePos, setStagePos] = useState({
+    x: stageSize.width / 2,
+    y: stageSize.height / 2,
+  });
   const [girdMargin, setGirdMargin] = useState(10000);
   const [contextMenuPos, setContextMenuPos] = useState<null | {
     mouseX: number;
@@ -146,80 +149,30 @@ const Viewer: React.FC<ViewerProps> = ({
     const scaleY = stageSize.height / bbox.height;
 
     const newScale = Math.min(scaleX, scaleY) * 0.9; // 留一点边距
-    const newPos = calculateNewOrigin(bbox.center, newScale, stageSize);
 
     setScale(newScale);
-    setStagePos(newPos);
+    setStagePos({ x: stageSize.width / 2, y: stageSize.height / 2 });
 
     handleCloseContextMenu(); // 关闭右键菜单
   };
 
   const handleReset = () => {
     setScale(1);
-    setStagePos({ x: 0, y: 0 });
+    setStagePos({ x: stageSize.width / 2, y: stageSize.height / 2 });
     handleCloseContextMenu();
   };
 
   const handleRotateClockwise = () => {
     const stage = stageRef.current;
     if (!stage) return;
-
-    const bbox = getBoundingBox(vehicle);
-
-    const offsetX = bbox.center.x;
-    const offsetY = bbox.center.y;
-
     setRotation((prevRotation) => prevRotation + 90); // 顺时针旋转90°
-
-    const newPosX =
-      stagePos.x -
-      offsetX * Math.cos(Math.PI / 2) +
-      offsetY * Math.sin(Math.PI / 2);
-    const newPosY =
-      stagePos.y -
-      offsetX * Math.sin(Math.PI / 2) -
-      offsetY * Math.cos(Math.PI / 2);
-
-    setStagePos({
-      x: newPosX,
-      y: newPosY,
-    });
-
     handleCloseContextMenu(); // 关闭右键菜单
   };
 
-  const handleRotateCounterClockwise = () => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    // 获取舞台中心点
-    const stageCenter = {
-      x: stage.width() / 2,
-      y: stage.height() / 2,
-    };
-
-    // 获取当前舞台的偏移位置
-    const stagePosX = stage.x();
-    const stagePosY = stage.y();
-
-    // 计算逆时针旋转后的偏移位置
-    const newPosX = stageCenter.x - (stagePosY - stageCenter.y);
-    const newPosY = stageCenter.y + (stagePosX - stageCenter.x);
-
-    setRotation((prevRotation) => prevRotation - 90); // 逆时针旋转90°
-    setStagePos({ x: newPosX, y: newPosY });
-  };
   const handleCenter = () => {
     const stage = stageRef.current;
     if (!stage) return;
-
-    const bbox = getBoundingBox(vehicle);
-
-    const newPos = calculateNewOrigin(bbox.center, scale, stageSize);
-
-    // 5. 设置图层的位置
-    setStagePos(newPos);
-
+    setStagePos({ x: stageSize.width / 2, y: stageSize.height / 2 });
     handleCloseContextMenu(); // 关闭右键菜单
   };
 
@@ -260,12 +213,15 @@ const Viewer: React.FC<ViewerProps> = ({
             onWheel={handleWheel} // 使用鼠标缩放
           >
             <Layer>{renderDebugOverlay(stageSize)}</Layer>
-            <Layer>{renderLayerBoundary(layerSize)}</Layer>
             <Layer listening={false} scaleX={1} scaleY={1} x={0} y={0}>
               {uiConfig.showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
-
-            {/* 允许缩放和拖动的图层 */}
+            {/* 
+            1. move origin to center 
+            2. x/y is the coordination of center,so set
+            it to stage center will draw layer on stage center
+            3. now the rotation is also ref the center of layer
+            */}
             <Layer
               scaleX={scale}
               scaleY={scale}
@@ -274,10 +230,14 @@ const Viewer: React.FC<ViewerProps> = ({
               draggable // 仅允许 Layer 拖动
               onDragMove={handleDragMove} // 拖动事件
               ref={layerRef}
+              rotation={rotation}
+              offsetX={stageSize.width / 2}
+              offsetY={stageSize.height / 2}
             >
               {renderBoundingBox(sensorConfiguration)}
+              {renderLayerBoundary(layerSize)}
 
-              <Group rotation={rotation}>
+              <Group>
                 <UssZones
                   show={uiConfig.showUssZones}
                   x={vehicle.origin.x}

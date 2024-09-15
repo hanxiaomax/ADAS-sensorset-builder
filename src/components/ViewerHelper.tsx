@@ -161,14 +161,15 @@ export const renderLayerBoundary = (layerSize: {
   width: number;
   height: number;
 }) => {
+  console.log(layerSize);
   return (
     <Rect
       x={0}
       y={0}
       width={layerSize.width}
       height={layerSize.height}
-      stroke="red"
-      strokeWidth={5}
+      stroke="black"
+      strokeWidth={10}
     />
   );
 };
