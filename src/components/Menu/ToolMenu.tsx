@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Menu,
   MenuItem,
@@ -7,22 +7,12 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Paper,
-  Typography,
 } from "@mui/material";
-import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
-import { Sensor } from "../../types/Common";
+import EnhancedTable from "./EnhancedTable"; // 引入表格组件
 
-interface ToolMenuProps {}
-
-const ToolMenu: React.FC<ToolMenuProps> = ({}) => {
+const ToolMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [specPageOpen, setSpecPageOpen] = useState<boolean>(false);
-  const [sensors, setSensors] = useState<Sensor[]>([]);
-  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
-    pageSize: 5,
-    page: 0,
-  });
 
   // 打开菜单
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -36,10 +26,6 @@ const ToolMenu: React.FC<ToolMenuProps> = ({}) => {
 
   // 打开spec对话框
   const handleSpecPageOpen = () => {
-    const sensors = JSON.parse(localStorage.getItem("sensorConfig") || "[]");
-    if (sensors) {
-      setSensors(sensors);
-    }
     setSpecPageOpen(true);
   };
 
@@ -47,23 +33,6 @@ const ToolMenu: React.FC<ToolMenuProps> = ({}) => {
   const handleSpecPageClose = () => {
     setSpecPageOpen(false);
   };
-
-  // 定义 DataGrid 列
-  const columns: GridColDef[] = [
-    { field: "name", headerName: "Name", flex: 1 },
-    { field: "type", headerName: "Type", flex: 1 },
-    { field: "range", headerName: "Range (m)", flex: 1, type: "number" },
-    { field: "fov", headerName: "Fov (°)", flex: 1, type: "number" },
-  ];
-
-  // 将 sensors 数据转换为 rows
-  const rows = sensors.map((sensor, index) => ({
-    id: index, // DataGrid 必须有 id 字段
-    name: sensor.sensorInfo.name,
-    type: sensor.sensorInfo.type,
-    range: sensor.sensorInfo.spec.range,
-    fov: sensor.sensorInfo.spec.fov,
-  }));
 
   return (
     <>
@@ -83,7 +52,7 @@ const ToolMenu: React.FC<ToolMenuProps> = ({}) => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleSpecPageOpen}>Show Specs</MenuItem>
+        <MenuItem onClick={handleSpecPageOpen}>Create BOM Table</MenuItem>
       </Menu>
 
       {/* Spec 对话框 */}
@@ -93,35 +62,12 @@ const ToolMenu: React.FC<ToolMenuProps> = ({}) => {
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Sensor Specifications</DialogTitle>
+        <DialogTitle>Sensor BOM</DialogTitle>
         <DialogContent>
-          {sensors.length > 0 ? (
-            <Paper sx={{ height: 400, width: "98%" }}>
-              <DataGrid
-                rows={rows}
-                columns={columns}
-                pagination
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                pageSizeOptions={[5, 10]}
-                checkboxSelection
-                sx={{ border: 1 }}
-              />
-            </Paper>
-          ) : (
-            <Typography variant="subtitle1">
-              No sensor config found in localStorage.
-            </Typography>
-          )}
+          {/* 在对话框内显示表格 */}
+          <EnhancedTable />
         </DialogContent>
         <DialogActions>
-          <Button
-            size="small"
-            variant="contained"
-            onClick={handleSpecPageClose}
-          >
-            Create
-          </Button>
           <Button onClick={handleSpecPageClose}>Close</Button>
         </DialogActions>
       </Dialog>
