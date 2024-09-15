@@ -9,10 +9,13 @@ import {
   DialogActions,
 } from "@mui/material";
 import EnhancedTable from "./EnhancedTable"; // 引入表格组件
+import html2canvas from "html2canvas";
+import { Sensor } from "../../types/Common"; // 引入 Sensor 类型
 
 const ToolMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [specPageOpen, setSpecPageOpen] = useState<boolean>(false);
+  const [selectedRows, setSelectedRows] = useState<any[]>([]); // 保存选中的行数据
 
   // 打开菜单
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -34,6 +37,27 @@ const ToolMenu: React.FC = () => {
     setSpecPageOpen(false);
   };
 
+  // 生成图片
+  const handleGenerateImage = () => {
+    const tableElement = document.getElementById("selectedTable");
+    if (tableElement) {
+      html2canvas(tableElement).then((canvas) => {
+        const link = document.createElement("a");
+        link.download = "selected_table_snapshot.png"; // 图片文件名
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    }
+  };
+
+  // 从 localStorage 加载 sensorConfig 数据
+  const loadSensorConfig = (): Sensor[] => {
+    const sensorConfig = JSON.parse(
+      localStorage.getItem("sensorConfig") || "[]"
+    );
+    return sensorConfig;
+  };
+
   return (
     <>
       <Button
@@ -52,7 +76,7 @@ const ToolMenu: React.FC = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleSpecPageOpen}>Create BOM Table</MenuItem>
+        <MenuItem onClick={handleSpecPageOpen}>Create Sensor BOM</MenuItem>
       </Menu>
 
       {/* Spec 对话框 */}
@@ -64,10 +88,21 @@ const ToolMenu: React.FC = () => {
       >
         <DialogTitle>Sensor BOM</DialogTitle>
         <DialogContent>
-          {/* 在对话框内显示表格 */}
-          <EnhancedTable />
+          {/* 将选中的行通过setSelectedRows传递给EnhancedTable */}
+          <EnhancedTable
+            sensorData={loadSensorConfig()} // 传递 sensorConfig 数据
+            setSelectedRows={setSelectedRows}
+          />
         </DialogContent>
         <DialogActions>
+          {/* 生成图片的按钮 */}
+          <Button
+            onClick={handleGenerateImage}
+            variant="contained"
+            color="primary"
+          >
+            Generate Selected Table Image
+          </Button>
           <Button onClick={handleSpecPageClose}>Close</Button>
         </DialogActions>
       </Dialog>
