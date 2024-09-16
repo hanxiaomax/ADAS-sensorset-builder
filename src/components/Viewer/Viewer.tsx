@@ -50,7 +50,7 @@ const Viewer: React.FC<ViewerProps> = ({
   const [rotation, setRotation] = useState(0);
   const layerRef = useRef<Konva.Layer>(null);
   const [layerSize, setLayerSize] = useState({ width: 0, height: 0 });
-
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [stagePos, setStagePos] = useState(stageCenter);
 
   useEffect(() => {
@@ -182,6 +182,15 @@ const Viewer: React.FC<ViewerProps> = ({
     });
   };
 
+  // 添加鼠标移动事件监听
+  const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const stage = e.target.getStage();
+    if (stage) {
+      const pointerPos = stage.getPointerPosition();
+      setMousePos(pointerPos || { x: 0, y: 0 });
+    }
+  };
+
   const renderDebugInfo = () => {
     if (!uiConfig.showDebugMode) return null;
 
@@ -216,6 +225,10 @@ const Viewer: React.FC<ViewerProps> = ({
     Y: ${stagePos.y.toFixed(2)}
     Rotation: ${rotation}°
 
+    Mouse Position:
+    X: ${mousePos.x.toFixed(2)}
+    Y: ${mousePos.y.toFixed(2)}
+
     ${
       selectedSensorInfo
         ? `
@@ -223,7 +236,7 @@ const Viewer: React.FC<ViewerProps> = ({
     ID: ${selectedSensorInfo.id}
     Name: ${selectedSensorInfo.sensorInfo.name}
     Type: ${selectedSensorInfo.sensorInfo.type}
-    Mounting:${selectedSensorInfo.mountPosition.name}
+    Mounting: ${selectedSensorInfo.mountPosition.name}
     Range: ${selectedSensorInfo.sensorInfo.spec.range} m
     FOV: ${selectedSensorInfo.sensorInfo.spec.fov} °
     `
@@ -263,6 +276,7 @@ const Viewer: React.FC<ViewerProps> = ({
             y={0}
             draggable={false} // 禁用 Stage 的拖动
             onWheel={handleWheel} // 使用鼠标缩放
+            onMouseMove={handleMouseMove}
           >
             <Layer>
               {uiConfig.showDebugMode && renderDebugOverlay(stageSize)}
