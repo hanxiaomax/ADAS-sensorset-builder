@@ -50,4 +50,10 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 - 在view菜单中增加图层的拖动功能
 - [color theme](https://uicolors.app/create) #6aeffb 
+- 夜间模式
 - 生成传感器配置表
+- debug模式增加stage右上角文字信息显示
+- 模式
+  - 专业模式
+  - 比较模式
+  - 排版模式

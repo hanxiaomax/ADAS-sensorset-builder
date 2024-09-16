@@ -16,11 +16,13 @@ import Sensor from "../types/Sensor";
 interface DataTableProps {
   sensorData: Sensor[]; // 传递传感器数据
   setSelectedRows: (rows: Sensor[]) => void;
+  enablePagination: boolean; // 新增参数，控制是否分页
 }
 
 export default function DataTable({
   sensorData,
   setSelectedRows,
+  enablePagination, // 接受新的参数
 }: DataTableProps) {
   const [order, setOrder] = React.useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Sensor>("id");
@@ -81,20 +83,21 @@ export default function DataTable({
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - sensorData.length) : 0;
 
-  const visibleRows = sensorData.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  // 根据 enablePagination 的值来决定是否分页
+  const visibleRows = enablePagination
+    ? sensorData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+    : sensorData;
 
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <TableContainer>
+        <TableContainer sx={{ maxHeight: 440 }}>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size="small"
             id="selectedTable"
+            stickyHeader
           >
             <TableHead>
               <TableRow>
@@ -262,15 +265,18 @@ export default function DataTable({
             </TableBody>
           </Table>
         </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={sensorData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        {/* 仅在启用分页时显示分页组件 */}
+        {enablePagination && (
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={sensorData.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        )}
       </Paper>
     </Box>
   );

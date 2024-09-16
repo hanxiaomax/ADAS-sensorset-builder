@@ -33,6 +33,7 @@ export const BomTableDialog: React.FC<BomTableDialogProp> = ({
         <DataTable
           sensorData={sensors} // 传递 sensorConfig 数据
           setSelectedRows={() => {}}
+          enablePagination={false}
         />
       </DialogContent>
       <DialogActions>
