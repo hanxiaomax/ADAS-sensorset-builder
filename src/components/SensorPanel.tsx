@@ -21,6 +21,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import {
   ArrowForwardIosOutlined,
   FilterList,
+  GetAppTwoTone,
+  ShareTwoTone,
   TableViewTwoTone,
 } from "@mui/icons-material";
 import HighlightIcon from "@mui/icons-material/Highlight";
@@ -257,11 +259,25 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
               }}
             >
               <IconButton
-                aria-controls="filter-menu"
+                aria-controls="Export-menu"
+                aria-haspopup="true"
+                onClick={() => {}}
+              >
+                <GetAppTwoTone />
+              </IconButton>
+              <IconButton
+                aria-controls="bom-menu"
                 aria-haspopup="true"
                 onClick={handleDataTableClick}
               >
                 <TableViewTwoTone />
+              </IconButton>
+              <IconButton
+                aria-controls="share-menu"
+                aria-haspopup="true"
+                onClick={() => {}}
+              >
+                <ShareTwoTone />
               </IconButton>
               <IconButton
                 aria-controls="filter-menu"
