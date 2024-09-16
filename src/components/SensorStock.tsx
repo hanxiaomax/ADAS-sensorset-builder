@@ -15,8 +15,8 @@ import {
   Typography,
   CardMedia,
 } from "@mui/material";
-import InstallConfigDialog from "./InstallConfigDialog";
-import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
+import InstallConfigDialog from "./Dialogs/InstallConfigDialog";
+import DeleteConfirmationDialog from "./Dialogs/DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
 import { SensorItem } from "../types/Common";
 import Sensor from "../types/Sensor";

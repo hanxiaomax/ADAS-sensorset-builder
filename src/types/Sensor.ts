@@ -28,6 +28,28 @@ export class Sensor {
     this.mountPosition = mountPosition;
     this.options = options;
   }
+
+  //箭头函数可以自绑定当前上下文的this
+  getMountPosition = (): MountPosition | undefined => {
+    const mountingPointsData = localStorage.getItem("mountingPoints");
+
+    if (mountingPointsData) {
+      const data: Record<string, MountPosition> =
+        JSON.parse(mountingPointsData);
+
+      if (data[this.mountPosition.name]) {
+        return data[this.mountPosition.name];
+      } else {
+        console.log(
+          `Mounting point '${this.mountPosition.name}' not found in data.`
+        );
+        return undefined;
+      }
+    } else {
+      console.log("No mounting points data found in localStorage.");
+      return undefined;
+    }
+  };
 }
 
 export default Sensor;

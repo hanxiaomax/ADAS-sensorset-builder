@@ -1,22 +1,11 @@
 import React, { useState } from "react";
-import {
-  Menu,
-  MenuItem,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-} from "@mui/material";
-import DataTable from "../DataTable"; // 引入表格组件
-import html2canvas from "html2canvas";
+import { Menu, MenuItem, Button } from "@mui/material";
 import Sensor from "../../types/Sensor";
-import { BomTableDialog } from "../BomTableDialog";
+import { BomTableDialog } from "../Dialogs/BomTableDialog";
 
 const ToolMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [bomTableDialogOpen, setBomTableDialogOpen] = useState<boolean>(false);
-  const [selectedRows, setSelectedRows] = useState<any[]>([]); // 保存选中的行数据
 
   // 打开菜单
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {

@@ -5,8 +5,8 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import DataTable from "./DataTable";
-import Sensor from "../types/Sensor";
+import DataTable from "../DataTable";
+import Sensor from "../../types/Sensor";
 
 interface BomTableDialogProp {
   open: boolean;

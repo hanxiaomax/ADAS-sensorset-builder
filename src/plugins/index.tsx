@@ -1,5 +1,5 @@
 import { Plugin } from "../types/Plugin";
-import SensorSetBuilder from "./sensor-set-builder";
+import SensorSetBuilder from "./main";
 // 示例插件
 
 const SensorSetBuilderMain: Plugin = {

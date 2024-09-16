@@ -8,7 +8,7 @@ import {
   Button,
   MenuItem,
 } from "@mui/material";
-import { SensorItem } from "../types/Common";
+import { SensorItem } from "../../types/Common";
 import { v4 as uuidv4 } from "uuid";
 interface CreateSensorDialogProps {
   open: boolean;
@@ -25,7 +25,6 @@ const CreateSensorDialog: React.FC<CreateSensorDialogProps> = ({
   existingTypes,
   defaultType,
 }) => {
-  // console.log("defaultType:", defaultType);
   const [newSensor, setNewSensor] = useState<SensorItem>({
     id: uuidv4(),
     name: "",

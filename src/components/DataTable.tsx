@@ -10,8 +10,6 @@ import {
   TablePagination,
   TableRow,
   Checkbox,
-  FormControlLabel,
-  Switch,
 } from "@mui/material";
 import Sensor from "../types/Sensor";
 

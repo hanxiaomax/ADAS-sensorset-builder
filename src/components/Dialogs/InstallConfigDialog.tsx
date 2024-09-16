@@ -15,7 +15,7 @@ import {
   TextField,
   FormHelperText,
 } from "@mui/material";
-import { SensorItem } from "../types/Common";
+import { SensorItem } from "../../types/Common";
 
 interface InstallConfigDialogProps {
   open: boolean;

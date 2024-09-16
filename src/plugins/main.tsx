@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Grid, Box } from "@mui/material";
+import { Grid } from "@mui/material";
 import useImage from "use-image";
 import Viewer from "../components/Viewer/Viewer"; // 引入 Viewer 组件
 import { SensorStocks } from "../types/Common";

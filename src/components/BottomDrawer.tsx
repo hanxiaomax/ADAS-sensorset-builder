@@ -7,7 +7,7 @@ import ToysIcon from "@mui/icons-material/Toys";
 import AddIcon from "@mui/icons-material/Add";
 import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
 import SensorStockItem from "./SensorStock";
-import CreateSensorDialog from "../components/CreateSensorDialog";
+import CreateSensorDialog from "./Dialogs/CreateSensorDialog";
 import { SensorItem, SensorStocks } from "../types/Common";
 import Sensor from "../types/Sensor";
 interface TabPanelProps {

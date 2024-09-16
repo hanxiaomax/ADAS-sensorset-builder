@@ -15,23 +15,18 @@ import {
   FormControlLabel,
   Checkbox,
   Pagination,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  Button,
 } from "@mui/material";
 import Sensor from "../types/Sensor";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   ArrowForwardIosOutlined,
   FilterList,
-  PinDrop,
   TableViewTwoTone,
 } from "@mui/icons-material";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Sensors from "@mui/icons-material/Sensors";
-import { BomTableDialog } from "./BomTableDialog";
+import { BomTableDialog } from "./Dialogs/BomTableDialog";
 
 interface SensorPanelProps {
   sensors: Sensor[];

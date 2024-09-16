@@ -5,7 +5,6 @@ import {
   StageSize,
 } from "../../types/Common";
 import Sensor from "../../types/Sensor";
-import { mountStringToPosition } from "../utils";
 import { Vehicle } from "../../types/Vehicle";
 
 export const renderDebugOverlay = (stageSize: StageSize) => {
@@ -82,9 +81,7 @@ export const getSensorCoverageBoundingBox = (sensors: Sensor[]) => {
   let maxY = -Infinity;
 
   sensors.forEach((sensor) => {
-    const mount_position = mountStringToPosition(
-      sensor.mountPosition!.name
-    ) as MountPosition;
+    const mount_position = sensor.getMountPosition() as MountPosition;
 
     const sensorX = mount_position.position!.x;
     const sensorY = mount_position.position!.y;
