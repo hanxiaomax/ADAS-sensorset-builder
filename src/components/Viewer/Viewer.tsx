@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Grid, Box } from "@mui/material";
-import { Stage, Layer, Group } from "react-konva";
+import { Stage, Layer, Group, Text } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
@@ -182,6 +182,59 @@ const Viewer: React.FC<ViewerProps> = ({
     });
   };
 
+  const renderDebugInfo = () => {
+    if (!uiConfig.showDebugMode) return null;
+
+    // 查找选中的传感器
+    const selectedSensorInfo = sensorConfiguration.find(
+      (sensor) => sensor.id === selectedSensor
+    );
+
+    return (
+      <Text
+        x={10}
+        y={10}
+        fontSize={18}
+        fontFamily="Courier New" // 使用等宽字体
+        fill="black" // 字体颜色
+        lineHeight={1} // 行高
+        text={`
+    Debug Information:
+
+    Stage:
+    Width: ${stageSize.width}
+    Height: ${stageSize.height}
+    Center: (${stageCenter.x}, ${stageCenter.y})
+
+    Layer:
+    Width: ${layerSize.width}
+    Height: ${layerSize.height}
+    Scale: ${scale.toFixed(2)}
+
+    BoundingBox:
+    X: ${stagePos.x.toFixed(2)}
+    Y: ${stagePos.y.toFixed(2)}
+    Rotation: ${rotation}°
+
+    ${
+      selectedSensorInfo
+        ? `
+    Selected Sensor:
+    ID: ${selectedSensorInfo.id}
+    Name: ${selectedSensorInfo.sensorInfo.name}
+    Type: ${selectedSensorInfo.sensorInfo.type}
+    Mounting:${selectedSensorInfo.mountPosition.name}
+    Range: ${selectedSensorInfo.sensorInfo.spec.range} m
+    FOV: ${selectedSensorInfo.sensorInfo.spec.fov} °
+    `
+        : "No sensor selected"
+    }
+        `}
+        align="left" // 左对齐
+      />
+    );
+  };
+
   return (
     <Grid
       container
@@ -225,12 +278,6 @@ const Viewer: React.FC<ViewerProps> = ({
             >
               {uiConfig.showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
-            {/* 
-            1. move origin to center 
-            2. x/y is the coordination of center,so set
-            it to stage center will draw layer on stage center
-            3. now the rotation is also ref the center of layer
-            */}
             <Layer
               scaleX={scale}
               scaleY={scale}
@@ -282,6 +329,9 @@ const Viewer: React.FC<ViewerProps> = ({
                 ))}
               </Group>
             </Layer>
+
+            {/* 显示调试信息 */}
+            <Layer>{renderDebugInfo()}</Layer>
           </Stage>
 
           {/* 独立的右键菜单 */}

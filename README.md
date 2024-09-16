@@ -57,3 +57,4 @@ To learn React, check out the [React documentation](https://reactjs.org/).
   - 专业模式
   - 比较模式
   - 排版模式
+- 点击传感器图标时，右侧面板显示被选中的传感器而不是全部的
