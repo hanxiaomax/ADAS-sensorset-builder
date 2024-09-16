@@ -38,6 +38,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
     sensor.mountPosition!.name
   ) as MountPosition;
 
+  console.log(sensor.options);
   const { color, opacity } = sensorStyles[type] || {
     color: "#000",
     opacity: 1,
@@ -55,18 +56,31 @@ export const SensorBlock: React.FC<SensorProp> = ({
     return null;
   }
 
+  const getStyle = (options: string[]) => {
+    if (options.includes("highlight")) {
+      return {
+        fill: `${color}${Math.floor(opacity * 1.5 * 255)
+          .toString(16)
+          .padStart(2, "0")}`,
+        strokeWidth: 2, // 更粗的边框表示高亮状态
+        stroke: "black",
+      };
+    } else {
+      return {
+        fill: `${color}${Math.floor(opacity * 255)
+          .toString(16)
+          .padStart(2, "0")}`,
+        strokeWidth: 0,
+      };
+    }
+  };
+
   const getSensorStyle = (options: string[]) => {
     if (isSelected) {
       return {
         width: 15,
         height: 15,
         fill: "#ff9c2d", // 选中时高亮的颜色
-      };
-    } else if (options.includes("highlight_sensor")) {
-      return {
-        width: 15,
-        height: 15,
-        fill: "#ff9c2d",
       };
     } else {
       return {
@@ -76,12 +90,11 @@ export const SensorBlock: React.FC<SensorProp> = ({
       };
     }
   };
+  const style = getStyle(sensor.options || []);
 
   const sensor_style = getSensorStyle(sensor.options || []);
-
   return (
     <>
-      {/* 渲染 FOV，但不监听点击事件 */}
       <Arc
         x={mount_position.position!.x}
         y={mount_position.position!.y}
@@ -89,10 +102,9 @@ export const SensorBlock: React.FC<SensorProp> = ({
         outerRadius={range}
         angle={fov}
         rotation={mount_position.orientation! - fov / 2}
-        fill={`${color}${Math.floor(opacity * 255)
-          .toString(16)
-          .padStart(2, "0")}`}
-        strokeWidth={0}
+        fill={style.fill}
+        stroke={style.stroke}
+        strokeWidth={0.5}
         listening={false} // 禁止FOV响应点击事件
       />
       {/* 渲染传感器本身，允许点击 */}
@@ -101,8 +113,8 @@ export const SensorBlock: React.FC<SensorProp> = ({
           x={mount_position.position!.x}
           y={mount_position.position!.y}
           points={[-10, -10, 10, 10, 0, 0, 10, -10, -10, 10]} // 绘制一个 "X" 形状
-          stroke="#fc4400"
-          strokeWidth={2}
+          stroke={style.stroke}
+          strokeWidth={style.strokeWidth}
         />
       ) : (
         <Circle
