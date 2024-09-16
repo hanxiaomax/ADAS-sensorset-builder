@@ -15,6 +15,10 @@ import {
   FormControlLabel,
   Checkbox,
   Pagination,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Button,
 } from "@mui/material";
 import Sensor from "../types/Sensor";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -22,22 +26,21 @@ import {
   ArrowForwardIosOutlined,
   TableRows,
   FilterList,
+  TableViewTwoTone,
 } from "@mui/icons-material";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { v4 as uuidv4 } from "uuid";
 import Sensors from "@mui/icons-material/Sensors";
+import BomTable from "./Menu/BomTable";
 
 interface SensorPanelProps {
-  sensorConfiguration: Sensor[];
-  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
+  sensors: Sensor[];
+  setSensors: React.Dispatch<React.SetStateAction<Sensor[]>>;
 }
 
-const SensorPanel: React.FC<SensorPanelProps> = ({
-  sensorConfiguration,
-  setSensorConfiguration,
-}) => {
+const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [bomTableOpen, setBomTableOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 用于控制筛选菜单的显示
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // 记录当前筛选的类型
   const [currentPage, setCurrentPage] = useState(1); // 当前页
@@ -72,7 +75,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     event: React.MouseEvent<HTMLElement>,
     newOptions: string[] | null
   ) => {
-    const updatedConfig = sensorConfiguration.map((sensor) => {
+    const updatedConfig = sensors.map((sensor) => {
       if (sensor.id === id) {
         return {
           ...sensor,
@@ -83,17 +86,15 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
       }
     });
 
-    setSensorConfiguration(updatedConfig); // 确保状态被更新并触发重新渲染
+    setSensors(updatedConfig); // 确保状态被更新并触发重新渲染
     localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
   };
 
   // 删除操作
   const handleDeleteClick = (id: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    const updatedConfig = sensorConfiguration.filter(
-      (sensor) => sensor.id !== id
-    );
-    setSensorConfiguration(updatedConfig);
+    const updatedConfig = sensors.filter((sensor) => sensor.id !== id);
+    setSensors(updatedConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
   };
 
@@ -107,6 +108,16 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     setAnchorEl(null);
   };
 
+  // 打开spec对话框
+  const handleBomTableClick = () => {
+    setBomTableOpen(true);
+  };
+
+  // 关闭spec对话框
+  const handleBomTableClose = () => {
+    setBomTableOpen(false);
+  };
+
   // 处理多选
   const handleTypeChange = (type: string) => {
     if (selectedTypes.includes(type)) {
@@ -118,10 +129,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
 
   // 筛选传感器
   const filteredSensors = selectedTypes.length
-    ? sensorConfiguration.filter((sensor) =>
-        selectedTypes.includes(sensor.sensorInfo.type)
-      )
-    : sensorConfiguration; // 如果未选中任何类型，显示所有传感器
+    ? sensors.filter((sensor) => selectedTypes.includes(sensor.sensorInfo.type))
+    : sensors; // 如果未选中任何类型，显示所有传感器
 
   // 计算当前页显示的传感器
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -257,6 +266,13 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
                 alignItems: "center", // 垂直居中对齐
               }}
             >
+              <IconButton
+                aria-controls="filter-menu"
+                aria-haspopup="true"
+                onClick={handleBomTableClick}
+              >
+                <TableViewTwoTone />
+              </IconButton>
               <IconButton
                 aria-controls="filter-menu"
                 aria-haspopup="true"
@@ -419,6 +435,21 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
           </Box>
         </Box>
       </Drawer>
+      <Dialog
+        open={bomTableOpen}
+        onClose={handleBomTableClose}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>Sensor BOM</DialogTitle>
+        <DialogContent>
+          {/* 将选中的行通过setSelectedRows传递给BomTable */}
+          <BomTable
+            sensorData={sensors} // 传递 sensorConfig 数据
+            setSelectedRows={() => {}}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

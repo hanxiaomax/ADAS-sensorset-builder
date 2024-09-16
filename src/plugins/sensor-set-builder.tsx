@@ -157,8 +157,8 @@ const SensorSetBuilderMain: React.FC = () => {
       />
 
       <SensorPanel
-        sensorConfiguration={sensorConfiguration}
-        setSensorConfiguration={setSensorConfiguration}
+        sensors={sensorConfiguration}
+        setSensors={setSensorConfiguration}
       />
     </Grid>
   );

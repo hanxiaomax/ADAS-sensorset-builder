@@ -8,7 +8,7 @@ import {
   DialogContent,
   DialogActions,
 } from "@mui/material";
-import EnhancedTable from "./EnhancedTable"; // 引入表格组件
+import BomTable from "./BomTable"; // 引入表格组件
 import html2canvas from "html2canvas";
 import Sensor from "../../types/Sensor";
 
@@ -79,7 +79,6 @@ const ToolMenu: React.FC = () => {
         <MenuItem onClick={handleSpecPageOpen}>Create Sensor BOM</MenuItem>
       </Menu>
 
-      {/* Spec 对话框 */}
       <Dialog
         open={specPageOpen}
         onClose={handleSpecPageClose}
@@ -88,8 +87,8 @@ const ToolMenu: React.FC = () => {
       >
         <DialogTitle>Sensor BOM</DialogTitle>
         <DialogContent>
-          {/* 将选中的行通过setSelectedRows传递给EnhancedTable */}
-          <EnhancedTable
+          {/* 将选中的行通过setSelectedRows传递给BomTable */}
+          <BomTable
             sensorData={loadSensorConfig()} // 传递 sensorConfig 数据
             setSelectedRows={setSelectedRows}
           />

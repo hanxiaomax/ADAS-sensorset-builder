@@ -15,15 +15,15 @@ import {
 } from "@mui/material";
 import Sensor from "../../types/Sensor";
 
-interface EnhancedTableProps {
+interface BomTableProps {
   sensorData: Sensor[]; // 传递传感器数据
   setSelectedRows: (rows: Sensor[]) => void;
 }
 
-export default function EnhancedTable({
+export default function BomTable({
   sensorData,
   setSelectedRows,
-}: EnhancedTableProps) {
+}: BomTableProps) {
   const [order, setOrder] = React.useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = React.useState<keyof Sensor>("id");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
