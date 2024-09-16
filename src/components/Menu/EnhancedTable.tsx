@@ -13,7 +13,7 @@ import {
   FormControlLabel,
   Switch,
 } from "@mui/material";
-import { Sensor } from "../../types/Common"; // 引入 Sensor 类型
+import Sensor from "../../types/Sensor";
 
 interface EnhancedTableProps {
   sensorData: Sensor[]; // 传递传感器数据

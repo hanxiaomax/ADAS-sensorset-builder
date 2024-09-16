@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import EnhancedTable from "./EnhancedTable"; // 引入表格组件
 import html2canvas from "html2canvas";
-import { Sensor } from "../../types/Common"; // 引入 Sensor 类型
+import Sensor from "../../types/Sensor";
 
 const ToolMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);

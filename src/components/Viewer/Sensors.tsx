@@ -3,20 +3,11 @@ import { Arc, Circle, Line } from "react-konva";
 import {
   UiConfig,
   MountPosition,
-  Sensor,
   SENSOR_RANGE_FACTOR,
 } from "../../types/Common";
-import { mountStringToPosition } from "../utils";
 
-const sensorStyles: {
-  [key: string]: { color: string; opacity: number };
-} = {
-  uss: { color: "#3a3895", opacity: 0.4 },
-  lidar: { color: "#4e4e7f", opacity: 0.2 },
-  radar: { color: "#00973d", opacity: 0.3 },
-  camera: { color: "#57b1b9", opacity: 0.2 },
-  tele_camera: { color: "#f1dae0", opacity: 0.5 },
-};
+import { sensorColorMap, Sensor } from "../../types/Sensor";
+import { mountStringToPosition } from "../utils";
 
 interface SensorProp {
   sensor: Sensor;
@@ -39,7 +30,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
   ) as MountPosition;
 
   console.log(sensor.options);
-  const { color, opacity } = sensorStyles[type] || {
+  const { color, opacity } = sensorColorMap[type] || {
     color: "#000",
     opacity: 1,
   };
@@ -108,24 +99,15 @@ export const SensorBlock: React.FC<SensorProp> = ({
         listening={false} // 禁止FOV响应点击事件
       />
       {/* 渲染传感器本身，允许点击 */}
-      {sensor.options?.includes("broken") ? (
-        <Line
-          x={mount_position.position!.x}
-          y={mount_position.position!.y}
-          points={[-10, -10, 10, 10, 0, 0, 10, -10, -10, 10]} // 绘制一个 "X" 形状
-          stroke={style.stroke}
-          strokeWidth={style.strokeWidth}
-        />
-      ) : (
-        <Circle
-          x={mount_position.position!.x}
-          y={mount_position.position!.y}
-          width={sensor_style.width}
-          height={sensor_style.height}
-          fill={sensor_style.fill}
-          onClick={onClick} // 点击事件只在 Circle 上生效
-        />
-      )}
+
+      <Circle
+        x={mount_position.position!.x}
+        y={mount_position.position!.y}
+        width={sensor_style.width}
+        height={sensor_style.height}
+        fill={sensor_style.fill}
+        onClick={onClick} // 点击事件只在 Circle 上生效
+      />
     </>
   );
 };

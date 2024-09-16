@@ -16,7 +16,7 @@ import {
   Checkbox,
   Pagination,
 } from "@mui/material";
-import { Sensor } from "../types/Common";
+import Sensor from "../types/Sensor";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   ArrowForwardIosOutlined,
@@ -68,15 +68,23 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
 
   // 处理 ToggleButton 的变化
   const handleToggleChange = (
-    id: string, // 使用 sensor 的 uuid
+    id: string,
     event: React.MouseEvent<HTMLElement>,
     newOptions: string[] | null
   ) => {
-    const updatedConfig = sensorConfiguration.map((sensor) =>
-      sensor.id === id ? { ...sensor, options: newOptions || [] } : sensor
-    );
+    const updatedConfig = sensorConfiguration.map((sensor) => {
+      if (sensor.id === id) {
+        return {
+          ...sensor,
+          options: newOptions || [], // 直接替换 options
+        };
+      } else {
+        return sensor;
+      }
+    });
 
-    setSensorConfiguration(updatedConfig);
+    setSensorConfiguration(updatedConfig); // 确保状态被更新并触发重新渲染
+    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
   };
 
   // 删除操作

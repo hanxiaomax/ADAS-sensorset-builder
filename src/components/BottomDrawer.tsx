@@ -8,8 +8,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
 import SensorStockItem from "./SensorStock";
 import CreateSensorDialog from "../components/CreateSensorDialog";
-import { Sensor, SensorItem, SensorStocks } from "../types/Common";
-
+import { SensorItem, SensorStocks } from "../types/Common";
+import Sensor from "../types/Sensor";
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;

@@ -1,13 +1,12 @@
 import { Circle, Line, Rect } from "react-konva";
 import {
   MountPosition,
-  Sensor,
   SENSOR_RANGE_FACTOR,
   StageSize,
 } from "../../types/Common";
+import Sensor from "../../types/Sensor";
 import { mountStringToPosition } from "../utils";
 import { Vehicle } from "../../types/Vehicle";
-import Konva from "konva";
 
 export const renderDebugOverlay = (stageSize: StageSize) => {
   const centerX = stageSize.width / 2;
@@ -161,7 +160,6 @@ export const renderLayerBoundary = (layerSize: {
   width: number;
   height: number;
 }) => {
-  console.log(layerSize);
   return (
     <Rect
       x={0}

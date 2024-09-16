@@ -55,23 +55,6 @@ export interface UiConfig {
   background: string;
 }
 
-export class Sensor {
-  id: string;
-  sensorInfo: SensorItem;
-  mountPosition: MountPosition;
-  options: string[];
-  constructor(
-    id: string,
-    sensorInfo: SensorItem,
-    mountPosition: MountPosition
-  ) {
-    this.id = id;
-    this.sensorInfo = sensorInfo;
-    this.mountPosition = mountPosition;
-    this.options = [];
-  }
-}
-
 export const SENSOR_RANGE_FACTOR = 5;
 
 export interface StageSize {

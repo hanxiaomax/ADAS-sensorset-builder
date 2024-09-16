@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from "react";
 import { Grid, Box } from "@mui/material";
 import useImage from "use-image";
 import Viewer from "../components/Viewer/Viewer"; // 引入 Viewer 组件
-import { Sensor, SensorStocks } from "../types/Common";
+import { SensorStocks } from "../types/Common";
 import { Vehicle } from "../types/Vehicle";
 import BottomDrawer from "../components/BottomDrawer";
 import SensorPanel from "../components/SensorPanel";
 import MenuBar from "../components/Menu/MenuBar";
 import Konva from "konva"; // 引入 Konva
+import Sensor from "../types/Sensor";
 
 const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -54,11 +55,22 @@ const SensorSetBuilderMain: React.FC = () => {
   useEffect(() => {
     const storedSensorConfig = localStorage.getItem("sensorConfig");
     const storedSensorStocks = localStorage.getItem("sensorStocks");
+
     if (storedSensorConfig) {
       const parsedConfig = JSON.parse(storedSensorConfig);
-      setSensorConfiguration(parsedConfig);
-    }
+      // 实例化 Sensor 对象
+      const sensorInstances = parsedConfig.map(
+        (sensorData: any) =>
+          new Sensor(
+            sensorData.id,
+            sensorData.sensorInfo,
+            sensorData.mountPosition,
+            sensorData.options
+          )
+      );
 
+      setSensorConfiguration(sensorInstances);
+    }
     if (storedSensorStocks) {
       setSensorData(JSON.parse(storedSensorStocks) as SensorStocks);
     }

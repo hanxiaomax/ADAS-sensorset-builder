@@ -18,7 +18,8 @@ import {
 import InstallConfigDialog from "./InstallConfigDialog";
 import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
-import { Sensor, SensorItem } from "../types/Common";
+import { SensorItem } from "../types/Common";
+import Sensor from "../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 interface SensorStockItemProps {
   icon: React.ReactElement;

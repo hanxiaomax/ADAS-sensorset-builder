@@ -5,7 +5,8 @@ import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
 import Marker from "../utils";
-import { Sensor, StageSize } from "../../types/Common";
+import { StageSize } from "../../types/Common";
+import Sensor from "../../types/Sensor";
 import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
 import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
@@ -270,9 +271,9 @@ const Viewer: React.FC<ViewerProps> = ({
                   Object.values(vehicle.refPoints).map((position, index) => (
                     <Marker key={index} position={position} fill="red" />
                   ))}
-                {sensorConfiguration.map((sensor, index) => (
+                {sensorConfiguration.map((sensor) => (
                   <SensorBlock
-                    key={index}
+                    key={sensor.id} // 使用传感器的唯一 ID 作为 key
                     sensor={sensor}
                     uiConfig={uiConfig}
                     onClick={() => handleSensorClick(sensor.id)}
