@@ -81,8 +81,9 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     const position = {
       name: selectedPosition,
     };
-    const newSensor = new Sensor(uuidv4(), selectedSensor, position);
-
+    const options = ["highlight"]; //highlight by default for new sesnor
+    const newSensor = new Sensor(uuidv4(), selectedSensor, position, options);
+    console.log(newSensor instanceof Sensor); // 应该返回 true
     sensorConfig.push(newSensor);
     setSensorConfiguration(sensorConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(sensorConfig));

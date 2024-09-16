@@ -24,7 +24,10 @@ export const SensorBlock: React.FC<SensorProp> = ({
   const type = sensor.sensorInfo.type;
   const fov = sensor.sensorInfo.spec.fov;
   const range = sensor.sensorInfo.spec.range * SENSOR_RANGE_FACTOR;
-  const mount_position = sensor.getMountPosition() as MountPosition;
+
+  const mount_position = Sensor.getMountPosition(
+    sensor.mountPosition.name
+  ) as MountPosition;
 
   console.log(sensor.options);
   const { color, opacity } = sensorColorMap[type] || {

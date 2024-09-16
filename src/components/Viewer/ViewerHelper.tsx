@@ -81,7 +81,9 @@ export const getSensorCoverageBoundingBox = (sensors: Sensor[]) => {
   let maxY = -Infinity;
 
   sensors.forEach((sensor) => {
-    const mount_position = sensor.getMountPosition() as MountPosition;
+    const mount_position = Sensor.getMountPosition(
+      sensor.mountPosition.name
+    ) as MountPosition;
 
     const sensorX = mount_position.position!.x;
     const sensorY = mount_position.position!.y;
