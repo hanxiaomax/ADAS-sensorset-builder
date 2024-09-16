@@ -24,14 +24,14 @@ import Sensor from "../types/Sensor";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
   ArrowForwardIosOutlined,
-  TableRows,
   FilterList,
+  PinDrop,
   TableViewTwoTone,
 } from "@mui/icons-material";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import Sensors from "@mui/icons-material/Sensors";
-import BomTable from "./Menu/BomTable";
+import { BomTableDialog } from "./BomTableDialog";
 
 interface SensorPanelProps {
   sensors: Sensor[];
@@ -40,7 +40,7 @@ interface SensorPanelProps {
 
 const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [bomTableOpen, setBomTableOpen] = useState(false);
+  const [bomTableDialogOpen, setBomTableDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 用于控制筛选菜单的显示
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // 记录当前筛选的类型
   const [currentPage, setCurrentPage] = useState(1); // 当前页
@@ -109,13 +109,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
   };
 
   // 打开spec对话框
-  const handleBomTableClick = () => {
-    setBomTableOpen(true);
-  };
-
-  // 关闭spec对话框
-  const handleBomTableClose = () => {
-    setBomTableOpen(false);
+  const handleDataTableClick = () => {
+    setBomTableDialogOpen(true);
   };
 
   // 处理多选
@@ -269,7 +264,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
               <IconButton
                 aria-controls="filter-menu"
                 aria-haspopup="true"
-                onClick={handleBomTableClick}
+                onClick={handleDataTableClick}
               >
                 <TableViewTwoTone />
               </IconButton>
@@ -323,8 +318,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
                       src={sensor.sensorInfo.image || undefined}
                       alt={sensor.sensorInfo.name}
                       sx={{
-                        width: 50,
-                        height: 50,
+                        width: 40,
+                        height: 40,
                       }}
                     >
                       {!sensor.sensorInfo.image && sensor.sensorInfo.name![0]}
@@ -332,12 +327,13 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
                   </Box>
 
                   <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs sx={{ m: "8px" }}>
-                      <Typography variant="h1" sx={{ fontSize: "20px" }}>
+                    <Grid item xs sx={{ m: "4px" }}>
+                      <Typography variant="h1" sx={{ fontSize: "18px" }}>
                         {sensor.sensorInfo.name}
                       </Typography>
+                      {/* <PinDrop /> */}
                       <Typography variant="body2" sx={{ fontSize: "12px" }}>
-                        Position: {sensor.mountPosition!.name}
+                        {sensor.mountPosition!.name}
                       </Typography>
                     </Grid>
                   </Grid>
@@ -387,8 +383,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
                         value="highlight"
                         aria-label="highlight"
                         sx={{
-                          width: 28,
-                          height: 28,
+                          width: 22,
+                          height: 22,
                           "&.Mui-selected": {
                             backgroundColor: "#efefef", // 激活时的背景色
                             color: "black", // 激活时的文字颜色
@@ -402,8 +398,8 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
                         value="hide"
                         aria-label="hide"
                         sx={{
-                          width: 28,
-                          height: 28,
+                          width: 22,
+                          height: 22,
                           "&.Mui-selected": {
                             backgroundColor: "#efefef", // 激活时的背景色
                             color: "black", // 激活时的文字颜色
@@ -426,6 +422,10 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
               page={currentPage}
               onChange={handlePageChange}
               sx={{
+                "& .MuiPaginationItem-root": {
+                  margin: "0 1px", // 调整页码按钮的左右间距，使它们更加紧凑
+                  padding: "2px 3px", // 调整按钮内部的填充
+                },
                 "& .Mui-selected": {
                   backgroundColor: "#0c7a92", // 选中页码按钮的背景颜色
                   color: "white", // 选中页码按钮的文字颜色
@@ -435,21 +435,11 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
           </Box>
         </Box>
       </Drawer>
-      <Dialog
-        open={bomTableOpen}
-        onClose={handleBomTableClose}
-        maxWidth="md"
-        fullWidth
-      >
-        <DialogTitle>Sensor BOM</DialogTitle>
-        <DialogContent>
-          {/* 将选中的行通过setSelectedRows传递给BomTable */}
-          <BomTable
-            sensorData={sensors} // 传递 sensorConfig 数据
-            setSelectedRows={() => {}}
-          />
-        </DialogContent>
-      </Dialog>
+      <BomTableDialog
+        open={bomTableDialogOpen}
+        setBomTableDialogOpen={setBomTableDialogOpen}
+        sensors={sensors}
+      />
     </>
   );
 };
