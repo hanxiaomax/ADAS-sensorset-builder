@@ -9,9 +9,11 @@ import { StageSize } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
-import ViewerContextMenu from "./ViewerContextMenu";
+import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable"; // 用于拖动浮动窗口
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator"; // 拖动指示图标
+
 import {
   getBoundingBox,
   getSensorCoverageBoundingBox,
@@ -60,8 +62,8 @@ const Viewer: React.FC<ViewerProps> = ({
   useEffect(() => {
     if (layerRef.current) {
       const layer = layerRef.current;
-      const width = layer.width();
-      const height = layer.height();
+      const width = layer.width(); // 获取Layer的宽度
+      const height = layer.height(); // 获取Layer的高度
       setLayerSize({ width, height });
     }
   }, []);
@@ -83,7 +85,7 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    const oldScale = scale;
+    const oldScale = scale; // 使用 Layer 的 scale
     const pointer = stage.getPointerPosition();
     const zoomFactor = e.evt.deltaY > 0 ? 0.9 : 1.1;
     const newScale = oldScale * zoomFactor;
@@ -98,8 +100,8 @@ const Viewer: React.FC<ViewerProps> = ({
       y: pointer!.y - mousePointTo.y * newScale,
     };
 
-    setScale(newScale);
-    setStagePos(newPos);
+    setScale(newScale); // 更新缩放比例
+    setStagePos(newPos); // 更新图层位置
   };
 
   const handleToggleGrid = () => {
@@ -190,8 +192,8 @@ const Viewer: React.FC<ViewerProps> = ({
   ) => {
     setSelectedSensor(sensor); // 设置为选中的传感器
     setFloatingWindowPos({
-      x: event.evt.clientX + 10, // 动态设置浮动窗口的位置，传感器附近
-      y: event.evt.clientY + 10,
+      x: event.evt.clientX + 20, // 动态设置浮动窗口的位置，传感器附近
+      y: event.evt.clientY + 20,
     });
     setShowSensorInfo(true); // 显示浮动窗口
   };
@@ -201,7 +203,6 @@ const Viewer: React.FC<ViewerProps> = ({
     setSelectedSensor(null); // 关闭时取消选中传感器
   };
 
-  // 渲染调试信息
   const renderDebugInfo = () => {
     if (!uiConfig.showDebugMode) return null;
 
@@ -345,7 +346,7 @@ const Viewer: React.FC<ViewerProps> = ({
                     key={sensor.id}
                     sensor={sensor}
                     uiConfig={uiConfig}
-                    onClick={(event: any) => handleSensorClick(sensor, event)}
+                    onClick={(e) => handleSensorClick(sensor, e)}
                     isSelected={selectedSensor?.id === sensor.id}
                   />
                 ))}
@@ -355,7 +356,6 @@ const Viewer: React.FC<ViewerProps> = ({
             <Layer>{renderDebugInfo()}</Layer>
           </Stage>
 
-          {/* 独立的右键菜单 */}
           <ViewerContextMenu
             contextMenuPos={contextMenuPos}
             handleCloseContextMenu={handleCloseContextMenu}
@@ -370,46 +370,67 @@ const Viewer: React.FC<ViewerProps> = ({
           />
         </Box>
 
-        {/* 浮动窗口 */}
         {showSensorInfo && selectedSensor && (
           <Draggable>
             <Paper
-              elevation={5}
+              elevation={3}
               sx={{
                 position: "absolute",
                 top: floatingWindowPos.y,
                 left: floatingWindowPos.x,
-                padding: 2,
+                padding: 0,
                 width: 300,
                 zIndex: 2000,
+                cursor: "move",
+                border: "2px solid #ccc",
+                "&:hover": {
+                  cursor: "pointer", // 鼠标悬停时变为小手
+                },
               }}
             >
-              <IconButton
-                size="small"
-                onClick={handleCloseSensorInfo}
-                sx={{ position: "absolute", top: 4, right: 4 }}
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{
+                  backgroundColor: "#f0f0f0",
+                  padding: 1,
+                  cursor: "move",
+                  borderBottom: "1px solid #ccc",
+                }}
               >
-                <CloseIcon fontSize="small" />
-              </IconButton>
-              <Typography variant="h6">Sensor Information</Typography>
-              <Typography variant="body1">
-                <strong>ID:</strong> {selectedSensor.id}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Name:</strong> {selectedSensor.sensorInfo.name}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Type:</strong> {selectedSensor.sensorInfo.type}
-              </Typography>
-              <Typography variant="body1">
-                <strong>Range:</strong> {selectedSensor.sensorInfo.spec.range} m
-              </Typography>
-              <Typography variant="body1">
-                <strong>FOV:</strong> {selectedSensor.sensorInfo.spec.fov} °
-              </Typography>
-              <Typography variant="body1">
-                <strong>Mounting:</strong> {selectedSensor.mountPosition.name}
-              </Typography>
+                <Box display="flex" alignItems="center">
+                  <DragIndicatorIcon sx={{ marginRight: 1 }} />{" "}
+                  {/* 拖动指示图标 */}
+                  <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                    Sensor Information
+                  </Typography>
+                </Box>
+                <IconButton size="small" onClick={handleCloseSensorInfo}>
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Box>
+              <Box sx={{ padding: 2 }}>
+                <Typography variant="body1">
+                  <strong>ID:</strong> {selectedSensor.id}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Name:</strong> {selectedSensor.sensorInfo.name}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Type:</strong> {selectedSensor.sensorInfo.type}
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Range:</strong> {selectedSensor.sensorInfo.spec.range}{" "}
+                  m
+                </Typography>
+                <Typography variant="body1">
+                  <strong>FOV:</strong> {selectedSensor.sensorInfo.spec.fov} °
+                </Typography>
+                <Typography variant="body1">
+                  <strong>Mounting:</strong> {selectedSensor.mountPosition.name}
+                </Typography>
+              </Box>
             </Paper>
           </Draggable>
         )}
