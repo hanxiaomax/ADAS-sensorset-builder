@@ -11,7 +11,7 @@ import { sensorColorMap, Sensor } from "../../types/Sensor";
 interface SensorProp {
   sensor: Sensor;
   uiConfig: UiConfig;
-  onClick: () => void; // 点击事件处理程序
+  onClick: (event: any) => void; // 点击事件处理程序
   isSelected: boolean; // 是否选中状态
 }
 

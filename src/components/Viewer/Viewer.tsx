@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, Box } from "@mui/material";
+import { Grid, Box, Paper, Typography, IconButton } from "@mui/material";
 import { Stage, Layer, Group, Text } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
@@ -9,7 +9,9 @@ import { StageSize } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
-import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
+import ViewerContextMenu from "./ViewerContextMenu";
+import CloseIcon from "@mui/icons-material/Close";
+import Draggable from "react-draggable"; // 用于拖动浮动窗口
 import {
   getBoundingBox,
   getSensorCoverageBoundingBox,
@@ -46,18 +48,20 @@ const Viewer: React.FC<ViewerProps> = ({
     mouseX: number;
     mouseY: number;
   }>(null);
-  const [selectedSensor, setSelectedSensor] = useState<string | null>(null);
+  const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null); // 选中的传感器
   const [rotation, setRotation] = useState(0);
   const layerRef = useRef<Konva.Layer>(null);
   const [layerSize, setLayerSize] = useState({ width: 0, height: 0 });
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [stagePos, setStagePos] = useState(stageCenter);
+  const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
+  const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
 
   useEffect(() => {
     if (layerRef.current) {
       const layer = layerRef.current;
-      const width = layer.width(); // 获取Layer的宽度
-      const height = layer.height(); // 获取Layer的高度
+      const width = layer.width();
+      const height = layer.height();
       setLayerSize({ width, height });
     }
   }, []);
@@ -79,25 +83,23 @@ const Viewer: React.FC<ViewerProps> = ({
     const stage = stageRef.current;
     if (!stage) return;
 
-    const oldScale = scale; // 使用 Layer 的 scale
+    const oldScale = scale;
     const pointer = stage.getPointerPosition();
     const zoomFactor = e.evt.deltaY > 0 ? 0.9 : 1.1;
     const newScale = oldScale * zoomFactor;
 
-    // 计算鼠标相对于 Layer 的位置
     const mousePointTo = {
       x: (pointer!.x - stagePos.x) / oldScale,
       y: (pointer!.y - stagePos.y) / oldScale,
     };
 
-    // 更新 Layer 的位置，以确保缩放以鼠标为中心
     const newPos = {
       x: pointer!.x - mousePointTo.x * newScale,
       y: pointer!.y - mousePointTo.y * newScale,
     };
 
-    setScale(newScale); // 更新缩放比例
-    setStagePos(newPos); // 更新图层位置
+    setScale(newScale);
+    setStagePos(newPos);
   };
 
   const handleToggleGrid = () => {
@@ -113,7 +115,6 @@ const Viewer: React.FC<ViewerProps> = ({
       showDebugMode: !prev.showDebugMode,
     }));
   };
-
   const handleAutoZoomToSensorCoverage = () => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -127,14 +128,6 @@ const Viewer: React.FC<ViewerProps> = ({
     setStagePos(stageCenter);
 
     handleCloseContextMenu(); // 关闭右键菜单
-  };
-
-  const handleSensorClick = (sensorId: string) => {
-    if (selectedSensor === sensorId) {
-      setSelectedSensor(null);
-    } else {
-      setSelectedSensor(sensorId);
-    }
   };
 
   // 自动缩放到适合的大小
@@ -191,22 +184,37 @@ const Viewer: React.FC<ViewerProps> = ({
     }
   };
 
+  const handleSensorClick = (
+    sensor: Sensor,
+    event: Konva.KonvaEventObject<MouseEvent>
+  ) => {
+    setSelectedSensor(sensor); // 设置为选中的传感器
+    setFloatingWindowPos({
+      x: event.evt.clientX + 10, // 动态设置浮动窗口的位置，传感器附近
+      y: event.evt.clientY + 10,
+    });
+    setShowSensorInfo(true); // 显示浮动窗口
+  };
+
+  const handleCloseSensorInfo = () => {
+    setShowSensorInfo(false);
+    setSelectedSensor(null); // 关闭时取消选中传感器
+  };
+
+  // 渲染调试信息
   const renderDebugInfo = () => {
     if (!uiConfig.showDebugMode) return null;
 
-    // 查找选中的传感器
-    const selectedSensorInfo = sensorConfiguration.find(
-      (sensor) => sensor.id === selectedSensor
-    );
+    const selectedSensorInfo = selectedSensor;
 
     return (
       <Text
         x={10}
         y={10}
         fontSize={18}
-        fontFamily="Courier New" // 使用等宽字体
-        fill="black" // 字体颜色
-        lineHeight={1} // 行高
+        fontFamily="Courier New"
+        fill="black"
+        lineHeight={1}
         text={`
     Debug Information:
 
@@ -243,7 +251,7 @@ const Viewer: React.FC<ViewerProps> = ({
         : "No sensor selected"
     }
         `}
-        align="left" // 左对齐
+        align="left"
       />
     );
   };
@@ -270,12 +278,12 @@ const Viewer: React.FC<ViewerProps> = ({
             width={stageSize.width}
             height={stageSize.height}
             ref={stageRef}
-            scaleX={1} // 固定 Stage 不进行缩放
+            scaleX={1}
             scaleY={1}
-            x={0} // 禁止 Stage 的拖动
+            x={0}
             y={0}
-            draggable={false} // 禁用 Stage 的拖动
-            onWheel={handleWheel} // 使用鼠标缩放
+            draggable={false}
+            onWheel={handleWheel}
             onMouseMove={handleMouseMove}
           >
             <Layer>
@@ -297,8 +305,8 @@ const Viewer: React.FC<ViewerProps> = ({
               scaleY={scale}
               x={stagePos.x}
               y={stagePos.y}
-              draggable // 仅允许 Layer 拖动
-              onDragMove={handleDragMove} // 拖动事件
+              draggable
+              onDragMove={handleDragMove}
               ref={layerRef}
               rotation={rotation}
               offsetX={stageSize.width / 2}
@@ -334,17 +342,16 @@ const Viewer: React.FC<ViewerProps> = ({
                   ))}
                 {sensorConfiguration.map((sensor) => (
                   <SensorBlock
-                    key={sensor.id} // 使用传感器的唯一 ID 作为 key
+                    key={sensor.id}
                     sensor={sensor}
                     uiConfig={uiConfig}
-                    onClick={() => handleSensorClick(sensor.id)}
-                    isSelected={selectedSensor === sensor.id}
+                    onClick={(event: any) => handleSensorClick(sensor, event)}
+                    isSelected={selectedSensor?.id === sensor.id}
                   />
                 ))}
               </Group>
             </Layer>
 
-            {/* 显示调试信息 */}
             <Layer>{renderDebugInfo()}</Layer>
           </Stage>
 
@@ -362,6 +369,50 @@ const Viewer: React.FC<ViewerProps> = ({
             uiConfig={uiConfig}
           />
         </Box>
+
+        {/* 浮动窗口 */}
+        {showSensorInfo && selectedSensor && (
+          <Draggable>
+            <Paper
+              elevation={5}
+              sx={{
+                position: "absolute",
+                top: floatingWindowPos.y,
+                left: floatingWindowPos.x,
+                padding: 2,
+                width: 300,
+                zIndex: 2000,
+              }}
+            >
+              <IconButton
+                size="small"
+                onClick={handleCloseSensorInfo}
+                sx={{ position: "absolute", top: 4, right: 4 }}
+              >
+                <CloseIcon fontSize="small" />
+              </IconButton>
+              <Typography variant="h6">Sensor Information</Typography>
+              <Typography variant="body1">
+                <strong>ID:</strong> {selectedSensor.id}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Name:</strong> {selectedSensor.sensorInfo.name}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Type:</strong> {selectedSensor.sensorInfo.type}
+              </Typography>
+              <Typography variant="body1">
+                <strong>Range:</strong> {selectedSensor.sensorInfo.spec.range} m
+              </Typography>
+              <Typography variant="body1">
+                <strong>FOV:</strong> {selectedSensor.sensorInfo.spec.fov} °
+              </Typography>
+              <Typography variant="body1">
+                <strong>Mounting:</strong> {selectedSensor.mountPosition.name}
+              </Typography>
+            </Paper>
+          </Draggable>
+        )}
       </Grid>
     </Grid>
   );
