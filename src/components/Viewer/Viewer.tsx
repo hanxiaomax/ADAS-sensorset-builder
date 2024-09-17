@@ -9,10 +9,10 @@ import { StageSize } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
-import ViewerContextMenu from "./ViewerContextMenu"; // 引入 ViewerContextMenu
+import ViewerContextMenu from "./ViewerContextMenu";
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable"; // 用于拖动浮动窗口
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator"; // 拖动指示图标
+import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 
 import {
   getBoundingBox,
@@ -58,6 +58,7 @@ const Viewer: React.FC<ViewerProps> = ({
   const [stagePos, setStagePos] = useState(stageCenter);
   const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
   const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
+  const [showLine, setShowLine] = useState(true); // 控制是否显示连线
 
   useEffect(() => {
     if (layerRef.current) {
@@ -356,6 +357,7 @@ const Viewer: React.FC<ViewerProps> = ({
             <Layer>{renderDebugInfo()}</Layer>
           </Stage>
 
+          {/* 独立的右键菜单 */}
           <ViewerContextMenu
             contextMenuPos={contextMenuPos}
             handleCloseContextMenu={handleCloseContextMenu}
@@ -370,6 +372,7 @@ const Viewer: React.FC<ViewerProps> = ({
           />
         </Box>
 
+        {/* 显示传感器信息和虚线连线 */}
         {showSensorInfo && selectedSensor && (
           <Draggable>
             <Paper
@@ -381,11 +384,8 @@ const Viewer: React.FC<ViewerProps> = ({
                 padding: 0,
                 width: 300,
                 zIndex: 2000,
-                cursor: "move",
                 border: "2px solid #ccc",
-                "&:hover": {
-                  cursor: "pointer", // 鼠标悬停时变为小手
-                },
+                cursor: "move",
               }}
             >
               <Box
@@ -400,8 +400,7 @@ const Viewer: React.FC<ViewerProps> = ({
                 }}
               >
                 <Box display="flex" alignItems="center">
-                  <DragIndicatorIcon sx={{ marginRight: 1 }} />{" "}
-                  {/* 拖动指示图标 */}
+                  <DragIndicatorIcon sx={{ marginRight: 1 }} />
                   <Typography variant="h6" sx={{ flexGrow: 1 }}>
                     Sensor Information
                   </Typography>
