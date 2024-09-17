@@ -1,5 +1,17 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Grid, Box, Paper, Typography, IconButton } from "@mui/material";
+import {
+  Grid,
+  Box,
+  Paper,
+  Typography,
+  IconButton,
+  CardMedia,
+  Table,
+  TableBody,
+  Tooltip,
+  TableCell,
+  TableRow,
+} from "@mui/material";
 import { Stage, Layer, Group, Text } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
@@ -372,7 +384,6 @@ const Viewer: React.FC<ViewerProps> = ({
           />
         </Box>
 
-        {/* 显示传感器信息和虚线连线 */}
         {showSensorInfo && selectedSensor && (
           <Draggable>
             <Paper
@@ -402,33 +413,86 @@ const Viewer: React.FC<ViewerProps> = ({
                 <Box display="flex" alignItems="center">
                   <DragIndicatorIcon sx={{ marginRight: 1 }} />
                   <Typography variant="h6" sx={{ flexGrow: 1 }}>
-                    Sensor Information
+                    {selectedSensor.sensorInfo.name}
                   </Typography>
                 </Box>
                 <IconButton size="small" onClick={handleCloseSensorInfo}>
                   <CloseIcon fontSize="small" />
                 </IconButton>
               </Box>
-              <Box sx={{ padding: 2 }}>
-                <Typography variant="body1">
-                  <strong>ID:</strong> {selectedSensor.id}
+              <Box padding={1}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: 12 }}
+                >
+                  {selectedSensor.mountPosition.name}
                 </Typography>
-                <Typography variant="body1">
-                  <strong>Name:</strong> {selectedSensor.sensorInfo.name}
+
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: 12 }}
+                >
+                  {selectedSensor.id}
                 </Typography>
-                <Typography variant="body1">
-                  <strong>Type:</strong> {selectedSensor.sensorInfo.type}
+
+                {selectedSensor.sensorInfo.image ? (
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={selectedSensor.sensorInfo.image}
+                    alt={selectedSensor.sensorInfo.name}
+                    sx={{ objectFit: "contain", marginBottom: "16px" }}
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      height: "140px",
+                      minWidth: "360",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      backgroundColor: "#f0f0f0",
+                      marginBottom: "16px",
+                    }}
+                  ></Box>
+                )}
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 2 }}
+                >
+                  {selectedSensor.sensorInfo.desc}
                 </Typography>
-                <Typography variant="body1">
-                  <strong>Range:</strong> {selectedSensor.sensorInfo.spec.range}{" "}
-                  m
-                </Typography>
-                <Typography variant="body1">
-                  <strong>FOV:</strong> {selectedSensor.sensorInfo.spec.fov} °
-                </Typography>
-                <Typography variant="body1">
-                  <strong>Mounting:</strong> {selectedSensor.mountPosition.name}
-                </Typography>
+
+                {selectedSensor.sensorInfo.spec && (
+                  <Table size="small" aria-label="sensor specs">
+                    <TableBody>
+                      {Object.entries(selectedSensor.sensorInfo.spec).map(
+                        ([key, value]) => (
+                          <TableRow key={key}>
+                            <TableCell component="th" scope="row">
+                              {key}
+                            </TableCell>
+                            <TableCell>
+                              <span
+                                style={{
+                                  display: "inline-block",
+                                  width: "50px",
+                                  color: "black",
+                                  textAlign: "center",
+                                }}
+                              >
+                                {value}
+                              </span>
+                            </TableCell>
+                          </TableRow>
+                        )
+                      )}
+                    </TableBody>
+                  </Table>
+                )}
               </Box>
             </Paper>
           </Draggable>
