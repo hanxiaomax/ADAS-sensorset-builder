@@ -148,17 +148,13 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
         sx={{
           position: "fixed",
           color: "#0c7a92",
-          top: 0,
+          top: 50,
           right: 0,
           fontSize: "40px",
           zIndex: 1400, // 确保图标显示在最前面
         }}
       >
-        {drawerOpen ? (
-          <ArrowForwardIosOutlined sx={{ fontSize: "40px", color: "white" }} />
-        ) : (
-          <Sensors sx={{ fontSize: "40px" }} />
-        )}
+        {!drawerOpen && <Sensors sx={{ fontSize: "40px" }} />}
       </IconButton>
 
       <Drawer
@@ -187,6 +183,22 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
             }}
           >
             <Typography variant="h6">Sensor Set</Typography>
+
+            <IconButton
+              onClick={toggleDrawer}
+              sx={{
+                position: "fixed",
+                color: "#0c7a92",
+                top: 0,
+                right: 0,
+                fontSize: "40px",
+                zIndex: 1400, // 确保图标显示在最前面
+              }}
+            >
+              <ArrowForwardIosOutlined
+                sx={{ fontSize: "40px", color: "white" }}
+              />
+            </IconButton>
           </Box>
 
           <Menu
