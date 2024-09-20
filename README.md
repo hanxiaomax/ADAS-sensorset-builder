@@ -52,13 +52,13 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 - [color theme](https://uicolors.app/create) #6aeffb 
 - 夜间模式
 - 生成传感器配置表
-- debug模式增加stage右上角文字信息显示
+[-] debug模式增加stage右上角文字信息显示
 - 模式
   - 专业模式
   - 比较模式
   - 排版模式
-- 点击传感器图标时，弹出sensor信息
+[-] 点击传感器图标时，弹出sensor信息
 - viwer 支持距离显示
 - 支持sensor样式自定义
 - 引导界面
-
+- 配置库页面；缩略图

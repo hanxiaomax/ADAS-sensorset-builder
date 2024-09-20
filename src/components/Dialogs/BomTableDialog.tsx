@@ -38,9 +38,9 @@ export const BomTableDialog: React.FC<BomTableDialogProp> = ({
       </DialogContent>
       <DialogActions>
         {/* 生成图片的按钮 */}
-        <Button onClick={() => {}} variant="contained" color="primary">
+        {/* <Button onClick={() => {}} variant="contained" color="primary">
           Generate Selected Table Image
-        </Button>
+        </Button> */}
         <Button
           onClick={() => {
             setBomTableDialogOpen(false);
