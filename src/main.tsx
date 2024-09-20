@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Grid } from "@mui/material";
 import useImage from "use-image";
-import Viewer from "../components/Viewer/Viewer"; // 引入 Viewer 组件
-import { SensorStocks } from "../types/Common";
-import { Vehicle } from "../types/Vehicle";
-import BottomDrawer from "../components/BottomDrawer";
-import SensorPanel from "../components/SensorPanel";
-import MenuBar from "../components/Menu/MenuBar";
+import Viewer from "./components/Viewer/Viewer"; // 引入 Viewer 组件
+import { SensorStocks } from "./types/Common";
+import { Vehicle } from "./types/Vehicle";
+import BottomDrawer from "./components/BottomDrawer";
+import SensorPanel from "./components/SensorPanel";
+import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva"; // 引入 Konva
-import Sensor from "../types/Sensor";
+import Sensor from "./types/Sensor";
 
-const SensorSetBuilderMain: React.FC = () => {
+export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
