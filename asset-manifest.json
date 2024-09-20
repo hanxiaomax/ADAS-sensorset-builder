@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/ADAS-sensorset-builder/static/css/main.e6c13ad2.css",
+    "main.js": "/ADAS-sensorset-builder/static/js/main.e9bea300.js",
+    "static/js/453.2a70bbdf.chunk.js": "/ADAS-sensorset-builder/static/js/453.2a70bbdf.chunk.js",
+    "index.html": "/ADAS-sensorset-builder/index.html",
+    "main.e6c13ad2.css.map": "/ADAS-sensorset-builder/static/css/main.e6c13ad2.css.map",
+    "main.e9bea300.js.map": "/ADAS-sensorset-builder/static/js/main.e9bea300.js.map",
+    "453.2a70bbdf.chunk.js.map": "/ADAS-sensorset-builder/static/js/453.2a70bbdf.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.e9bea300.js"
+  ]
+}
