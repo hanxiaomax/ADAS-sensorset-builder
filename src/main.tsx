@@ -38,7 +38,7 @@ export const SensorSetBuilderMain: React.FC = () => {
     background: "white",
   });
 
-  const [image] = useImage("/vehicle.png");
+  const [image] = useImage(process.env.PUBLIC_URL + "/vehicle.png");
   const vehicle = new Vehicle(stageSize, image);
 
   const mountingPointsJSON = JSON.stringify(vehicle._mountingPoints);

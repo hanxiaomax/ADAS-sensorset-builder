@@ -1,64 +1,25 @@
-# Getting Started with Create React App
+# ADAS Sensor Set Builder
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A handy tool for Product Managers/System Engineers to easly create illustration of their product's sensor set
 
-## Available Scripts
+![Car Image](./screenshot.png)
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
+1. Sensor Set creation and visualization 
+2. Highlight and visibility control
+3. import/export your data
+4. BOM table generation (WIP) 
 
 ## TODOs
 
-- 在view菜单中增加图层的拖动功能
 - [color theme](https://uicolors.app/create) #6aeffb 
-- 夜间模式
-- 生成传感器配置表
-[-] debug模式增加stage右上角文字信息显示
-- 模式
-  - 专业模式
-  - 比较模式
-  - 排版模式
-[-] 点击传感器图标时，弹出sensor信息
-- viwer 支持距离显示
-- 支持sensor样式自定义
-- 引导界面
-- 配置库页面；缩略图
+- Dark mode
+- BOM table generation
+- Different mode
+  - compare mode
+  - editing mode
+- Measurement tools/ distance display in Viewer
+- Customizable sensor style
+- Onboarding Interface
+- layer tools
