@@ -225,7 +225,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
             <GitHubIcon sx={{ mr: 1 }} />
             <Typography variant="body2">
               <Link
-                href="https://github.com/hanxiaomax/vehicle-sensorset-builder"
+                href="https://github.com/hanxiaomax/ADAS-sensorset-builder"
                 target="_blank"
                 rel="noopener"
               >
