@@ -9,13 +9,20 @@ import {
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CloseIcon from "@mui/icons-material/Close";
-import SensorsIcon from "@mui/icons-material/Sensors";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import CategoryIcon from "@mui/icons-material/Category";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ImageIcon from "@mui/icons-material/Image";
+import SensorsIcon from "@mui/icons-material/Sensors";
+import BackdropPanel from "./Panels/SamplePanel";
+// import ShapePanel from "./panels/ShapePanel";
+// import VehiclePanel from "./panels/VehiclePanel";
+// import SensorPanel from "./panels/SensorPanel";
+// import ObjectPanel from "./panels/ObjectPanel";
+// import TextPanel from "./panels/TextPanel";
+// import ImagePanel from "./panels/ImagePanel";
 
 const SidebarMenu: React.FC = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
@@ -25,36 +32,43 @@ const SidebarMenu: React.FC = () => {
       name: "Backdrop",
       icon: <WallpaperIcon />,
       description: "Configure the background of your canvas.",
+      panel: <BackdropPanel />,
     },
     {
       name: "Shape",
       icon: <CategoryIcon />,
       description: "Add and customize shapes in your project.",
+      panel: <BackdropPanel />,
     },
     {
       name: "Vehicle",
       icon: <DirectionsCarIcon />,
       description: "Insert and configure vehicles for simulations.",
+      panel: <BackdropPanel />,
     },
     {
       name: "Sensor",
       icon: <SensorsIcon />,
       description: "Manage and configure sensors in your scene.",
+      panel: <BackdropPanel />,
     },
     {
       name: "Object",
       icon: <WidgetsIcon />,
       description: "Add interactive objects to your scene.",
+      panel: <BackdropPanel />,
     },
     {
       name: "Text",
       icon: <TextFieldsIcon />,
       description: "Add and format text elements.",
+      panel: <BackdropPanel />,
     },
     {
       name: "Image",
       icon: <ImageIcon />,
       description: "Insert and manage images in your project.",
+      panel: <BackdropPanel />,
     },
   ];
 
@@ -107,9 +121,7 @@ const SidebarMenu: React.FC = () => {
             <CloseIcon />
           </IconButton>
         </Box>
-        <Box sx={{ padding: 2 }}>
-          {children || `No content available for ${name}`}
-        </Box>
+        <Box sx={{ padding: 2 }}>{children}</Box>
       </Box>
     );
   };
@@ -138,16 +150,6 @@ const SidebarMenu: React.FC = () => {
         }}
       >
         <List sx={{ padding: 0 }}>
-          {panels.map((panel) => (
-            <SidePanel
-              key={panel.name}
-              name={panel.name}
-              description={panel.description}
-            >
-              Content for {panel.name}
-            </SidePanel>
-          ))}
-
           {panels.map((panel) => (
             <ListItemButton
               key={panel.name}
@@ -191,7 +193,7 @@ const SidebarMenu: React.FC = () => {
           name={panel.name}
           description={panel.description}
         >
-          Content for {panel.name}
+          {panel.panel}
         </SidePanel>
       ))}
     </Box>
