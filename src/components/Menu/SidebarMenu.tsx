@@ -16,13 +16,6 @@ import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ImageIcon from "@mui/icons-material/Image";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import BackdropPanel from "../Panels/SamplePanel";
-import DownloadPanel from "../Panels/DownloadPanel";
-// import ShapePanel from "./panels/ShapePanel";
-// import VehiclePanel from "./panels/VehiclePanel";
-// import SensorPanel from "./panels/SensorPanel";
-// import ObjectPanel from "./panels/ObjectPanel";
-// import TextPanel from "./panels/TextPanel";
-// import ImagePanel from "./panels/ImagePanel";
 
 const SidebarMenu: React.FC = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);

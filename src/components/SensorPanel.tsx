@@ -33,10 +33,14 @@ import { BomTableDialog } from "./Dialogs/BomTableDialog";
 interface SensorPanelProps {
   sensors: Sensor[];
   setSensors: React.Dispatch<React.SetStateAction<Sensor[]>>;
+  drawerOpen: boolean;
 }
 
-const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+const SensorPanel: React.FC<SensorPanelProps> = ({
+  sensors,
+  setSensors,
+  drawerOpen,
+}) => {
   const [bomTableDialogOpen, setBomTableDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 用于控制筛选菜单的显示
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // 记录当前筛选的类型
@@ -60,11 +64,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  // 切换 Drawer 显示/隐藏状态
-  const toggleDrawer = () => {
-    setDrawerOpen(!drawerOpen);
-  };
 
   // 处理 ToggleButton 的变化
   const handleToggleChange = (
@@ -142,32 +141,17 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
 
   return (
     <>
-      {/* 确保 IconButton 的 z-index 比较高，避免被其他元素遮盖 */}
-      <IconButton
-        onClick={toggleDrawer}
-        sx={{
-          position: "fixed",
-          color: "#0c7a92",
-          top: 50,
-          right: 0,
-          fontSize: "40px",
-          zIndex: 1400, // 确保图标显示在最前面
-        }}
-      >
-        {!drawerOpen && <Sensors sx={{ fontSize: "40px" }} />}
-      </IconButton>
-
       <Drawer
         anchor="right"
         open={drawerOpen}
-        onClose={toggleDrawer}
         variant="persistent"
         PaperProps={{ sx: { overflow: "visible" } }}
       >
         <Box
           sx={{
             width: "20vw",
-            height: "100vh",
+            top: "20vh",
+            height: "80vh",
             display: "flex",
             flexDirection: "column",
           }}
@@ -183,22 +167,6 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ sensors, setSensors }) => {
             }}
           >
             <Typography variant="h6">Sensor Set</Typography>
-
-            <IconButton
-              onClick={toggleDrawer}
-              sx={{
-                position: "fixed",
-                color: "#0c7a92",
-                top: 0,
-                right: 0,
-                fontSize: "40px",
-                zIndex: 1400, // 确保图标显示在最前面
-              }}
-            >
-              <ArrowForwardIosOutlined
-                sx={{ fontSize: "40px", color: "white" }}
-              />
-            </IconButton>
           </Box>
 
           <Menu

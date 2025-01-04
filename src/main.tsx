@@ -5,11 +5,11 @@ import Viewer from "./components/Viewer/Viewer"; // 引入 Viewer 组件
 import { SensorStocks } from "./types/Common";
 import { Vehicle } from "./types/Vehicle";
 import BottomDrawer from "./components/BottomDrawer";
-import SensorPanel from "./components/SensorPanel";
 import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva";
 import Sensor from "./types/Sensor";
 import SidebarMenu from "./components/Menu/SidebarMenu";
+import BottomMenu from "./components/Menu/BottomMenu";
 
 export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -150,16 +150,16 @@ export const SensorSetBuilderMain: React.FC = () => {
           stageRef={stageRef}
         />
       </Grid>
-      <SidebarMenu></SidebarMenu>
+      <SidebarMenu />
+
+      <BottomMenu
+        sensors={sensorConfiguration}
+        setSensors={setSensorConfiguration}
+      />
       <BottomDrawer
         sensorStocks={sensorData}
         setSensorStocks={setSensorData}
         setSensorConfiguration={setSensorConfiguration}
-      />
-
-      <SensorPanel
-        sensors={sensorConfiguration}
-        setSensors={setSensorConfiguration}
       />
     </Grid>
   );
