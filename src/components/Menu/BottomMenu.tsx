@@ -1,36 +1,93 @@
 import React, { useState } from "react";
-import { Box, Button, ButtonGroup, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import PanToolIcon from "@mui/icons-material/PanTool";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SensorsIcon from "@mui/icons-material/Sensors";
-
+import CloseIcon from "@mui/icons-material/Close";
 import Sensor from "../../types/Sensor";
+import SensorPanelEx from "../Panels/SensorPanelex";
 
 interface BottomMenuProp {
   sensors: Sensor[];
   setSensors: React.Dispatch<React.SetStateAction<Sensor[]>>;
-  PanelComponent?: React.ReactNode; // 可选的外部传入 Panel 组件
 }
-const BottomMenu: React.FC<BottomMenuProp> = ({
-  sensors,
-  setSensors,
-  PanelComponent,
-}) => {
-  const [zoomLevel, setZoomLevel] = React.useState(95);
-  const [panelOpen, setPanelOpen] = useState(false);
 
-  const handleZoomIn = () => {
-    setZoomLevel((prev) => Math.min(prev + 5, 200));
+const BottomMenu: React.FC<BottomMenuProp> = ({ sensors, setSensors }) => {
+  const [openPanel, setOpenPanel] = useState<string | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(95);
+
+  const panels = [
+    {
+      name: "Feedback",
+      icon: <FeedbackIcon />,
+      description: "Provide feedback to improve the application.",
+      panel: <Box sx={{ padding: 2 }}>Feedback Panel Content</Box>,
+    },
+    {
+      name: "Sensors",
+      icon: <SensorsIcon />,
+      description: "Manage sensors and configurations.",
+      panel: <SensorPanelEx />,
+    },
+  ];
+
+  const handlePanelClick = (panelName: string) => {
+    setOpenPanel(openPanel === panelName ? null : panelName);
   };
 
-  const handleZoomOut = () => {
-    setZoomLevel((prev) => Math.max(prev - 5, 10));
-  };
+  const PanelWrapper: React.FC<{
+    name: string;
+    description: string;
+    children?: React.ReactNode;
+  }> = ({ name, description, children }) => {
+    const isVisible = openPanel === name;
 
-  const togglePanel = () => {
-    setPanelOpen(!panelOpen);
+    return (
+      <Box
+        sx={{
+          position: "fixed",
+          bottom: "80px",
+          right: "20px",
+          backgroundColor: "#FFFFFF",
+          boxShadow: 3,
+          borderRadius: "8px",
+          zIndex: 1200,
+          display: isVisible ? "block" : "none",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: 2,
+            borderBottom: "1px solid #ddd",
+          }}
+        >
+          <Box>
+            <Typography variant="h6">{name}</Typography>
+            <Typography variant="body2" color="textSecondary">
+              {description}
+            </Typography>
+          </Box>
+          <IconButton
+            onClick={() => setOpenPanel(null)}
+            sx={{ alignSelf: "flex-start" }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
+        <Box>{children}</Box>
+      </Box>
+    );
   };
 
   return (
@@ -59,16 +116,16 @@ const BottomMenu: React.FC<BottomMenuProp> = ({
           },
         }}
       >
-        <Button startIcon={<FeedbackIcon />}>Feedback</Button>
-        <Button>
-          <PanToolIcon />
-        </Button>
-        {PanelComponent && (
-          <Button onClick={togglePanel}>
-            <SensorsIcon />
+        {panels.map((panel) => (
+          <Button
+            key={panel.name}
+            onClick={() => handlePanelClick(panel.name)}
+            startIcon={panel.icon}
+          >
+            {panel.name}
           </Button>
-        )}
-        <Button onClick={handleZoomOut}>
+        ))}
+        <Button onClick={() => setZoomLevel((prev) => Math.max(prev - 5, 10))}>
           <RemoveIcon />
         </Button>
         <Typography
@@ -78,33 +135,26 @@ const BottomMenu: React.FC<BottomMenuProp> = ({
             alignItems: "center",
             padding: "0 8px",
             fontWeight: "bold",
+            width: "40px", // 固定宽度避免布局移动
+            textAlign: "center",
           }}
         >
           {zoomLevel}%
         </Typography>
-        <Button onClick={handleZoomIn}>
+        <Button onClick={() => setZoomLevel((prev) => Math.min(prev + 5, 200))}>
           <AddIcon />
         </Button>
       </ButtonGroup>
 
-      {PanelComponent && panelOpen && (
-        <Box
-          sx={{
-            position: "fixed",
-            bottom: "80px",
-            right: "20px",
-            width: "300px",
-            height: "400px",
-            backgroundColor: "#fff",
-            boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-            borderRadius: "8px",
-            zIndex: 1200,
-            overflow: "auto",
-          }}
+      {panels.map((panel) => (
+        <PanelWrapper
+          key={panel.name}
+          name={panel.name}
+          description={panel.description}
         >
-          {PanelComponent}
-        </Box>
-      )}
+          {panel.panel}
+        </PanelWrapper>
+      ))}
     </Box>
   );
 };

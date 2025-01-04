@@ -11,6 +11,7 @@ const SensorPanelEx: React.FC<SensorPanelExProps> = () => {
       sx={{
         padding: 2,
         height: "100%",
+        width: "600px",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
@@ -19,16 +20,13 @@ const SensorPanelEx: React.FC<SensorPanelExProps> = () => {
     >
       <Box>
         <Typography variant="h6" gutterBottom>
-          Sample Panel
+          Sensors
         </Typography>
         <Typography variant="body1">
           This is a sample panel content. You can add your own components or
           content here to customize it.
         </Typography>
       </Box>
-      <Button variant="contained" color="primary">
-        Close Panel
-      </Button>
     </Box>
   );
 };

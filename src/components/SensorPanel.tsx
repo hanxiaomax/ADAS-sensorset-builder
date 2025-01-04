@@ -33,7 +33,7 @@ import { BomTableDialog } from "./Dialogs/BomTableDialog";
 interface SensorPanelProps {
   sensors: Sensor[];
   setSensors: React.Dispatch<React.SetStateAction<Sensor[]>>;
-  drawerOpen: boolean;
+  drawerOpen?: boolean;
 }
 
 const SensorPanel: React.FC<SensorPanelProps> = ({
