@@ -7,8 +7,9 @@ import { Vehicle } from "./types/Vehicle";
 import BottomDrawer from "./components/BottomDrawer";
 import SensorPanel from "./components/SensorPanel";
 import MenuBar from "./components/Menu/MenuBar";
-import Konva from "konva"; // 引入 Konva
+import Konva from "konva";
 import Sensor from "./types/Sensor";
+import SidebarMenu from "./components/SidebarMenu";
 
 export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -58,7 +59,6 @@ export const SensorSetBuilderMain: React.FC = () => {
 
     if (storedSensorConfig) {
       const parsedConfig = JSON.parse(storedSensorConfig);
-      // 实例化 Sensor 对象
       const sensorInstances = parsedConfig.map(
         (sensorData: any) =>
           new Sensor(
@@ -150,6 +150,7 @@ export const SensorSetBuilderMain: React.FC = () => {
           stageRef={stageRef}
         />
       </Grid>
+      <SidebarMenu></SidebarMenu>
       <BottomDrawer
         sensorStocks={sensorData}
         setSensorStocks={setSensorData}

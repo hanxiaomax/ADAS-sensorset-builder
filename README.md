@@ -16,6 +16,7 @@ A handy tool for Product Managers/System Engineers to easly create illustration 
 - [color theme](https://uicolors.app/create) #6aeffb 
 - Dark mode
 - BOM table generation
+- multiple/history sensor set memory and selection
 - Different mode
   - compare mode
   - editing mode

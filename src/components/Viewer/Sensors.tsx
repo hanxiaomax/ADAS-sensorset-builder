@@ -29,7 +29,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
     sensor.mountPosition.name
   ) as MountPosition;
 
-  console.log(sensor.options);
+  // console.log(sensor.options);
   const { color, opacity } = sensorColorMap[type] || {
     color: "#000",
     opacity: 1,
