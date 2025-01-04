@@ -160,11 +160,6 @@ export const SensorSetBuilderMain: React.FC = () => {
         sensors={sensorConfiguration}
         setSensors={setSensorConfiguration}
       />
-      {/* <BottomDrawer
-        sensorStocks={sensorData}
-        setSensorStocks={setSensorData}
-        setSensorConfiguration={setSensorConfiguration}
-      /> */}
     </Grid>
   );
 };

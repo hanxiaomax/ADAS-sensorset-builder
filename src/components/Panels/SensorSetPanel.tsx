@@ -10,6 +10,9 @@ import SensorStockItem from "../SensorStock";
 import CreateSensorDialog from "../Dialogs/CreateSensorDialog";
 import { SensorItem, SensorStocks } from "../../types/Common";
 import Sensor from "../../types/Sensor";
+import AddIcon from "@mui/icons-material/Add";
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
+import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
 
 interface SensorSetPanelProps {
   sensorStocks: SensorStocks;
@@ -24,8 +27,8 @@ const SensorSetPanel: React.FC<SensorSetPanelProps> = ({
 }) => {
   const [panelOpen, setPanelOpen] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-
   const sensorTypes = ["USS", "Lidar", "Radar", "Camera"];
+  const [selectedType, setSelectedType] = useState("USS");
 
   const categorizedSensors: { [key: string]: SensorItem[] } =
     sensorTypes.reduce((acc, type) => {
@@ -44,8 +47,9 @@ const SensorSetPanel: React.FC<SensorSetPanelProps> = ({
     localStorage.setItem("sensorStocks", JSON.stringify(updatedSensorStocks));
   };
 
-  const handleDialogOpen = () => {
+  const handleDialogOpen = (type: string) => {
     setDialogOpen(true);
+    setSelectedType(type);
   };
 
   const handleDialogClose = () => {
@@ -114,9 +118,21 @@ const SensorSetPanel: React.FC<SensorSetPanelProps> = ({
           <Divider sx={{ flexGrow: 1 }} />
           <Box display="flex" flexWrap="wrap">
             {renderSensors(type)}
+            <Box onClick={() => handleDialogOpen(type)}>
+              <IconButton>
+                <AddTwoToneIcon sx={{ fontSize: "40px" }} />
+              </IconButton>
+            </Box>
           </Box>
         </Box>
       ))}
+      <CreateSensorDialog
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        onCreate={handleCreateSensor}
+        existingTypes={Object.values(sensorTypes || {})} // 将现有类型传递给对话框
+        defaultType={selectedType}
+      />
     </>
   );
 };

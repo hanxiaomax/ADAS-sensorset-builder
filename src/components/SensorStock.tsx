@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Badge,
-  Chip,
-  ButtonGroup,
-  Button,
   Popover,
   Card,
   CardContent,
@@ -14,9 +10,7 @@ import {
   TableCell,
   Typography,
   CardMedia,
-  IconButton,
   styled,
-  Divider,
 } from "@mui/material";
 import InstallConfigDialog from "./Dialogs/InstallConfigDialog";
 import DeleteConfirmationDialog from "./Dialogs/DeleteConfirmationDialog";
@@ -134,15 +128,17 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
         sx={{
           width: "60px",
           height: "60px",
-          // borderRadius: "16px",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          // marginRight: "4px",
           // margin: "8px",
           position: "relative",
+          // boxShadow: 1,
+          borderRadius: "60px",
           "&:hover": {
             boxShadow: 1,
-            borderRadius: "16px",
+            borderRadius: "60px",
           },
         }}
         onClick={handleSensorClick} // 点击时关闭 Popover

@@ -102,7 +102,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
           top: "10vh",
           left: 110,
           height: "60vh",
-          width: 350,
+          width: 380,
           backgroundColor: "#FFFFFF",
           boxShadow: 3,
           borderRadius: "8px 8px 8px 8px",
@@ -122,7 +122,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
         >
           <Box>
             <Typography variant="h6">{name}</Typography>
-            <Typography variant="body2" color="textSecondary">
+            <Typography variant="body1" color="textSecondary">
               {description}
             </Typography>
           </Box>
