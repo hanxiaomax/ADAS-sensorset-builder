@@ -9,7 +9,7 @@ import SensorPanel from "./components/SensorPanel";
 import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva";
 import Sensor from "./types/Sensor";
-import SidebarMenu from "./components/SidebarMenu";
+import SidebarMenu from "./components/Menu/SidebarMenu";
 
 export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
