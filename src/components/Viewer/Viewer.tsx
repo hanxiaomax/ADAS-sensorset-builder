@@ -223,7 +223,7 @@ const Viewer: React.FC<ViewerProps> = ({
 
     return (
       <Text
-        x={10}
+        x={100}
         y={10}
         fontSize={18}
         fontFamily="Courier New"
