@@ -7,7 +7,6 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
 import CategoryIcon from "@mui/icons-material/Category";
@@ -17,6 +16,7 @@ import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ImageIcon from "@mui/icons-material/Image";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import BackdropPanel from "./Panels/SamplePanel";
+import DownloadPanel from "./Panels/DownloadPanel";
 // import ShapePanel from "./panels/ShapePanel";
 // import VehiclePanel from "./panels/VehiclePanel";
 // import SensorPanel from "./panels/SensorPanel";

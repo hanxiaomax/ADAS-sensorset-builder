@@ -15,14 +15,16 @@ import {
   FormControlLabel,
   Radio,
   Checkbox,
+  Popover,
 } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import EmailIcon from "@mui/icons-material/Email";
 import ProfileMenu from "./ProfileMenu";
 import ViewMenu from "./ViewMenu";
-import { Stage } from "konva/lib/Stage";
-import Konva from "konva"; // 引入 Konva
 import ToolMenu from "./ToolMenu";
+import DownloadPanel from "../Panels/DownloadPanel";
+import { Stage } from "konva/lib/Stage";
+import DownloadIcon from "@mui/icons-material/Download";
 
 interface MenuBarProps {
   handleSensorSetConfigImport: (data: any) => void;
@@ -30,7 +32,7 @@ interface MenuBarProps {
   handleExport: () => void;
   uiConfig: any;
   setUiConfig: (config: any) => void;
-  stageRef: React.RefObject<Stage>; // 新增用于传递 stage 的引用
+  stageRef: React.RefObject<Stage>;
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({
@@ -39,12 +41,11 @@ const MenuBar: React.FC<MenuBarProps> = ({
   handleExport,
   uiConfig,
   setUiConfig,
-  stageRef, // 新增
+  stageRef,
 }) => {
   const [open, setOpen] = useState(false);
-  const [snapshotOpen, setSnapshotOpen] = useState(false); // 控制 Snapshot 对话框
-  const [format, setFormat] = useState("png"); // 默认导出格式为 PNG
-  const [includeBackground, setIncludeBackground] = useState(false); // 是否包含背景
+  const [downloadAnchorEl, setDownloadAnchorEl] =
+    useState<HTMLButtonElement | null>(null);
 
   const handleAboutOpen = () => {
     setOpen(true);
@@ -54,61 +55,16 @@ const MenuBar: React.FC<MenuBarProps> = ({
     setOpen(false);
   };
 
-  const handleSnapshotOpen = () => {
-    setSnapshotOpen(true); // 打开 Snapshot 对话框
+  const handleDownloadClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setDownloadAnchorEl(event.currentTarget);
   };
 
-  const handleSnapshotClose = () => {
-    setSnapshotOpen(false); // 关闭 Snapshot 对话框
+  const handleDownloadClose = () => {
+    setDownloadAnchorEl(null);
   };
 
-  const handleFormatChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormat((event.target as HTMLInputElement).value);
-  };
-
-  const handleSnapshotConfirm = () => {
-    if (stageRef && stageRef.current) {
-      const stage = stageRef.current;
-      let backgroundLayer: Konva.Layer | null = null;
-
-      // 如果用户选择包含背景，我们手动添加一个背景矩形
-      if (includeBackground) {
-        backgroundLayer = new Konva.Layer();
-        const backgroundRect = new Konva.Rect({
-          x: 0,
-          y: 0,
-          width: stage.width(),
-          height: stage.height(),
-          fill: "#ffffff", // 背景颜色
-        });
-        backgroundLayer.add(backgroundRect);
-
-        // 将背景层添加到最底层
-        stage.add(backgroundLayer);
-        backgroundLayer.moveToBottom(); // 移动背景层到最底层
-        stage.draw(); // 确保背景立即渲染
-      }
-
-      // 导出 PNG
-      if (format === "png") {
-        const uri = stage.toDataURL({ pixelRatio: 2, mimeType: "image/png" });
-        const link = document.createElement("a");
-        link.download = "snapshot.png"; // 设置下载文件名
-        link.href = uri;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
-      // 导出完成后移除背景层
-      if (backgroundLayer) {
-        backgroundLayer.remove();
-        stage.draw(); // 重新绘制舞台
-      }
-
-      handleSnapshotClose(); // 导出完成后关闭对话框
-    }
-  };
+  const isDownloadOpen = Boolean(downloadAnchorEl);
+  const downloadId = isDownloadOpen ? "download-popover" : undefined;
 
   return (
     <>
@@ -117,7 +73,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
         elevation={0}
         sx={{
           backgroundColor: "#ffffff",
-          height: "10px",
+          height: "20px",
         }}
       >
         <ButtonGroup
@@ -126,6 +82,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
           size="large"
           sx={{
             "& .MuiButtonBase-root": {
+              top: "3px",
               borderColor: "#f6f6f6",
               color: "#0c7a92",
               borderRadius: 0,
@@ -144,51 +101,39 @@ const MenuBar: React.FC<MenuBarProps> = ({
             onExport={handleExport}
           />
           <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
-          <Button onClick={handleSnapshotOpen}>Snapshot</Button>
           <ToolMenu />
           <Button onClick={handleAboutOpen}>About</Button>
+          <Button
+            aria-describedby={downloadId}
+            onClick={handleDownloadClick}
+            sx={{
+              position: "absolute",
+              right: "10px",
+            }}
+          >
+            <DownloadIcon />
+            Download
+          </Button>
         </ButtonGroup>
       </AppBar>
 
-      {/* Snapshot Dialog */}
-      <Dialog open={snapshotOpen} onClose={handleSnapshotClose}>
-        <DialogTitle>Export Snapshot</DialogTitle>
-        <DialogContent>
-          <Typography variant="subtitle1" gutterBottom>
-            Choose file format:
-          </Typography>
-          <RadioGroup
-            aria-label="format"
-            name="format"
-            value={format}
-            onChange={handleFormatChange}
-          >
-            <FormControlLabel value="png" control={<Radio />} label="PNG" />
-          </RadioGroup>
+      <Popover
+        id={downloadId}
+        open={isDownloadOpen}
+        anchorEl={downloadAnchorEl}
+        onClose={handleDownloadClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <DownloadPanel stageRef={stageRef} />
+      </Popover>
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={includeBackground}
-                onChange={() => setIncludeBackground(!includeBackground)}
-              />
-            }
-            label="Include Background"
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleSnapshotClose}>Cancel</Button>
-          <Button
-            onClick={handleSnapshotConfirm}
-            variant="contained"
-            color="primary"
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Dialog for About information */}
       <Dialog open={open} onClose={handleAboutClose}>
         <DialogTitle>About</DialogTitle>
         <DialogContent>
