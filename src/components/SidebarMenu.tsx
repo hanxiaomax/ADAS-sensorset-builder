@@ -5,31 +5,68 @@ import {
   ListItemButton,
   ListItemIcon,
   Typography,
+  IconButton,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CloseIcon from "@mui/icons-material/Close";
+import SensorsIcon from "@mui/icons-material/Sensors";
+import WallpaperIcon from "@mui/icons-material/Wallpaper";
+import CategoryIcon from "@mui/icons-material/Category";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import WidgetsIcon from "@mui/icons-material/Widgets";
+import TextFieldsIcon from "@mui/icons-material/TextFields";
+import ImageIcon from "@mui/icons-material/Image";
 
 const SidebarMenu: React.FC = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
 
   const panels = [
-    { name: "Backdrop", icon: <AddCircleOutlineIcon /> },
-    { name: "Frames", icon: <AddCircleOutlineIcon /> },
-    { name: "Shape", icon: <AddCircleOutlineIcon /> },
-    { name: "Character", icon: <AddCircleOutlineIcon /> },
-    { name: "Props", icon: <AddCircleOutlineIcon /> },
-    { name: "Speech", icon: <AddCircleOutlineIcon /> },
-    { name: "Text", icon: <AddCircleOutlineIcon /> },
-    { name: "Image", icon: <AddCircleOutlineIcon /> },
+    {
+      name: "Backdrop",
+      icon: <WallpaperIcon />,
+      description: "Configure the background of your canvas.",
+    },
+    {
+      name: "Shape",
+      icon: <CategoryIcon />,
+      description: "Add and customize shapes in your project.",
+    },
+    {
+      name: "Vehicle",
+      icon: <DirectionsCarIcon />,
+      description: "Insert and configure vehicles for simulations.",
+    },
+    {
+      name: "Sensor",
+      icon: <SensorsIcon />,
+      description: "Manage and configure sensors in your scene.",
+    },
+    {
+      name: "Object",
+      icon: <WidgetsIcon />,
+      description: "Add interactive objects to your scene.",
+    },
+    {
+      name: "Text",
+      icon: <TextFieldsIcon />,
+      description: "Add and format text elements.",
+    },
+    {
+      name: "Image",
+      icon: <ImageIcon />,
+      description: "Insert and manage images in your project.",
+    },
   ];
 
   const handlePanelClick = (panelName: string) => {
     setOpenPanel(openPanel === panelName ? null : panelName);
   };
 
-  const SidePanel: React.FC<{ name: string; children?: React.ReactNode }> = ({
-    name,
-    children,
-  }) => {
+  const SidePanel: React.FC<{
+    name: string;
+    description: string;
+    children?: React.ReactNode;
+  }> = ({ name, description, children }) => {
     const isVisible = openPanel === name;
 
     return (
@@ -48,9 +85,28 @@ const SidebarMenu: React.FC = () => {
           overflowY: "auto",
         }}
       >
-        <Typography variant="h6" sx={{ padding: 2 }}>
-          {name}
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: 2,
+            borderBottom: "1px solid #ddd",
+          }}
+        >
+          <Box>
+            <Typography variant="h6">{name}</Typography>
+            <Typography variant="body2" color="textSecondary">
+              {description}
+            </Typography>
+          </Box>
+          <IconButton
+            onClick={() => setOpenPanel(null)}
+            sx={{ alignSelf: "flex-start" }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
         <Box sx={{ padding: 2 }}>
           {children || `No content available for ${name}`}
         </Box>
@@ -77,11 +133,21 @@ const SidebarMenu: React.FC = () => {
           width: 80,
           backgroundColor: "#FFFFFF",
           borderRight: "1px solid #ddd",
-          borderRadius: "0 8px 8px 0",
-          boxShadow: "2px 0px 5px rgba(0, 0, 0, 0.1)",
+          borderRadius: "8px 8px 8px 8px",
+          boxShadow: 3,
         }}
       >
         <List sx={{ padding: 0 }}>
+          {panels.map((panel) => (
+            <SidePanel
+              key={panel.name}
+              name={panel.name}
+              description={panel.description}
+            >
+              Content for {panel.name}
+            </SidePanel>
+          ))}
+
           {panels.map((panel) => (
             <ListItemButton
               key={panel.name}
@@ -120,7 +186,11 @@ const SidebarMenu: React.FC = () => {
       </Box>
 
       {panels.map((panel) => (
-        <SidePanel key={panel.name} name={panel.name}>
+        <SidePanel
+          key={panel.name}
+          name={panel.name}
+          description={panel.description}
+        >
           Content for {panel.name}
         </SidePanel>
       ))}
