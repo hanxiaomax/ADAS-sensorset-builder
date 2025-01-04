@@ -5,7 +5,8 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { SensorStocks } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import notifier from "../Notification";
+import { useSnackbar } from "notistack";
 
 interface ProfileMenuProps {
   onImportSensorSetConfigImport: (sensors: Sensor[]) => void;
@@ -21,6 +22,9 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const { enqueueSnackbar } = useSnackbar();
+  React.useEffect(() => {
+    notifier.init(enqueueSnackbar);
+  }, [enqueueSnackbar]);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -74,9 +78,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
             if (isValidSensorStock(data)) {
               // 验证传入数据是否符合SensorStocks类型
               onImportSensorStock(data);
-              enqueueSnackbar("Sensor Stocks imported successfully!", {
-                variant: "success",
-              });
+              notifier.success("Sensor Stocks imported successfully!");
             } else {
               throw new Error("Invalid Sensor Database format.");
             }
@@ -92,19 +94,16 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
                 );
               });
               onImportSensorSetConfigImport(sensorInstances);
-              enqueueSnackbar(
-                "Sensor Set imported and instantiated successfully!",
-                { variant: "success" }
+              notifier.success(
+                "Sensor Set imported and instantiated successfully!"
               );
             } else {
-              throw new Error("Invalid Sensor Set format.");
+              notifier.error("Invalid Sensor Set format.");
             }
           }
         } catch (error) {
           const errorMessage = (error as Error).message.replace("Error: ", "");
-          enqueueSnackbar(`Import failed due to:\n${errorMessage}`, {
-            variant: "error",
-          });
+          notifier.error(errorMessage);
         }
       };
       reader.readAsText(file);
@@ -116,7 +115,7 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
 
   const handleExportClick = () => {
     onExport();
-    enqueueSnackbar("Data exported successfully!", { variant: "success" });
+    notifier.success("Data exported successfully!");
   };
 
   return (

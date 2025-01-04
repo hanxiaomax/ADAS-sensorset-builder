@@ -13,7 +13,8 @@ import {
 import { Stage } from "konva/lib/Stage";
 import Konva from "konva"; // 引入 Konva
 // import { useSnackbarContext } from "../SnackbarContext";
-import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
+import { useSnackbar } from "notistack";
+import notifier from "../Notification";
 
 interface DownloadPanelProps {
   stageRef: React.RefObject<Stage>; // 新增用于传递 stage 的引用
@@ -26,14 +27,12 @@ const DownloadPanel: React.FC<DownloadPanelProps> = ({ stageRef }) => {
   const [includebackground, setIncludeBackground] = useState(false);
 
   const { enqueueSnackbar } = useSnackbar();
-  const handleClickVariant = (variant: VariantType) => () => {
-    // variant could be success, error, warning, info, or default
-    enqueueSnackbar("This is a success message!", { variant });
-  };
+  React.useEffect(() => {
+    notifier.init(enqueueSnackbar);
+  }, [enqueueSnackbar]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIncludeBackground(event.target.checked);
-    console.log(`Checked: ${event.target.checked}`);
   };
 
   const handleDownloadClick = () => {
@@ -68,18 +67,12 @@ const DownloadPanel: React.FC<DownloadPanelProps> = ({ stageRef }) => {
         link.click();
         document.body.removeChild(link);
         if (includebackground) {
-          enqueueSnackbar("Image downloaded with background", {
-            variant: "success",
-          });
+          notifier.success("Image downloaded with background");
         } else {
-          enqueueSnackbar("Image downloaded without background", {
-            variant: "success",
-          });
+          notifier.success("Image downloaded with background");
         }
       } else {
-        enqueueSnackbar("File type " + fileType + " not supported yet", {
-          variant: "error",
-        });
+        notifier.error("File type " + fileType + " not supported yet");
       }
 
       // 导出完成后移除背景层
