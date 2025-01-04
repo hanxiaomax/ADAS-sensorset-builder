@@ -7,6 +7,8 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import { Stage } from "konva/lib/Stage";
 import Konva from "konva"; // 引入 Konva
@@ -22,12 +24,17 @@ const DownloadPanel: React.FC<DownloadPanelProps> = ({ stageRef }) => {
   const [pages, setPages] = useState("Current page only");
   const [includebackground, setIncludeBackground] = useState(false);
   const { showSnackbar } = useSnackbarContext();
+  // const [checked, setChecked] = useState(false);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setIncludeBackground(event.target.checked);
+    console.log(`Checked: ${event.target.checked}`);
+  };
 
   const handleDownloadClick = () => {
     if (stageRef && stageRef.current) {
       const stage = stageRef.current;
       let backgroundLayer: Konva.Layer | null = null;
-      console.log(stageRef);
       // 如果用户选择包含背景，我们手动添加一个背景矩形
       if (includebackground) {
         backgroundLayer = new Konva.Layer();
@@ -55,7 +62,11 @@ const DownloadPanel: React.FC<DownloadPanelProps> = ({ stageRef }) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        showSnackbar("Image downloaded", "success");
+        if (includebackground) {
+          showSnackbar("Image downloaded with background", "success");
+        } else {
+          showSnackbar("Image downloaded without background", "success");
+        }
       } else {
         showSnackbar("File type " + fileType + " not supported yet", "error");
       }
@@ -124,12 +135,18 @@ const DownloadPanel: React.FC<DownloadPanelProps> = ({ stageRef }) => {
             </Select>
           </FormControl>
         </Box>
+        <FormControlLabel
+          control={
+            <Checkbox checked={includebackground} onChange={handleChange} />
+          }
+          label="Background"
+        />
       </Box>
       <Button
         variant="contained"
         onClick={handleDownloadClick}
         sx={{
-          backgroundColor: "#000",
+          backgroundColor: "#0c7a92",
           color: "#fff",
           width: "100%",
           marginTop: 2,
