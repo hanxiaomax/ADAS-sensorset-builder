@@ -1,18 +1,11 @@
 import React, { useState } from "react";
-import {
-  Menu,
-  MenuItem,
-  Button,
-  Snackbar,
-  Alert,
-  AlertTitle,
-  Typography,
-} from "@mui/material";
+import { Menu, MenuItem, Button } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { SensorStocks } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
+import { useSnackbarContext } from "../SnackbarContext";
 
 interface ProfileMenuProps {
   onImportSensorSetConfigImport: (sensors: Sensor[]) => void;
@@ -26,11 +19,8 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   onExport,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
-    "success"
-  );
+
+  const { showSnackbar } = useSnackbarContext();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -38,21 +28,6 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleSnackbarClose = () => {
-    setOpenSnackbar(false);
-  };
-
-  const showSnackbar = (message: string, severity: "success" | "error") => {
-    setOpenSnackbar(false); // 强制关闭Snackbar
-
-    // 确保Snackbar关闭后再显示新消息，使用短暂延迟
-    setTimeout(() => {
-      setSnackbarMessage(message);
-      setSnackbarSeverity(severity);
-      setOpenSnackbar(true); // 重新打开Snackbar
-    }, 200);
   };
 
   const isValidUUID = (id: string) => {
@@ -182,30 +157,6 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
           Export Data
         </MenuItem>
       </Menu>
-
-      {/* Snackbar for notifications */}
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={6000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert
-          onClose={handleSnackbarClose}
-          severity={snackbarSeverity}
-          variant="filled"
-          sx={{
-            width: "100%",
-            backgroundColor:
-              snackbarSeverity === "error" ? "#ff9800" : undefined,
-            color: snackbarSeverity === "error" ? "#fff" : undefined,
-          }}
-        >
-          {snackbarSeverity === "error" ? <AlertTitle>Error</AlertTitle> : null}
-          <Typography sx={{ whiteSpace: "pre-line" }}>
-            {snackbarMessage}
-          </Typography>
-        </Alert>
-      </Snackbar>
     </>
   );
 };

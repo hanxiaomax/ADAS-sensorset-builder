@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -10,20 +10,20 @@ import {
 } from "@mui/material";
 import { Stage } from "konva/lib/Stage";
 import Konva from "konva"; // 引入 Konva
+import { useSnackbarContext } from "../SnackbarContext";
 
 interface DownloadPanelProps {
   stageRef: React.RefObject<Stage>; // 新增用于传递 stage 的引用
 }
 
 const DownloadPanel: React.FC<DownloadPanelProps> = ({ stageRef }) => {
-  const [fileType, setFileType] = React.useState("JPG");
-  const [size, setSize] = React.useState("1x");
-  const [pages, setPages] = React.useState("Current page only");
-  const [includebackground, setIncludeBackground] = React.useState(false);
+  const [fileType, setFileType] = useState("JPG");
+  const [size, setSize] = useState("1x");
+  const [pages, setPages] = useState("Current page only");
+  const [includebackground, setIncludeBackground] = useState(false);
+  const { showSnackbar } = useSnackbarContext();
 
   const handleDownloadClick = () => {
-    console.log("----");
-
     if (stageRef && stageRef.current) {
       const stage = stageRef.current;
       let backgroundLayer: Konva.Layer | null = null;
@@ -55,7 +55,9 @@ const DownloadPanel: React.FC<DownloadPanelProps> = ({ stageRef }) => {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        showSnackbar("Image downloaded", "success");
       } else {
+        showSnackbar("File type " + fileType + " not supported yet", "error");
       }
 
       // 导出完成后移除背景层
