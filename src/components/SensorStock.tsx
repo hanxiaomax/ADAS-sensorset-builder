@@ -14,6 +14,9 @@ import {
   TableCell,
   Typography,
   CardMedia,
+  IconButton,
+  styled,
+  Divider,
 } from "@mui/material";
 import InstallConfigDialog from "./Dialogs/InstallConfigDialog";
 import DeleteConfirmationDialog from "./Dialogs/DeleteConfirmationDialog";
@@ -21,6 +24,8 @@ import SensorInfoDialog from "./SensorInfoDialog";
 import { SensorItem } from "../types/Common";
 import Sensor from "../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
+import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+
 interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorItem;
@@ -28,6 +33,18 @@ interface SensorStockItemProps {
   setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
   onEdit: (editedSensor: SensorItem) => void;
 }
+
+const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#f5f5f9",
+    color: "rgba(0, 0, 0, 0.87)",
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: "1px solid #dadde9",
+  },
+}));
 
 const SensorStockItem: React.FC<SensorStockItemProps> = ({
   icon,
@@ -107,76 +124,61 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
 
   return (
     <Box
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       sx={{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
       }}
     >
-      <Badge
-        badgeContent={
-          sensor.attr.new ? (
-            <Chip label="New" color="primary" size="small" />
-          ) : null
-        }
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        overlap="circular"
+      <Box
         sx={{
-          "& .MuiBadge-badge": {
-            transform: "translate(25%, -25%)",
-            borderRadius: "8px",
-          },
-        }}
-      >
-        <Box
-          sx={{
-            width: "80px",
-            height: "80px",
-            backgroundColor: "#f0f0f0",
+          width: "60px",
+          height: "60px",
+          // borderRadius: "16px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          // margin: "8px",
+          position: "relative",
+          "&:hover": {
+            boxShadow: 1,
             borderRadius: "16px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            margin: "8px",
-            position: "relative",
-            transition: "transform 0.2s, box-shadow 0.2s",
-            "&:hover": {
-              transform: "translateY(-5px)",
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-            },
-          }}
-          onClick={handleSensorClick} // 点击时关闭 Popover
-          onMouseEnter={handlePopoverOpen} // 鼠标移入时打开 Popover
-          onMouseLeave={handlePopoverClose} // 鼠标移出时关闭 Popover
-        >
-          {icon}
-        </Box>
-      </Badge>
-      {/* Use 和 Delete 按钮，仅在悬停时显示 */}
-      <ButtonGroup
-        disableElevation
-        variant="outlined"
-        size="small"
-        sx={{
-          "& .MuiButtonBase-root": {
-            backgroundColor: hover ? "#f6f6f6" : "transparent",
-            width: "80px",
-            height: "30px",
-            color: "#111111",
-            border: 0,
-            boxShadow: "none",
-            textTransform: "none",
-            display: hover ? "block" : "none",
-            "&:hover": {
-              backgroundColor: "#e0e0e0",
-            },
           },
         }}
+        onClick={handleSensorClick} // 点击时关闭 Popover
       >
-        <Button onClick={handleInstallClick}>Install</Button>
-      </ButtonGroup>
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <HtmlTooltip
+            title={
+              <React.Fragment>
+                <Typography color="inherit">{sensor.name}</Typography>
+                <Typography
+                  fontStyle="italic"
+                  sx={{ fontSize: "12px" }}
+                  gutterBottom
+                >
+                  {sensor.desc}
+                </Typography>
+
+                <Box>
+                  <Typography sx={{ fontSize: "13px" }}>
+                    Brand: <u>{sensor.brand}</u>
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px" }}>
+                    Fov: <u>{sensor.spec.fov}</u>
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px" }}>
+                    Range: <u>{sensor.spec.range}</u>
+                  </Typography>
+                </Box>
+              </React.Fragment>
+            }
+          >
+            {icon}
+          </HtmlTooltip>
+        </Box>
+      </Box>
+      {/* Use 和 Delete 按钮，仅在悬停时显示 */}
       {/* Popover 显示详细信息卡片 */}
       <Popover
         sx={{

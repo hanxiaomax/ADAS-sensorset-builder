@@ -109,5 +109,53 @@
       "promotion": false,
       "new": true
     }
+  },
+  "c84406bc-cb54-46ec-ab63-32e883399e62": {
+    "id":"c84406bc-cb54-46ec-ab63-32e883399e6b",
+    "name": "Wide Camera",
+    "type": "camera",
+    "brand": "unknown",
+    "desc": "Camera Sensor for sensing",
+    "image": "",
+    "spec": {
+      "range": 50,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    }
+  },
+  "c84406bc-cb54-46ec-ab63-32e883399e61": {
+    "id":"c84406bc-cb54-46ec-ab63-32e883399e6b",
+    "name": "Wide Camera",
+    "type": "camera",
+    "brand": "unknown",
+    "desc": "Camera Sensor for sensing",
+    "image": "",
+    "spec": {
+      "range": 50,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    }
+  },
+  "c84406bc-cb54-46ec-ab63-32e822399e6b": {
+    "id":"c84406bc-cb54-46ec-ab63-32e883399e6b",
+    "name": "Wide Camera",
+    "type": "camera",
+    "brand": "unknown",
+    "desc": "Camera Sensor for sensing",
+    "image": "",
+    "spec": {
+      "range": 50,
+      "fov": 120
+    },
+    "attr": {
+      "promotion": false,
+      "new": true
+    }
   }
 }

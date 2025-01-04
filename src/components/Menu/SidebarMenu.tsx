@@ -16,8 +16,21 @@ import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ImageIcon from "@mui/icons-material/Image";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import BackdropPanel from "../Panels/SamplePanel";
+import SensorSetPanel from "../Panels/SensorSetPanel";
+import { SensorStocks } from "../../types/Common";
+import Sensor from "../../types/Sensor";
 
-const SidebarMenu: React.FC = () => {
+interface SidebarMenuProps {
+  sensorStocks: SensorStocks;
+  setSensorStocks: React.Dispatch<React.SetStateAction<SensorStocks>>;
+  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
+}
+
+const SidebarMenu: React.FC<SidebarMenuProps> = ({
+  sensorStocks,
+  setSensorStocks,
+  setSensorConfiguration,
+}) => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
 
   const panels = [
@@ -43,7 +56,13 @@ const SidebarMenu: React.FC = () => {
       name: "Sensor",
       icon: <SensorsIcon />,
       description: "Manage and configure sensors in your scene.",
-      panel: <BackdropPanel />,
+      panel: (
+        <SensorSetPanel
+          sensorStocks={sensorStocks}
+          setSensorStocks={setSensorStocks}
+          setSensorConfiguration={setSensorConfiguration}
+        />
+      ),
     },
     {
       name: "Object",
@@ -83,7 +102,7 @@ const SidebarMenu: React.FC = () => {
           top: "10vh",
           left: 110,
           height: "60vh",
-          width: 300,
+          width: 350,
           backgroundColor: "#FFFFFF",
           boxShadow: 3,
           borderRadius: "8px 8px 8px 8px",
