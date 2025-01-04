@@ -1,10 +1,11 @@
 import React from "react";
 import SensorSetBuilderMain from "./main";
-import { SnackbarProvider } from "./components/SnackbarContext";
+// import { SnackbarProvider } from "./components/SnackbarContext";
+import { SnackbarProvider, VariantType, useSnackbar } from "notistack";
 
 const App: React.FC = () => {
   return (
-    <SnackbarProvider>
+    <SnackbarProvider maxSnack={4} autoHideDuration={5000}>
       <SensorSetBuilderMain />
     </SnackbarProvider>
   );
