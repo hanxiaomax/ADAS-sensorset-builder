@@ -15,7 +15,7 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { SensorItem, SensorSpec } from "../types/Common";
+import { SensorItem, SensorSpec } from "../../types/Common";
 
 interface SensorInfoDialogProps {
   open: boolean;

@@ -11,14 +11,14 @@ import {
   Typography,
   CardMedia,
 } from "@mui/material";
-import InstallConfigDialog from "./Dialogs/InstallConfigDialog";
-import DeleteConfirmationDialog from "./Dialogs/DeleteConfirmationDialog";
+import InstallConfigDialog from "./InstallConfigDialog";
+import DeleteConfirmationDialog from "./DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
-import { SensorItem } from "../types/Common";
-import Sensor from "../types/Sensor";
+import { SensorItem } from "../../types/Common";
+import Sensor from "../../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
-import { HtmlTooltip } from "./ToolTips";
-import { useSensorStore } from "../stores/sensorStore";
+import { HtmlTooltip } from "../Helper/ToolTips";
+import { useSensorStore } from "../../stores/sensorStore";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;

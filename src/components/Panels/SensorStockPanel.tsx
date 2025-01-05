@@ -4,11 +4,11 @@ import SensorsOutlinedIcon from "@mui/icons-material/SensorsOutlined";
 import RadarOutlinedIcon from "@mui/icons-material/RadarOutlined";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import ToysOutlinedIcon from "@mui/icons-material/ToysOutlined";
-import SensorStockItem from "../SensorStock";
+import SensorStockItem from "../Dialogs/SensorStock";
 import CreateSensorDialog from "../Dialogs/CreateSensorDialog";
 import { SensorItem, SensorStocks } from "../../types/Common";
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
-import { HtmlTooltip } from "../ToolTips";
+import { HtmlTooltip } from "../Helper/ToolTips";
 import { useSensorStore } from "../../stores/sensorStore";
 
 interface SensorStackPanelProps {}
