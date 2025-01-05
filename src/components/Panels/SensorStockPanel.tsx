@@ -52,9 +52,16 @@ const SensorStackPanel: React.FC<SensorStackPanelProps> = ({}) => {
   const handleCreateSensor = (newSensor: SensorItem) => {
     if (!sensorStocks) return;
 
+    // 合并新旧传感器配置
     const updatedSensorStocks = {
       ...sensorStocks,
-      [newSensor.id]: newSensor,
+      [newSensor.id]: {
+        ...newSensor,
+        configuration: {
+          ...(sensorStocks[newSensor.id]?.configuration || {}),
+          ...newSensor.configuration,
+        },
+      },
     };
 
     setSensorStocks(updatedSensorStocks);
@@ -132,7 +139,7 @@ const SensorStackPanel: React.FC<SensorStackPanelProps> = ({}) => {
         open={dialogOpen}
         onClose={handleDialogClose}
         onCreate={handleCreateSensor}
-        existingTypes={Object.values(sensorTypes || {})} // 将现有类型传递给对话框
+        existingTypes={Object.values(sensorTypes || {})}
         defaultType={selectedType}
       />
     </>

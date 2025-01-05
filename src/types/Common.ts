@@ -30,9 +30,10 @@ export interface SensorItem {
   name: string;
   desc: string;
   brand: string;
-  image: "";
+  image: string;
   spec: SensorSpec;
   attr: SensorAttr;
+  configuration?: { [key: string]: any }; // 添加可选的configuration属性
 }
 
 export interface SensorStocks {

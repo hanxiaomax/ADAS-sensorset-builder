@@ -68,17 +68,15 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     selectedPosition: string,
     orientation: number
   ) => {
-    const sensorConfig = JSON.parse(
-      localStorage.getItem("sensorConfig") || "[]"
-    );
     const position = {
       name: selectedPosition,
     };
-    const options = ["highlight"]; //highlight by default for new sesnor
+    const options = ["highlight"]; //highlight by default for new sensor
     const newSensor = new Sensor(uuidv4(), selectedSensor, position, options);
-    sensorConfig.push(newSensor);
-    setSensorConfiguration(sensorConfig);
-    localStorage.setItem("sensorConfig", JSON.stringify(sensorConfig));
+    setSensorConfiguration([
+      ...useSensorStore.getState().sensorConfiguration,
+      newSensor,
+    ]);
     setDialogOpen(false);
   };
 
