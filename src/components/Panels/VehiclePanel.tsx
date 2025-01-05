@@ -1,11 +1,11 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 
-interface SamplePanelProps {
+interface VehiclePanelProps {
   // onClose: () => void;
 }
 
-const SamplePanel: React.FC<SamplePanelProps> = () => {
+const VehiclePanel: React.FC<VehiclePanelProps> = () => {
   return (
     <Box
       sx={{
@@ -20,4 +20,4 @@ const SamplePanel: React.FC<SamplePanelProps> = () => {
   );
 };
 
-export default SamplePanel;
+export default VehiclePanel;

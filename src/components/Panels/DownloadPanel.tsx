@@ -9,6 +9,7 @@ import {
   InputLabel,
   Checkbox,
   FormControlLabel,
+  Switch,
 } from "@mui/material";
 import { Stage } from "konva/lib/Stage";
 import Konva from "konva"; // 引入 Konva
@@ -141,7 +142,7 @@ const DownloadPanel: React.FC<DownloadPanelProps> = ({ stageRef }) => {
         </Box>
         <FormControlLabel
           control={
-            <Checkbox checked={includebackground} onChange={handleChange} />
+            <Switch checked={includebackground} onChange={handleChange} />
           }
           label="Background"
         />

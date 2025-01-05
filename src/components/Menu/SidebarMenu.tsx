@@ -16,7 +16,9 @@ import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ImageIcon from "@mui/icons-material/Image";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import BackdropPanel from "../Panels/SamplePanel";
-import SensorSetPanel from "../Panels/SensorSetPanel";
+import SensorStockPanel from "../Panels/SensorStockPanel";
+import VehiclePanel from "../Panels/VehiclePanel";
+
 import { SensorStocks } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 
@@ -50,14 +52,14 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
       name: "Vehicle",
       icon: <DirectionsCarIcon />,
       description: "Insert and configure vehicles for simulations.",
-      panel: <BackdropPanel />,
+      panel: <VehiclePanel />,
     },
     {
       name: "Sensor",
       icon: <SensorsIcon />,
       description: "Manage and configure sensors in your scene.",
       panel: (
-        <SensorSetPanel
+        <SensorStockPanel
           sensorStocks={sensorStocks}
           setSensorStocks={setSensorStocks}
           setSensorConfiguration={setSensorConfiguration}
