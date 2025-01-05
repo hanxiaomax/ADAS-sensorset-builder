@@ -25,7 +25,6 @@ import ViewerContextMenu from "./ViewerContextMenu";
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable"; // 用于拖动浮动窗口
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import { useUiConfig } from "../../contexts/UiConfigContext";
 
 import {
   getBoundingBox,
@@ -36,6 +35,7 @@ import {
   renderLayerBoundary,
 } from "./ViewerHelper";
 import { useSensor } from "../../contexts/SensorContext";
+import useUiConfigStore from "../../stores/uiConfigStore";
 
 interface ViewerProps {
   stageSize: StageSize;
@@ -62,9 +62,32 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const [stagePos, setStagePos] = useState(stageCenter);
   const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
   const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
-  const { uiConfig, setUiConfig } = useUiConfig();
   const { sensorConfiguration } = useSensor();
-
+  const {
+    showCarImage,
+    showUssZones,
+    showUssSensors,
+    showLidarSensors,
+    showRadarSensors,
+    showCameraSensors,
+    showGrid,
+    showVehicleRefPoint,
+    showDebugMode,
+    frontZones,
+    sideZones,
+    rearZones,
+    toggleCarImage,
+    toggleUssZones,
+    toggleUssSensors,
+    toggleLidarSensors,
+    toggleRadarSensors,
+    toggleCameraSensors,
+    toggleVehicleRefPoint,
+    toggleDebugModePoint,
+    setFrontZones,
+    setSideZones,
+    setRearZones,
+  } = useUiConfigStore();
   useEffect(() => {
     if (layerRef.current) {
       const layer = layerRef.current;
@@ -110,19 +133,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     setStagePos(newPos); // 更新图层位置
   };
 
-  const handleToggleGrid = () => {
-    setUiConfig((prev: any) => ({
-      ...prev,
-      showGrid: !prev.showGrid,
-    }));
-  };
-
-  const handelToggleDebugMode = () => {
-    setUiConfig((prev: any) => ({
-      ...prev,
-      showDebugMode: !prev.showDebugMode,
-    }));
-  };
   const handleAutoZoomToSensorCoverage = () => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -210,7 +220,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   };
 
   const renderDebugInfo = () => {
-    if (!uiConfig.showDebugMode) return null;
+    if (!showDebugMode) return null;
 
     const selectedSensorInfo = selectedSensor;
 
@@ -293,9 +303,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
             onWheel={handleWheel}
             onMouseMove={handleMouseMove}
           >
-            <Layer>
-              {uiConfig.showDebugMode && renderDebugOverlay(stageSize)}
-            </Layer>
+            <Layer>{showDebugMode && renderDebugOverlay(stageSize)}</Layer>
             <Layer
               listening={false}
               scaleX={scale}
@@ -305,7 +313,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
               offsetX={stageSize.width / 2}
               offsetY={stageSize.height / 2}
             >
-              {uiConfig.showGrid && renderGrid(stageSize, girdMargin)}
+              {showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
             <Layer
               scaleX={scale}
@@ -319,31 +327,31 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
               offsetX={stageSize.width / 2}
               offsetY={stageSize.height / 2}
             >
-              {uiConfig.showDebugMode && renderBoundingBox(sensorConfiguration)}
-              {uiConfig.showDebugMode && renderLayerBoundary(layerSize)}
+              {showDebugMode && renderBoundingBox(sensorConfiguration)}
+              {showDebugMode && renderLayerBoundary(layerSize)}
 
               <Group>
                 <UssZones
-                  show={uiConfig.showUssZones}
+                  show={showUssZones}
                   x={vehicle.origin.x}
                   y={vehicle.origin.y}
                   carWidth={vehicle.width}
                   carLength={vehicle.length}
                   frontOverhang={vehicle.frontOverhang}
                   rearOverhang={vehicle.rearOverhang}
-                  frontZones={uiConfig.frontZones}
-                  rearZones={uiConfig.rearZones}
-                  sideZones={uiConfig.sideZones}
+                  frontZones={frontZones}
+                  rearZones={rearZones}
+                  sideZones={sideZones}
                 />
                 <CarImage
-                  show={uiConfig.showCarImage}
+                  show={showCarImage}
                   x={vehicle.origin.x}
                   y={vehicle.origin.y}
                   width={vehicle.width}
                   height={vehicle.length}
                   image={vehicle.image}
                 />
-                {uiConfig.showVehicleRefPoint &&
+                {showVehicleRefPoint &&
                   Object.values(vehicle.refPoints).map((position, index) => (
                     <Marker key={index} position={position} fill="red" />
                   ))}
@@ -351,7 +359,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                   <SensorBlock
                     key={sensor.id}
                     sensor={sensor}
-                    uiConfig={uiConfig}
                     onClick={(e) => handleSensorClick(sensor, e)}
                     isSelected={selectedSensor?.id === sensor.id}
                   />
@@ -363,7 +370,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
           </Stage>
 
           {/* 独立的右键菜单 */}
-          <ViewerContextMenu
+          {/* <ViewerContextMenu
             contextMenuPos={contextMenuPos}
             handleCloseContextMenu={handleCloseContextMenu}
             handleToggleGrid={handleToggleGrid}
@@ -372,9 +379,8 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
             handleAutoZoom={handleAutoZoom}
             handleAutoZoomToSensorCoverage={handleAutoZoomToSensorCoverage}
             handleRotateClockwise={handleRotateClockwise}
-            handleToggleDebugMode={handelToggleDebugMode}
-            uiConfig={uiConfig}
-          />
+            handleToggleDebugMode={toggleDebugModePoint}
+          /> */}
         </Box>
 
         {showSensorInfo && selectedSensor && (

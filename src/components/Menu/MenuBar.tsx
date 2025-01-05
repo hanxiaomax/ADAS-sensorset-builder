@@ -21,7 +21,7 @@ import ToolMenu from "./ToolMenu";
 import DownloadPanel from "../Panels/DownloadPanel";
 import { Stage } from "konva/lib/Stage";
 import DownloadIcon from "@mui/icons-material/Download";
-import { useUiConfig } from "../../contexts/UiConfigContext";
+import useUiConfigStore from "../../stores/uiConfigStore";
 
 interface MenuBarProps {
   handleSensorSetConfigImport: (data: any) => void;
@@ -39,8 +39,6 @@ const MenuBar: React.FC<MenuBarProps> = ({
   const [open, setOpen] = useState(false);
   const [downloadAnchorEl, setDownloadAnchorEl] =
     useState<HTMLButtonElement | null>(null);
-
-  const { uiConfig, setUiConfig } = useUiConfig();
 
   const handleAboutOpen = () => {
     setOpen(true);
@@ -95,7 +93,7 @@ const MenuBar: React.FC<MenuBarProps> = ({
             onImportSensorStock={handleSensorStockImport}
             onExport={handleExport}
           />
-          <ViewMenu uiConfig={uiConfig} setUiConfig={setUiConfig} />
+          <ViewMenu />
           <ToolMenu />
           <Button onClick={handleAboutOpen}>About</Button>
           <Button

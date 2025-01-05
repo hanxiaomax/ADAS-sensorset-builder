@@ -39,22 +39,6 @@ export interface SensorStocks {
   [key: string]: SensorItem;
 }
 
-// ui configuration interface used in control panel
-export interface UiConfig {
-  showCarImage: boolean;
-  showUssZones: boolean;
-  showUssSensors: boolean;
-  showLidarSensors: boolean;
-  showRadarSensors: boolean;
-  showCameraSensors: boolean;
-  showVehicleRefPoint: boolean;
-  frontZones: number;
-  rearZones: number;
-  sideZones: number;
-  panelVisible: boolean;
-  background: string;
-}
-
 export const SENSOR_RANGE_FACTOR = 5;
 
 export interface StageSize {

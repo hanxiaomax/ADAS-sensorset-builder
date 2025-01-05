@@ -8,13 +8,32 @@ import {
   Box,
   TextField,
 } from "@mui/material";
+import useUiConfigStore from "../../stores/uiConfigStore";
 
-interface ViewMenuProps {
-  uiConfig: any;
-  setUiConfig: React.Dispatch<React.SetStateAction<any>>;
-}
-
-const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
+const ViewMenu: React.FC = () => {
+  const {
+    showCarImage,
+    showUssZones,
+    showUssSensors,
+    showLidarSensors,
+    showRadarSensors,
+    showCameraSensors,
+    showVehicleRefPoint,
+    showGrid,
+    frontZones,
+    sideZones,
+    rearZones,
+    toggleCarImage,
+    toggleUssZones,
+    toggleUssSensors,
+    toggleLidarSensors,
+    toggleRadarSensors,
+    toggleCameraSensors,
+    toggleVehicleRefPoint,
+    setFrontZones,
+    setSideZones,
+    setRearZones,
+  } = useUiConfigStore();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -25,20 +44,15 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
     setAnchorEl(null);
   };
 
-  const handleUssZonesToggle = () => {
-    setUiConfig((prev: any) => ({
-      ...prev,
-      showUssZones: !prev.showUssZones,
-    }));
-  };
+  const handleUssZonesToggle = toggleUssZones;
 
   const handleZoneChange =
     (zone: "frontZones" | "sideZones" | "rearZones") =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      setUiConfig((prev: any) => ({
-        ...prev,
-        [zone]: Number(event.target.value),
-      }));
+      const value = Number(event.target.value);
+      if (zone === "frontZones") setFrontZones(value);
+      else if (zone === "sideZones") setSideZones(value);
+      else if (zone === "rearZones") setRearZones(value);
     };
 
   return (
@@ -59,15 +73,7 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
         <MenuItem>
           <FormControlLabel
             control={
-              <Switch
-                checked={uiConfig.showCarImage}
-                onChange={() =>
-                  setUiConfig((prev: any) => ({
-                    ...prev,
-                    showCarImage: !prev.showCarImage,
-                  }))
-                }
-              />
+              <Switch checked={showCarImage} onChange={toggleCarImage} />
             }
             label="Car Image"
           />
@@ -75,16 +81,13 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
         <MenuItem>
           <FormControlLabel
             control={
-              <Switch
-                checked={uiConfig.showUssZones}
-                onChange={handleUssZonesToggle}
-              />
+              <Switch checked={showUssZones} onChange={toggleUssZones} />
             }
             label="USS Zones"
           />
         </MenuItem>
 
-        {uiConfig.showUssZones && (
+        {showUssZones && (
           <Box
             sx={{
               padding: "0 16px",
@@ -97,7 +100,7 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
               label="Front"
               type="number"
               variant="standard"
-              value={uiConfig.frontZones}
+              value={frontZones}
               onChange={handleZoneChange("frontZones")}
               size="small"
               sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
@@ -107,7 +110,7 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
               label="Side"
               type="number"
               variant="standard"
-              value={uiConfig.sideZones}
+              value={sideZones}
               onChange={handleZoneChange("sideZones")}
               size="small"
               sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
@@ -117,7 +120,7 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
               label="Rear"
               type="number"
               variant="standard"
-              value={uiConfig.rearZones}
+              value={rearZones}
               onChange={handleZoneChange("rearZones")}
               size="small"
               sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
@@ -129,15 +132,7 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
         <MenuItem>
           <FormControlLabel
             control={
-              <Switch
-                checked={uiConfig.showUssSensors}
-                onChange={() =>
-                  setUiConfig((prev: any) => ({
-                    ...prev,
-                    showUssSensors: !prev.showUssSensors,
-                  }))
-                }
-              />
+              <Switch checked={showUssSensors} onChange={toggleUssSensors} />
             }
             label="USS Sensors"
           />
@@ -146,13 +141,8 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
           <FormControlLabel
             control={
               <Switch
-                checked={uiConfig.showLidarSensors}
-                onChange={() =>
-                  setUiConfig((prev: any) => ({
-                    ...prev,
-                    showLidarSensors: !prev.showLidarSensors,
-                  }))
-                }
+                checked={showLidarSensors}
+                onChange={toggleLidarSensors}
               />
             }
             label="Lidar Sensors"
@@ -162,13 +152,8 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
           <FormControlLabel
             control={
               <Switch
-                checked={uiConfig.showRadarSensors}
-                onChange={() =>
-                  setUiConfig((prev: any) => ({
-                    ...prev,
-                    showRadarSensors: !prev.showRadarSensors,
-                  }))
-                }
+                checked={showRadarSensors}
+                onChange={toggleRadarSensors}
               />
             }
             label="Radar Sensors"
@@ -178,13 +163,8 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
           <FormControlLabel
             control={
               <Switch
-                checked={uiConfig.showCameraSensors}
-                onChange={() =>
-                  setUiConfig((prev: any) => ({
-                    ...prev,
-                    showCameraSensors: !prev.showCameraSensors,
-                  }))
-                }
+                checked={showCameraSensors}
+                onChange={toggleCameraSensors}
               />
             }
             label="Camera Sensors"
@@ -194,13 +174,8 @@ const ViewMenu: React.FC<ViewMenuProps> = ({ uiConfig, setUiConfig }) => {
           <FormControlLabel
             control={
               <Switch
-                checked={uiConfig.showVehicleRefPoint}
-                onChange={() =>
-                  setUiConfig((prev: any) => ({
-                    ...prev,
-                    showVehicleRefPoint: !prev.showVehicleRefPoint,
-                  }))
-                }
+                checked={showVehicleRefPoint}
+                onChange={toggleVehicleRefPoint}
               />
             }
             label="Vehicle Key Point"
