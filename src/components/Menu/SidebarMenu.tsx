@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   Typography,
   IconButton,
+  Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
@@ -15,16 +16,26 @@ import WidgetsIcon from "@mui/icons-material/Widgets";
 import TextFieldsIcon from "@mui/icons-material/TextFields";
 import ImageIcon from "@mui/icons-material/Image";
 import SensorsIcon from "@mui/icons-material/Sensors";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import BackdropPanel from "../Panels/SamplePanel";
 import SensorStockPanel from "../Panels/SensorStockPanel";
 import VehiclePanel from "../Panels/VehiclePanel";
+import ViewPanel from "../Panels/ViewPanel";
+
+interface PanelItem {
+  type?: "divider";
+  name?: string;
+  icon?: React.ReactNode;
+  description?: string;
+  panel?: React.ReactNode;
+}
 
 interface SidebarMenuProps {}
 
 const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
 
-  const panels = [
+  const panels: PanelItem[] = [
     {
       name: "Backdrop",
       icon: <WallpaperIcon />,
@@ -67,6 +78,15 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
       description: "Insert and manage images in your project.",
       panel: <BackdropPanel />,
     },
+    {
+      type: "divider",
+    },
+    {
+      name: "View Control",
+      icon: <VisibilityIcon />,
+      description: "Configure view settings and layer visibility.",
+      panel: <ViewPanel />,
+    },
   ];
 
   const handlePanelClick = (panelName: string) => {
@@ -85,7 +105,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
         sx={{
           position: "fixed",
           top: "10vh",
-          left: 110,
+          left: 130,
           height: "60vh",
           width: 380,
           backgroundColor: "#FFFFFF",
@@ -139,7 +159,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
           top: "10vh",
           bottom: "10vh",
           height: "60vh",
-          width: 80,
+          width: 100,
           backgroundColor: "#FFFFFF",
           borderRight: "1px solid #ddd",
           borderRadius: "8px 8px 8px 8px",
@@ -147,52 +167,70 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
         }}
       >
         <List sx={{ padding: 0 }}>
-          {panels.map((panel) => (
-            <ListItemButton
-              key={panel.name}
-              onClick={() => handlePanelClick(panel.name)}
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                padding: "10px 0",
-                "&:hover": {
-                  backgroundColor: "#eaeaea",
-                  cursor: "pointer",
-                },
-              }}
-            >
-              <ListItemIcon
+          {panels.map((panel) =>
+            panel.type === "divider" ? (
+              <Divider key="divider" sx={{ my: 1 }} />
+            ) : (
+              <ListItemButton
+                key={panel.name}
+                onClick={() => panel.name && handlePanelClick(panel.name)}
                 sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
                   justifyContent: "center",
-                  color: "#666",
-                  minWidth: 0,
-                  marginBottom: "4px",
+                  padding: "10px 0",
+                  "&:hover": {
+                    backgroundColor: "#eaeaea",
+                    cursor: "pointer",
+                  },
                 }}
               >
-                {panel.icon}
-              </ListItemIcon>
-              <Typography
-                variant="caption"
-                sx={{ fontSize: "0.75rem", color: "#333", textAlign: "center" }}
-              >
-                {panel.name}
-              </Typography>
-            </ListItemButton>
-          ))}
+                <ListItemIcon
+                  sx={{
+                    justifyContent: "center",
+                    color: "#666",
+                    minWidth: 0,
+                    marginBottom: "4px",
+                  }}
+                >
+                  {panel.icon}
+                </ListItemIcon>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontSize: "0.75rem",
+                    color: "#333",
+                    textAlign: "center",
+                  }}
+                >
+                  {panel.name}
+                </Typography>
+              </ListItemButton>
+            )
+          )}
         </List>
       </Box>
 
-      {panels.map((panel) => (
-        <SidePanel
-          key={panel.name}
-          name={panel.name}
-          description={panel.description}
-        >
-          {panel.panel}
-        </SidePanel>
-      ))}
+      {panels
+        .filter(
+          (
+            p
+          ): p is PanelItem & {
+            name: string;
+            description: string;
+            panel: React.ReactNode;
+          } => p.type !== "divider"
+        )
+        .map((panel) => (
+          <SidePanel
+            key={panel.name}
+            name={panel.name}
+            description={panel.description}
+          >
+            {panel.panel}
+          </SidePanel>
+        ))}
     </Box>
   );
 };

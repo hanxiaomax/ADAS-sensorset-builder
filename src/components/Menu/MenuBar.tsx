@@ -16,7 +16,6 @@ import {
 import GitHubIcon from "@mui/icons-material/GitHub";
 import EmailIcon from "@mui/icons-material/Email";
 import ProfileMenu from "./ProfileMenu";
-import ViewMenu from "./ViewMenu";
 import DownloadPanel from "../Panels/DownloadPanel";
 import { Stage } from "konva/lib/Stage";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -123,7 +122,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
             onImportSensorStock={handleSensorStockImport}
             onExport={handleExport}
           />
-          <ViewMenu />
           <Button onClick={handleAboutOpen}>About</Button>
           <Button
             aria-describedby={downloadId}
