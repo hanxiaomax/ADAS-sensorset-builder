@@ -21,23 +21,55 @@ import ToolMenu from "./ToolMenu";
 import DownloadPanel from "../Panels/DownloadPanel";
 import { Stage } from "konva/lib/Stage";
 import DownloadIcon from "@mui/icons-material/Download";
+import { useSensorStore } from "../../stores/sensorStore";
+import { SensorStocks } from "../../types/Common";
+import { Sensor } from "../../types/Sensor";
 
 interface MenuBarProps {
-  handleSensorSetConfigImport: (data: any) => void;
-  handleSensorStockImport: (data: any) => void;
-  handleExport: () => void;
   stageRef: React.RefObject<Stage>;
 }
 
-const MenuBar: React.FC<MenuBarProps> = ({
-  handleSensorSetConfigImport,
-  handleSensorStockImport,
-  handleExport,
-  stageRef,
-}) => {
+const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
+  const {
+    sensorConfiguration,
+    setSensorConfiguration,
+    sensorStocks,
+    setSensorStocks,
+  } = useSensorStore();
+
   const [open, setOpen] = useState(false);
   const [downloadAnchorEl, setDownloadAnchorEl] =
     useState<HTMLButtonElement | null>(null);
+
+  const handleSensorSetConfigImport = (data: Sensor[]) => {
+    setSensorConfiguration(data);
+  };
+
+  const handleSensorStockImport = (data: SensorStocks) => {
+    setSensorStocks(data);
+  };
+
+  const handleExport = () => {
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(sensorConfiguration, null, 2));
+    const downloadAnchorNode = document.createElement("a");
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "sensor_config.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+
+    const stockDataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(sensorStocks, null, 2));
+    const stockDownloadNode = document.createElement("a");
+    stockDownloadNode.setAttribute("href", stockDataStr);
+    stockDownloadNode.setAttribute("download", "sensor_data.json");
+    document.body.appendChild(stockDownloadNode);
+    stockDownloadNode.click();
+    stockDownloadNode.remove();
+  };
 
   const handleAboutOpen = () => {
     setOpen(true);

@@ -7,18 +7,8 @@ import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
-import { useSensorStore } from "./stores/sensorStore";
-import Sensor from "./types/Sensor";
-import { SensorStocks } from "./types/Common";
 
 export const SensorSetBuilderMain: React.FC = () => {
-  const {
-    sensorConfiguration,
-    setSensorConfiguration,
-    sensorStocks,
-    setSensorStocks,
-  } = useSensorStore();
-
   const [stageSize, setStageSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -40,36 +30,6 @@ export const SensorSetBuilderMain: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleSensorSetConfigImport = (data: Sensor[]) => {
-    setSensorConfiguration(data);
-  };
-
-  const handleSensorStockImport = (data: SensorStocks) => {
-    setSensorStocks(data);
-  };
-
-  const handleExport = () => {
-    const dataStr =
-      "data:text/json;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(sensorConfiguration, null, 2));
-    const downloadAnchorNode = document.createElement("a");
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "sensor_config.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-
-    const stockDataStr =
-      "data:text/json;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(sensorStocks, null, 2));
-    const stockDownloadNode = document.createElement("a");
-    stockDownloadNode.setAttribute("href", stockDataStr);
-    stockDownloadNode.setAttribute("download", "sensor_data.json");
-    document.body.appendChild(stockDownloadNode);
-    stockDownloadNode.click();
-    stockDownloadNode.remove();
-  };
-
   return (
     <Grid
       container
@@ -80,12 +40,7 @@ export const SensorSetBuilderMain: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      <MenuBar
-        handleSensorSetConfigImport={handleSensorSetConfigImport}
-        handleSensorStockImport={handleSensorStockImport}
-        handleExport={handleExport}
-        stageRef={stageRef}
-      />
+      <MenuBar stageRef={stageRef} />
       <Grid item xs={12}>
         <Viewer stageSize={stageSize} vehicle={vehicle} stageRef={stageRef} />
       </Grid>
