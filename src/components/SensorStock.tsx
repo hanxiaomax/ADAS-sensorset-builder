@@ -40,6 +40,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
   const setSensorConfiguration = useSensorStore(
     (state) => state.setSensorConfiguration
   );
+
   const handleSensorClick = () => {
     setSensorInfoOpen(true);
   };
