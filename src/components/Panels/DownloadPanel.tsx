@@ -15,7 +15,7 @@ import { Stage } from "konva/lib/Stage";
 import Konva from "konva"; // 引入 Konva
 // import { useSnackbarContext } from "../SnackbarContext";
 import { useSnackbar } from "notistack";
-import notifier from "../Notification";
+import notifier from "../Helper/Notification";
 
 interface DownloadPanelProps {
   stageRef: React.RefObject<Stage>; // 新增用于传递 stage 的引用

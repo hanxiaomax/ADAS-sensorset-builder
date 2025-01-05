@@ -5,7 +5,7 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { SensorStocks } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
-import notifier from "../Notification";
+import notifier from "../Helper/Notification";
 import { useSnackbar } from "notistack";
 
 interface ProfileMenuProps {

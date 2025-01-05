@@ -25,13 +25,12 @@ import ToolMenu from "./ToolMenu";
 import DownloadPanel from "../Panels/DownloadPanel";
 import { Stage } from "konva/lib/Stage";
 import DownloadIcon from "@mui/icons-material/Download";
+import { useUiConfig } from "../../contexts/UiConfigContext";
 
 interface MenuBarProps {
   handleSensorSetConfigImport: (data: any) => void;
   handleSensorStockImport: (data: any) => void;
   handleExport: () => void;
-  uiConfig: any;
-  setUiConfig: (config: any) => void;
   stageRef: React.RefObject<Stage>;
 }
 
@@ -39,13 +38,13 @@ const MenuBar: React.FC<MenuBarProps> = ({
   handleSensorSetConfigImport,
   handleSensorStockImport,
   handleExport,
-  uiConfig,
-  setUiConfig,
   stageRef,
 }) => {
   const [open, setOpen] = useState(false);
   const [downloadAnchorEl, setDownloadAnchorEl] =
     useState<HTMLButtonElement | null>(null);
+
+  const { uiConfig, setUiConfig } = useUiConfig();
 
   const handleAboutOpen = () => {
     setOpen(true);

@@ -25,6 +25,7 @@ import ViewerContextMenu from "./ViewerContextMenu";
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable"; // 用于拖动浮动窗口
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import { useUiConfig } from "../../contexts/UiConfigContext";
 
 import {
   getBoundingBox,
@@ -39,8 +40,6 @@ interface ViewerProps {
   stageSize: StageSize;
   vehicle: Vehicle;
   sensorConfiguration: Sensor[];
-  uiConfig: any;
-  setUiConfig: (config: any) => void;
   stageRef: React.RefObject<Konva.Stage>;
 }
 
@@ -48,8 +47,6 @@ const Viewer: React.FC<ViewerProps> = ({
   stageSize,
   vehicle,
   sensorConfiguration,
-  uiConfig,
-  setUiConfig,
   stageRef,
 }) => {
   const stageCenter = {
@@ -71,6 +68,7 @@ const Viewer: React.FC<ViewerProps> = ({
   const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
   const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
   const [showLine, setShowLine] = useState(true); // 控制是否显示连线
+  const { uiConfig, setUiConfig } = useUiConfig();
 
   useEffect(() => {
     if (layerRef.current) {

@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Grid } from "@mui/material";
 import useImage from "use-image";
-import Viewer from "./components/Viewer/Viewer"; // 引入 Viewer 组件
+import Viewer from "./components/Viewer/Viewer";
 import { SensorStocks } from "./types/Common";
 import { Vehicle } from "./types/Vehicle";
-import BottomDrawer from "./components/BottomDrawer";
 import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva";
 import Sensor from "./types/Sensor";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
+import { useUiConfig } from "./contexts/UiConfigContext";
 
 export const SensorSetBuilderMain: React.FC = () => {
+  const { uiConfig, setUiConfig } = useUiConfig();
+
   const [stageSize, setStageSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
@@ -21,23 +23,6 @@ export const SensorSetBuilderMain: React.FC = () => {
 
   const [sensorConfiguration, setSensorConfiguration] = useState<Sensor[]>([]);
   const [sensorData, setSensorData] = useState<SensorStocks>({});
-
-  const [uiConfig, setUiConfig] = useState({
-    showCarImage: true,
-    showUssZones: false,
-    showUssSensors: true,
-    showLidarSensors: true,
-    showRadarSensors: true,
-    showCameraSensors: true,
-    showVehicleRefPoint: false,
-    showDebugMode: false,
-    showGrid: true,
-    frontZones: 6,
-    rearZones: 4,
-    sideZones: 6,
-    panelVisible: false,
-    background: "white",
-  });
 
   const [image] = useImage(process.env.PUBLIC_URL + "/vehicle.png");
   const vehicle = new Vehicle(stageSize, image);
@@ -136,8 +121,6 @@ export const SensorSetBuilderMain: React.FC = () => {
         handleSensorSetConfigImport={handleSensorSetConfigImport}
         handleSensorStockImport={handleSensorStockImport}
         handleExport={handleExport}
-        uiConfig={uiConfig}
-        setUiConfig={setUiConfig}
         stageRef={stageRef}
       />
       <Grid item xs={12}>
@@ -145,8 +128,6 @@ export const SensorSetBuilderMain: React.FC = () => {
           stageSize={stageSize}
           vehicle={vehicle}
           sensorConfiguration={sensorConfiguration}
-          uiConfig={uiConfig}
-          setUiConfig={setUiConfig}
           stageRef={stageRef}
         />
       </Grid>
