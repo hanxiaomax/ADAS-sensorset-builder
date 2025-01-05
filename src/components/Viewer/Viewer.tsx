@@ -35,20 +35,15 @@ import {
   renderGrid,
   renderLayerBoundary,
 } from "./ViewerHelper";
+import { useSensor } from "../../contexts/SensorContext";
 
 interface ViewerProps {
   stageSize: StageSize;
   vehicle: Vehicle;
-  sensorConfiguration: Sensor[];
   stageRef: React.RefObject<Konva.Stage>;
 }
 
-const Viewer: React.FC<ViewerProps> = ({
-  stageSize,
-  vehicle,
-  sensorConfiguration,
-  stageRef,
-}) => {
+const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const stageCenter = {
     x: stageSize.width / 2,
     y: stageSize.height / 2,
@@ -67,8 +62,8 @@ const Viewer: React.FC<ViewerProps> = ({
   const [stagePos, setStagePos] = useState(stageCenter);
   const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
   const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
-  const [showLine, setShowLine] = useState(true); // 控制是否显示连线
   const { uiConfig, setUiConfig } = useUiConfig();
+  const { sensorConfiguration } = useSensor();
 
   useEffect(() => {
     if (layerRef.current) {

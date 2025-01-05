@@ -90,12 +90,7 @@ export const SensorSetBuilderMain: React.FC = () => {
         stageRef={stageRef}
       />
       <Grid item xs={12}>
-        <Viewer
-          stageSize={stageSize}
-          vehicle={vehicle}
-          sensorConfiguration={sensorConfiguration}
-          stageRef={stageRef}
-        />
+        <Viewer stageSize={stageSize} vehicle={vehicle} stageRef={stageRef} />
       </Grid>
       <SidebarMenu />
       <BottomMenu />
