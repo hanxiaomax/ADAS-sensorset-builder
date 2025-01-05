@@ -27,6 +27,21 @@ interface SensorStockItemProps {
   onEdit: (editedSensor: SensorItem) => void;
 }
 
+// 提取样式常量
+const iconContainerStyles = {
+  width: "60px",
+  height: "60px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  position: "relative",
+  borderRadius: "60px",
+  "&:hover": {
+    boxShadow: 1,
+    borderRadius: "60px",
+  },
+};
+
 const SensorStockItem: React.FC<SensorStockItemProps> = ({
   icon,
   sensor,
@@ -34,33 +49,18 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
   onEdit,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 删除确认弹窗状态
-  const [sensorInfoOpen, setSensorInfoOpen] = useState(false);
+  const [dialogState, setDialogState] = useState({
+    install: false,
+    delete: false,
+    info: false,
+  });
+
   const setSensorConfiguration = useSensorStore(
     (state) => state.setSensorConfiguration
   );
 
-  const handleSensorClick = () => {
-    setSensorInfoOpen(true);
-  };
-
-  const handleSensorInfoClose = () => {
-    setSensorInfoOpen(false);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-
-  const handleInstallClick = () => {
-    setDialogOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setDialogOpen(false);
+  const handleDialog = (type: keyof typeof dialogState, open: boolean) => {
+    setDialogState((prev) => ({ ...prev, [type]: open }));
   };
 
   const handleInstallConfirm = (
@@ -68,60 +68,32 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     selectedPosition: string,
     orientation: number
   ) => {
-    const position = {
-      name: selectedPosition,
-    };
-    const options = ["highlight"]; //highlight by default for new sensor
-    const newSensor = new Sensor(uuidv4(), selectedSensor, position, options);
+    const newSensor = new Sensor(
+      uuidv4(),
+      selectedSensor,
+      {
+        name: selectedPosition,
+      },
+      ["highlight"]
+    );
+
     setSensorConfiguration([
       ...useSensorStore.getState().sensorConfiguration,
       newSensor,
     ]);
-    setDialogOpen(false);
-  };
-
-  const handleDeleteClick = () => {
-    setDeleteDialogOpen(true);
+    handleDialog("install", false);
   };
 
   const handleDeleteConfirm = () => {
-    if (onDelete) {
-      onDelete(sensor.id); // 删除使用 sensor ID
-    }
-    setDeleteDialogOpen(false);
-  };
-
-  const handleDeleteDialogClose = () => {
-    setDeleteDialogOpen(false);
+    onDelete?.(sensor.id);
+    handleDialog("delete", false);
   };
 
   return (
     <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      <Box
-        sx={{
-          width: "60px",
-          height: "60px",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          // marginRight: "4px",
-          // margin: "8px",
-          position: "relative",
-          // boxShadow: 1,
-          borderRadius: "60px",
-          "&:hover": {
-            boxShadow: 1,
-            borderRadius: "60px",
-          },
-        }}
-        onClick={handleSensorClick}
-      >
+      <Box sx={iconContainerStyles} onClick={() => handleDialog("info", true)}>
         <Box display="flex" flexDirection="column" alignItems="center">
           <HtmlTooltip
             title={
@@ -154,20 +126,12 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
         </Box>
       </Box>
       <Popover
-        sx={{
-          pointerEvents: "none",
-        }}
-        open={open}
+        sx={{ pointerEvents: "none" }}
+        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        onClose={handlePopoverClose}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        transformOrigin={{ vertical: "bottom", horizontal: "left" }}
+        onClose={() => setAnchorEl(null)}
         disableRestoreFocus
       >
         <Card sx={{ maxWidth: 300 }}>
@@ -217,28 +181,26 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       </Popover>
       {/* Install Config Dialog */}
       <InstallConfigDialog
-        open={dialogOpen}
+        open={dialogState.install}
         sensorItem={sensor}
-        onClose={handleDialogClose}
+        onClose={() => handleDialog("install", false)}
         onConfirm={handleInstallConfirm}
       />
-      {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
-        open={deleteDialogOpen}
-        onClose={handleDeleteDialogClose}
+        open={dialogState.delete}
+        onClose={() => handleDialog("delete", false)}
         onConfirm={handleDeleteConfirm}
         sensorName={sensor.name}
       />
-      {/* Sensor Info Dialog */}
       <SensorInfoDialog
-        open={sensorInfoOpen}
-        onClose={handleSensorInfoClose}
-        onInstall={handleInstallClick}
-        onRemove={handleDeleteClick}
+        open={dialogState.info}
+        onClose={() => handleDialog("info", false)}
+        onInstall={() => handleDialog("install", true)}
+        onRemove={() => handleDialog("delete", true)}
         onEdit={onEdit}
         sensor={sensor}
         icon={icon}
-      />{" "}
+      />
     </Box>
   );
 };
