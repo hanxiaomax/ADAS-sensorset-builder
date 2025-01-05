@@ -1,5 +1,5 @@
 import React from "react";
-import { Arc, Circle, Line } from "react-konva";
+import { Arc, Circle } from "react-konva";
 import { MountPosition, SENSOR_RANGE_FACTOR } from "../../types/Common";
 
 import { sensorColorMap, Sensor } from "../../types/Sensor";
@@ -29,18 +29,13 @@ export const SensorBlock: React.FC<SensorProp> = ({
     color: "#000",
     opacity: 1,
   };
-  const {
-    showUssSensors,
-    showLidarSensors,
-    showRadarSensors,
-    showCameraSensors,
-  } = useUiConfigStore();
+  const { layerVisibility } = useUiConfigStore();
 
   const visibility = (() => {
-    if (type.includes("uss")) return showUssSensors;
-    if (type.includes("lidar")) return showLidarSensors;
-    if (type.includes("radar")) return showRadarSensors;
-    if (type.includes("camera")) return showCameraSensors;
+    if (type.includes("uss")) return layerVisibility.showUssSensors;
+    if (type.includes("lidar")) return layerVisibility.showLidarSensors;
+    if (type.includes("radar")) return layerVisibility.showRadarSensors;
+    if (type.includes("camera")) return layerVisibility.showCameraSensors;
     return false;
   })();
 

@@ -63,31 +63,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
   const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
   const { sensorConfiguration } = useSensor();
-  const {
-    showCarImage,
-    showUssZones,
-    showUssSensors,
-    showLidarSensors,
-    showRadarSensors,
-    showCameraSensors,
-    showGrid,
-    showVehicleRefPoint,
-    showDebugMode,
-    frontZones,
-    sideZones,
-    rearZones,
-    toggleCarImage,
-    toggleUssZones,
-    toggleUssSensors,
-    toggleLidarSensors,
-    toggleRadarSensors,
-    toggleCameraSensors,
-    toggleVehicleRefPoint,
-    toggleDebugModePoint,
-    setFrontZones,
-    setSideZones,
-    setRearZones,
-  } = useUiConfigStore();
+  const { ussZoneConfig, layerVisibility } = useUiConfigStore();
   useEffect(() => {
     if (layerRef.current) {
       const layer = layerRef.current;
@@ -220,7 +196,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   };
 
   const renderDebugInfo = () => {
-    if (!showDebugMode) return null;
+    if (!layerVisibility.showDebugMode) return null;
 
     const selectedSensorInfo = selectedSensor;
 
@@ -303,7 +279,9 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
             onWheel={handleWheel}
             onMouseMove={handleMouseMove}
           >
-            <Layer>{showDebugMode && renderDebugOverlay(stageSize)}</Layer>
+            <Layer>
+              {layerVisibility.showDebugMode && renderDebugOverlay(stageSize)}
+            </Layer>
             <Layer
               listening={false}
               scaleX={scale}
@@ -313,7 +291,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
               offsetX={stageSize.width / 2}
               offsetY={stageSize.height / 2}
             >
-              {showGrid && renderGrid(stageSize, girdMargin)}
+              {layerVisibility.showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
             <Layer
               scaleX={scale}
@@ -327,31 +305,32 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
               offsetX={stageSize.width / 2}
               offsetY={stageSize.height / 2}
             >
-              {showDebugMode && renderBoundingBox(sensorConfiguration)}
-              {showDebugMode && renderLayerBoundary(layerSize)}
+              {layerVisibility.showDebugMode &&
+                renderBoundingBox(sensorConfiguration)}
+              {layerVisibility.showDebugMode && renderLayerBoundary(layerSize)}
 
               <Group>
                 <UssZones
-                  show={showUssZones}
+                  show={layerVisibility.showUssZones}
                   x={vehicle.origin.x}
                   y={vehicle.origin.y}
                   carWidth={vehicle.width}
                   carLength={vehicle.length}
                   frontOverhang={vehicle.frontOverhang}
                   rearOverhang={vehicle.rearOverhang}
-                  frontZones={frontZones}
-                  rearZones={rearZones}
-                  sideZones={sideZones}
+                  frontZones={ussZoneConfig.frontZones}
+                  rearZones={ussZoneConfig.rearZones}
+                  sideZones={ussZoneConfig.sideZones}
                 />
                 <CarImage
-                  show={showCarImage}
+                  show={layerVisibility.showCarImage}
                   x={vehicle.origin.x}
                   y={vehicle.origin.y}
                   width={vehicle.width}
                   height={vehicle.length}
                   image={vehicle.image}
                 />
-                {showVehicleRefPoint &&
+                {layerVisibility.showVehicleRefPoint &&
                   Object.values(vehicle.refPoints).map((position, index) => (
                     <Marker key={index} position={position} fill="red" />
                   ))}

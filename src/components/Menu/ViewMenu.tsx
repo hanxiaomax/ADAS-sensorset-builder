@@ -12,27 +12,10 @@ import useUiConfigStore from "../../stores/uiConfigStore";
 
 const ViewMenu: React.FC = () => {
   const {
-    showCarImage,
-    showUssZones,
-    showUssSensors,
-    showLidarSensors,
-    showRadarSensors,
-    showCameraSensors,
-    showVehicleRefPoint,
-    showGrid,
-    frontZones,
-    sideZones,
-    rearZones,
-    toggleCarImage,
-    toggleUssZones,
-    toggleUssSensors,
-    toggleLidarSensors,
-    toggleRadarSensors,
-    toggleCameraSensors,
-    toggleVehicleRefPoint,
-    setFrontZones,
-    setSideZones,
-    setRearZones,
+    layerVisibility,
+    toggleLayerVisibility,
+    ussZoneConfig,
+    setUssZoneConfig,
   } = useUiConfigStore();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -44,15 +27,11 @@ const ViewMenu: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleUssZonesToggle = toggleUssZones;
-
   const handleZoneChange =
     (zone: "frontZones" | "sideZones" | "rearZones") =>
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const value = Number(event.target.value);
-      if (zone === "frontZones") setFrontZones(value);
-      else if (zone === "sideZones") setSideZones(value);
-      else if (zone === "rearZones") setRearZones(value);
+      setUssZoneConfig(zone, value);
     };
 
   return (
@@ -73,7 +52,10 @@ const ViewMenu: React.FC = () => {
         <MenuItem>
           <FormControlLabel
             control={
-              <Switch checked={showCarImage} onChange={toggleCarImage} />
+              <Switch
+                checked={layerVisibility.showCarImage}
+                onChange={() => toggleLayerVisibility("showCarImage")}
+              />
             }
             label="Car Image"
           />
@@ -81,13 +63,16 @@ const ViewMenu: React.FC = () => {
         <MenuItem>
           <FormControlLabel
             control={
-              <Switch checked={showUssZones} onChange={toggleUssZones} />
+              <Switch
+                checked={layerVisibility.showUssZones}
+                onChange={() => toggleLayerVisibility("showUssZones")}
+              />
             }
             label="USS Zones"
           />
         </MenuItem>
 
-        {showUssZones && (
+        {layerVisibility.showUssZones && (
           <Box
             sx={{
               padding: "0 16px",
@@ -100,7 +85,7 @@ const ViewMenu: React.FC = () => {
               label="Front"
               type="number"
               variant="standard"
-              value={frontZones}
+              value={ussZoneConfig.frontZones}
               onChange={handleZoneChange("frontZones")}
               size="small"
               sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
@@ -110,7 +95,7 @@ const ViewMenu: React.FC = () => {
               label="Side"
               type="number"
               variant="standard"
-              value={sideZones}
+              value={ussZoneConfig.sideZones}
               onChange={handleZoneChange("sideZones")}
               size="small"
               sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
@@ -120,7 +105,7 @@ const ViewMenu: React.FC = () => {
               label="Rear"
               type="number"
               variant="standard"
-              value={rearZones}
+              value={ussZoneConfig.rearZones}
               onChange={handleZoneChange("rearZones")}
               size="small"
               sx={{ marginBottom: 1, width: "100%" }} // 设置宽度为100%
@@ -132,7 +117,10 @@ const ViewMenu: React.FC = () => {
         <MenuItem>
           <FormControlLabel
             control={
-              <Switch checked={showUssSensors} onChange={toggleUssSensors} />
+              <Switch
+                checked={layerVisibility.showUssSensors}
+                onChange={() => toggleLayerVisibility("showUssSensors")}
+              />
             }
             label="USS Sensors"
           />
@@ -141,8 +129,8 @@ const ViewMenu: React.FC = () => {
           <FormControlLabel
             control={
               <Switch
-                checked={showLidarSensors}
-                onChange={toggleLidarSensors}
+                checked={layerVisibility.showLidarSensors}
+                onChange={() => toggleLayerVisibility("showLidarSensors")}
               />
             }
             label="Lidar Sensors"
@@ -152,8 +140,8 @@ const ViewMenu: React.FC = () => {
           <FormControlLabel
             control={
               <Switch
-                checked={showRadarSensors}
-                onChange={toggleRadarSensors}
+                checked={layerVisibility.showRadarSensors}
+                onChange={() => toggleLayerVisibility("showRadarSensors")}
               />
             }
             label="Radar Sensors"
@@ -163,8 +151,8 @@ const ViewMenu: React.FC = () => {
           <FormControlLabel
             control={
               <Switch
-                checked={showCameraSensors}
-                onChange={toggleCameraSensors}
+                checked={layerVisibility.showCameraSensors}
+                onChange={() => toggleLayerVisibility("showCameraSensors")}
               />
             }
             label="Camera Sensors"
@@ -174,8 +162,8 @@ const ViewMenu: React.FC = () => {
           <FormControlLabel
             control={
               <Switch
-                checked={showVehicleRefPoint}
-                onChange={toggleVehicleRefPoint}
+                checked={layerVisibility.showVehicleRefPoint}
+                onChange={() => toggleLayerVisibility("showVehicleRefPoint")}
               />
             }
             label="Vehicle Key Point"
