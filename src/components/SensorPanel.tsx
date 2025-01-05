@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSensorStore } from "../stores/sensorStore";
 import {
   Box,
   Typography,
@@ -31,16 +32,11 @@ import Sensors from "@mui/icons-material/Sensors";
 import { BomTableDialog } from "./Dialogs/BomTableDialog";
 
 interface SensorPanelProps {
-  sensors: Sensor[];
-  setSensors: React.Dispatch<React.SetStateAction<Sensor[]>>;
   drawerOpen?: boolean;
 }
 
-const SensorPanel: React.FC<SensorPanelProps> = ({
-  sensors,
-  setSensors,
-  drawerOpen,
-}) => {
+const SensorPanel: React.FC<SensorPanelProps> = ({ drawerOpen }) => {
+  const { sensorConfiguration, setSensorConfiguration } = useSensorStore();
   const [bomTableDialogOpen, setBomTableDialogOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 用于控制筛选菜单的显示
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // 记录当前筛选的类型
@@ -71,27 +67,25 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
     event: React.MouseEvent<HTMLElement>,
     newOptions: string[] | null
   ) => {
-    const updatedConfig = sensors.map((sensor) => {
+    const updatedConfig = sensorConfiguration.map((sensor) => {
       if (sensor.id === id) {
         return {
           ...sensor,
-          options: newOptions || [], // 直接替换 options
+          options: newOptions || [],
         };
-      } else {
-        return sensor;
       }
+      return sensor;
     });
-
-    setSensors(updatedConfig); // 确保状态被更新并触发重新渲染
-    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
+    setSensorConfiguration(updatedConfig);
   };
 
   // 删除操作
   const handleDeleteClick = (id: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    const updatedConfig = sensors.filter((sensor) => sensor.id !== id);
-    setSensors(updatedConfig);
-    localStorage.setItem("sensorConfig", JSON.stringify(updatedConfig));
+    const updatedConfig = sensorConfiguration.filter(
+      (sensor) => sensor.id !== id
+    );
+    setSensorConfiguration(updatedConfig);
   };
 
   // 打开筛选菜单
@@ -120,8 +114,10 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
 
   // 筛选传感器
   const filteredSensors = selectedTypes.length
-    ? sensors.filter((sensor) => selectedTypes.includes(sensor.sensorInfo.type))
-    : sensors; // 如果未选中任何类型，显示所有传感器
+    ? sensorConfiguration.filter((sensor) =>
+        selectedTypes.includes(sensor.sensorInfo.type)
+      )
+    : sensorConfiguration;
 
   // 计算当前页显示的传感器
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -429,7 +425,7 @@ const SensorPanel: React.FC<SensorPanelProps> = ({
       <BomTableDialog
         open={bomTableDialogOpen}
         setBomTableDialogOpen={setBomTableDialogOpen}
-        sensors={sensors}
+        sensors={sensorConfiguration}
       />
     </>
   );
