@@ -8,7 +8,7 @@ import {
   Box,
   TextField,
 } from "@mui/material";
-import useUiConfigStore from "../../stores/uiConfigStore";
+import useGlobalConfigStore from "../../stores/globalConfigStore";
 
 const ViewMenu: React.FC = () => {
   const {
@@ -16,7 +16,7 @@ const ViewMenu: React.FC = () => {
     toggleLayerVisibility,
     ussZoneConfig,
     setUssZoneConfig,
-  } = useUiConfigStore();
+  } = useGlobalConfigStore();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -35,7 +35,7 @@ import {
   renderLayerBoundary,
 } from "./ViewerHelper";
 import { useSensor } from "../../contexts/SensorContext";
-import useUiConfigStore from "../../stores/uiConfigStore";
+import useGlobalConfigStore from "../../stores/globalConfigStore";
 
 interface ViewerProps {
   stageSize: StageSize;
@@ -63,7 +63,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
   const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
   const { sensorConfiguration } = useSensor();
-  const { ussZoneConfig, layerVisibility } = useUiConfigStore();
+  const { ussZoneConfig, layerVisibility } = useGlobalConfigStore();
   useEffect(() => {
     if (layerRef.current) {
       const layer = layerRef.current;
@@ -349,17 +349,15 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
           </Stage>
 
           {/* 独立的右键菜单 */}
-          {/* <ViewerContextMenu
+          <ViewerContextMenu
             contextMenuPos={contextMenuPos}
             handleCloseContextMenu={handleCloseContextMenu}
-            handleToggleGrid={handleToggleGrid}
             handleReset={handleReset}
             handleCenter={handleCenter}
             handleAutoZoom={handleAutoZoom}
             handleAutoZoomToSensorCoverage={handleAutoZoomToSensorCoverage}
             handleRotateClockwise={handleRotateClockwise}
-            handleToggleDebugMode={toggleDebugModePoint}
-          /> */}
+          />
         </Box>
 
         {showSensorInfo && selectedSensor && (

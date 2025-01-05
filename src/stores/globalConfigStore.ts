@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-interface UiConfigState {
+interface GlobalConfigStore {
   theme: "light" | "dark";
   layout: "compact" | "spacious";
   layerVisibility: {
@@ -24,14 +24,16 @@ interface UiConfigState {
   setTheme: (theme: "light" | "dark") => void;
   setLayout: (layout: "compact" | "spacious") => void;
   toggleSidebar: () => void;
-  toggleLayerVisibility: (key: keyof UiConfigState["layerVisibility"]) => void;
+  toggleLayerVisibility: (
+    key: keyof GlobalConfigStore["layerVisibility"]
+  ) => void;
   setUssZoneConfig: (
-    key: keyof UiConfigState["ussZoneConfig"],
+    key: keyof GlobalConfigStore["ussZoneConfig"],
     value: number
   ) => void;
 }
 
-const useUiConfigStore = create<UiConfigState>((set) => ({
+const useGlobalConfigStore = create<GlobalConfigStore>((set) => ({
   theme: "light",
   layout: "compact",
   layerVisibility: {
@@ -71,4 +73,4 @@ const useUiConfigStore = create<UiConfigState>((set) => ({
     })),
 }));
 
-export default useUiConfigStore;
+export default useGlobalConfigStore;

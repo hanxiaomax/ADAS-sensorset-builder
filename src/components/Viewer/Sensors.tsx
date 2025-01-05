@@ -3,7 +3,7 @@ import { Arc, Circle } from "react-konva";
 import { MountPosition, SENSOR_RANGE_FACTOR } from "../../types/Common";
 
 import { sensorColorMap, Sensor } from "../../types/Sensor";
-import useUiConfigStore from "../../stores/uiConfigStore";
+import useGlobalConfigStore from "../../stores/globalConfigStore";
 
 interface SensorProp {
   sensor: Sensor;
@@ -29,7 +29,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
     color: "#000",
     opacity: 1,
   };
-  const { layerVisibility } = useUiConfigStore();
+  const { layerVisibility } = useGlobalConfigStore();
 
   const visibility = (() => {
     if (type.includes("uss")) return layerVisibility.showUssSensors;

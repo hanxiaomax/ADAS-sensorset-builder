@@ -21,7 +21,6 @@ import ToolMenu from "./ToolMenu";
 import DownloadPanel from "../Panels/DownloadPanel";
 import { Stage } from "konva/lib/Stage";
 import DownloadIcon from "@mui/icons-material/Download";
-import useUiConfigStore from "../../stores/uiConfigStore";
 
 interface MenuBarProps {
   handleSensorSetConfigImport: (data: any) => void;

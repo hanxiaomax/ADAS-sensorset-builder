@@ -24,8 +24,6 @@ export default function DataTable({
   setSelectedRows,
   enablePagination, // 接受新的参数
 }: DataTableProps) {
-  const [order, setOrder] = React.useState<"asc" | "desc">("asc");
-  const [orderBy, setOrderBy] = React.useState<keyof Sensor>("id");
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
