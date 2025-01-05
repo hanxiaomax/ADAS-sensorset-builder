@@ -10,7 +10,6 @@ import {
   TableCell,
   Typography,
   CardMedia,
-  styled,
 } from "@mui/material";
 import InstallConfigDialog from "./Dialogs/InstallConfigDialog";
 import DeleteConfirmationDialog from "./Dialogs/DeleteConfirmationDialog";
@@ -18,7 +17,7 @@ import SensorInfoDialog from "./SensorInfoDialog";
 import { SensorItem } from "../types/Common";
 import Sensor from "../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
-import Tooltip, { TooltipProps, tooltipClasses } from "@mui/material/Tooltip";
+import { HtmlTooltip } from "./ToolTips";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
@@ -28,18 +27,6 @@ interface SensorStockItemProps {
   onEdit: (editedSensor: SensorItem) => void;
 }
 
-const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
-  [`& .${tooltipClasses.tooltip}`]: {
-    backgroundColor: "#f5f5f9",
-    color: "rgba(0, 0, 0, 0.87)",
-    maxWidth: 220,
-    fontSize: theme.typography.pxToRem(12),
-    border: "1px solid #dadde9",
-  },
-}));
-
 const SensorStockItem: React.FC<SensorStockItemProps> = ({
   icon,
   sensor,
@@ -48,7 +35,6 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
   setSensorConfiguration,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [hover, setHover] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 删除确认弹窗状态
   const [sensorInfoOpen, setSensorInfoOpen] = useState(false);
@@ -141,7 +127,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
             borderRadius: "60px",
           },
         }}
-        onClick={handleSensorClick} // 点击时关闭 Popover
+        onClick={handleSensorClick}
       >
         <Box display="flex" flexDirection="column" alignItems="center">
           <HtmlTooltip
@@ -174,8 +160,6 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
           </HtmlTooltip>
         </Box>
       </Box>
-      {/* Use 和 Delete 按钮，仅在悬停时显示 */}
-      {/* Popover 显示详细信息卡片 */}
       <Popover
         sx={{
           pointerEvents: "none",

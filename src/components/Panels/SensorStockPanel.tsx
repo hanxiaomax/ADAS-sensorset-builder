@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Divider, IconButton } from "@mui/material";
+import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
 import SensorsOutlinedIcon from "@mui/icons-material/SensorsOutlined";
 import RadarOutlinedIcon from "@mui/icons-material/RadarOutlined";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
@@ -13,14 +13,15 @@ import Sensor from "../../types/Sensor";
 import AddIcon from "@mui/icons-material/Add";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
+import { HtmlTooltip } from "../ToolTips";
 
-interface SensorSetPanelProps {
+interface SensorStackPanelProps {
   sensorStocks: SensorStocks;
   setSensorStocks: React.Dispatch<React.SetStateAction<SensorStocks>>;
   setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
 }
 
-const SensorSetPanel: React.FC<SensorSetPanelProps> = ({
+const SensorStackPanel: React.FC<SensorStackPanelProps> = ({
   sensorStocks,
   setSensorStocks,
   setSensorConfiguration,
@@ -119,9 +120,19 @@ const SensorSetPanel: React.FC<SensorSetPanelProps> = ({
           <Box display="flex" flexWrap="wrap">
             {renderSensors(type)}
             <Box onClick={() => handleDialogOpen(type)}>
-              <IconButton>
-                <AddTwoToneIcon sx={{ fontSize: "40px" }} />
-              </IconButton>
+              <HtmlTooltip
+                title={
+                  <React.Fragment>
+                    <Typography color="inherit">
+                      Create new <u>{type}</u> sensor
+                    </Typography>
+                  </React.Fragment>
+                }
+              >
+                <IconButton>
+                  <AddTwoToneIcon sx={{ fontSize: "40px" }} />
+                </IconButton>
+              </HtmlTooltip>
             </Box>
           </Box>
         </Box>
@@ -137,4 +148,4 @@ const SensorSetPanel: React.FC<SensorSetPanelProps> = ({
   );
 };
 
-export default SensorSetPanel;
+export default SensorStackPanel;
