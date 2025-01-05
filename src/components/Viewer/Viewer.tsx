@@ -34,7 +34,7 @@ import {
   renderGrid,
   renderLayerBoundary,
 } from "./ViewerHelper";
-import { useSensor } from "../../contexts/SensorContext";
+import { useSensorStore, SensorStoreState } from "../../stores/sensorStore";
 import useGlobalConfigStore from "../../stores/globalConfigStore";
 
 interface ViewerProps {
@@ -62,7 +62,9 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const [stagePos, setStagePos] = useState(stageCenter);
   const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
   const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
-  const { sensorConfiguration } = useSensor();
+  const sensorConfiguration = useSensorStore(
+    (state: SensorStoreState) => state.sensorConfiguration
+  );
   const { ussZoneConfig, layerVisibility } = useGlobalConfigStore();
   useEffect(() => {
     if (layerRef.current) {
@@ -181,7 +183,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const handleSensorClick = (
     sensor: Sensor,
     event: Konva.KonvaEventObject<MouseEvent>
-  ) => {
+  ): void => {
     setSelectedSensor(sensor); // 设置为选中的传感器
     setFloatingWindowPos({
       x: event.evt.clientX + 20, // 动态设置浮动窗口的位置，传感器附近

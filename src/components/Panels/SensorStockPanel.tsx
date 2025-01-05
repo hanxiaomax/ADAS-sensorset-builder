@@ -9,7 +9,7 @@ import CreateSensorDialog from "../Dialogs/CreateSensorDialog";
 import { SensorItem, SensorStocks } from "../../types/Common";
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
 import { HtmlTooltip } from "../ToolTips";
-import { useSensor } from "../../contexts/SensorContext";
+import { useSensorStore } from "../../stores/sensorStore";
 
 interface SensorStackPanelProps {}
 
@@ -17,8 +17,12 @@ const SensorStackPanel: React.FC<SensorStackPanelProps> = ({}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const sensorTypes = ["USS", "Lidar", "Radar", "Camera"];
   const [selectedType, setSelectedType] = useState("USS");
-  const { sensorStocks, setSensorStocks } = useSensor();
-
+  const {
+    sensorConfiguration,
+    setSensorConfiguration,
+    sensorStocks,
+    setSensorStocks,
+  } = useSensorStore();
   const categorizedSensors: { [key: string]: SensorItem[] } =
     sensorTypes.reduce((acc, type) => {
       acc[type.toLowerCase()] = Object.values(sensorStocks).filter(

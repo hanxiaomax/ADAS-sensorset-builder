@@ -18,7 +18,7 @@ import { SensorItem } from "../types/Common";
 import Sensor from "../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 import { HtmlTooltip } from "./ToolTips";
-import { useSensor } from "../contexts/SensorContext";
+import { useSensorStore } from "../stores/sensorStore";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
@@ -37,7 +37,9 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 删除确认弹窗状态
   const [sensorInfoOpen, setSensorInfoOpen] = useState(false);
-  const { setSensorConfiguration } = useSensor();
+  const setSensorConfiguration = useSensorStore(
+    (state) => state.setSensorConfiguration
+  );
   const handleSensorClick = () => {
     setSensorInfoOpen(true);
   };

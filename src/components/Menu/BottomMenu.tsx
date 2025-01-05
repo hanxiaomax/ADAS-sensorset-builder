@@ -12,14 +12,13 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import CloseIcon from "@mui/icons-material/Close";
 import SensorPanelEx from "../Panels/SensorPanelex";
-import { useSensor } from "../../contexts/SensorContext";
+import { useSensorStore } from "../../stores/sensorStore";
 
 interface BottomMenuProp {}
 
 const BottomMenu: React.FC<BottomMenuProp> = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(95);
-  const {} = useSensor();
 
   const panels = [
     {

@@ -7,7 +7,7 @@ import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
-import { useSensor } from "./contexts/SensorContext";
+import { useSensorStore } from "./stores/sensorStore";
 import Sensor from "./types/Sensor";
 import { SensorStocks } from "./types/Common";
 
@@ -17,7 +17,7 @@ export const SensorSetBuilderMain: React.FC = () => {
     setSensorConfiguration,
     sensorStocks,
     setSensorStocks,
-  } = useSensor();
+  } = useSensorStore();
 
   const [stageSize, setStageSize] = useState({
     width: window.innerWidth,
