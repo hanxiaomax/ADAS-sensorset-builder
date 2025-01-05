@@ -18,12 +18,12 @@ import { SensorItem } from "../types/Common";
 import Sensor from "../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 import { HtmlTooltip } from "./ToolTips";
+import { useSensor } from "../contexts/SensorContext";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorItem;
   onDelete: (id: string) => void; // 添加删除处理函数，使用 sensor ID 进行删除
-  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
   onEdit: (editedSensor: SensorItem) => void;
 }
 
@@ -32,25 +32,18 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
   sensor,
   onDelete,
   onEdit,
-  setSensorConfiguration,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 删除确认弹窗状态
   const [sensorInfoOpen, setSensorInfoOpen] = useState(false);
-
+  const { setSensorConfiguration } = useSensor();
   const handleSensorClick = () => {
     setSensorInfoOpen(true);
   };
 
   const handleSensorInfoClose = () => {
     setSensorInfoOpen(false);
-  };
-
-  const handlePopoverOpen = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    setAnchorEl(event.currentTarget);
   };
 
   const handlePopoverClose = () => {
@@ -80,7 +73,6 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     };
     const options = ["highlight"]; //highlight by default for new sesnor
     const newSensor = new Sensor(uuidv4(), selectedSensor, position, options);
-    console.log(newSensor instanceof Sensor); // 应该返回 true
     sensorConfig.push(newSensor);
     setSensorConfiguration(sensorConfig);
     localStorage.setItem("sensorConfig", JSON.stringify(sensorConfig));

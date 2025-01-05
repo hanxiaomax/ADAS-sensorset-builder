@@ -11,10 +11,6 @@ import {
   Typography,
   Link,
   Box,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Checkbox,
   Popover,
 } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";

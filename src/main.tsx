@@ -2,17 +2,24 @@ import React, { useState, useEffect, useRef } from "react";
 import { Grid } from "@mui/material";
 import useImage from "use-image";
 import Viewer from "./components/Viewer/Viewer";
-import { SensorStocks } from "./types/Common";
 import { Vehicle } from "./types/Vehicle";
 import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva";
-import Sensor from "./types/Sensor";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
 import { useUiConfig } from "./contexts/UiConfigContext";
+import { useSensor } from "./contexts/SensorContext";
+import Sensor from "./types/Sensor";
+import { SensorStocks } from "./types/Common";
 
 export const SensorSetBuilderMain: React.FC = () => {
-  const { uiConfig, setUiConfig } = useUiConfig();
+  const { uiConfig } = useUiConfig();
+  const {
+    sensorConfiguration,
+    setSensorConfiguration,
+    sensorStocks,
+    setSensorStocks,
+  } = useSensor();
 
   const [stageSize, setStageSize] = useState({
     width: window.innerWidth,
@@ -20,9 +27,6 @@ export const SensorSetBuilderMain: React.FC = () => {
   });
 
   const stageRef = useRef<Konva.Stage>(null);
-
-  const [sensorConfiguration, setSensorConfiguration] = useState<Sensor[]>([]);
-  const [sensorData, setSensorData] = useState<SensorStocks>({});
 
   const [image] = useImage(process.env.PUBLIC_URL + "/vehicle.png");
   const vehicle = new Vehicle(stageSize, image);
@@ -38,72 +42,34 @@ export const SensorSetBuilderMain: React.FC = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    const storedSensorConfig = localStorage.getItem("sensorConfig");
-    const storedSensorStocks = localStorage.getItem("sensorStocks");
-
-    if (storedSensorConfig) {
-      const parsedConfig = JSON.parse(storedSensorConfig);
-      const sensorInstances = parsedConfig.map(
-        (sensorData: any) =>
-          new Sensor(
-            sensorData.id,
-            sensorData.sensorInfo,
-            sensorData.mountPosition,
-            sensorData.options
-          )
-      );
-
-      setSensorConfiguration(sensorInstances);
-    }
-    if (storedSensorStocks) {
-      setSensorData(JSON.parse(storedSensorStocks) as SensorStocks);
-    }
-  }, []);
-
   const handleSensorSetConfigImport = (data: Sensor[]) => {
     setSensorConfiguration(data);
-    localStorage.setItem("sensorConfig", JSON.stringify(data));
   };
 
   const handleSensorStockImport = (data: SensorStocks) => {
-    setSensorData(data);
-    localStorage.setItem("sensorStocks", JSON.stringify(data));
+    setSensorStocks(data);
   };
 
   const handleExport = () => {
-    const sensorConfig = localStorage.getItem("sensorConfig");
-    const sensorStockData = localStorage.getItem("sensorStocks");
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(sensorConfiguration, null, 2));
+    const downloadAnchorNode = document.createElement("a");
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "sensor_config.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
 
-    if (sensorConfig) {
-      const dataStr =
-        "data:text/json;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(JSON.parse(sensorConfig), null, 2));
-      const downloadAnchorNode = document.createElement("a");
-      downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", "sensor_config.json");
-      document.body.appendChild(downloadAnchorNode);
-      downloadAnchorNode.click();
-      downloadAnchorNode.remove();
-    } else {
-      alert("No sensor configuration data available to export.");
-    }
-
-    if (sensorStockData) {
-      const dataStr =
-        "data:text/json;charset=utf-8," +
-        encodeURIComponent(
-          JSON.stringify(JSON.parse(sensorStockData), null, 2)
-        );
-      const downloadAnchorNode = document.createElement("a");
-      downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", "sensor_data.json");
-      document.body.appendChild(downloadAnchorNode);
-      downloadAnchorNode.click();
-      downloadAnchorNode.remove();
-    } else {
-      alert("No sensor data available to export.");
-    }
+    const stockDataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(sensorStocks, null, 2));
+    const stockDownloadNode = document.createElement("a");
+    stockDownloadNode.setAttribute("href", stockDataStr);
+    stockDownloadNode.setAttribute("download", "sensor_data.json");
+    document.body.appendChild(stockDownloadNode);
+    stockDownloadNode.click();
+    stockDownloadNode.remove();
   };
 
   return (
@@ -131,16 +97,8 @@ export const SensorSetBuilderMain: React.FC = () => {
           stageRef={stageRef}
         />
       </Grid>
-      <SidebarMenu
-        sensorStocks={sensorData}
-        setSensorStocks={setSensorData}
-        setSensorConfiguration={setSensorConfiguration}
-      />
-
-      <BottomMenu
-        sensors={sensorConfiguration}
-        setSensors={setSensorConfiguration}
-      />
+      <SidebarMenu />
+      <BottomMenu />
     </Grid>
   );
 };

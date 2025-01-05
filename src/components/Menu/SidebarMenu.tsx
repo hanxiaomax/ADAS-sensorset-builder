@@ -19,20 +19,9 @@ import BackdropPanel from "../Panels/SamplePanel";
 import SensorStockPanel from "../Panels/SensorStockPanel";
 import VehiclePanel from "../Panels/VehiclePanel";
 
-import { SensorStocks } from "../../types/Common";
-import Sensor from "../../types/Sensor";
+interface SidebarMenuProps {}
 
-interface SidebarMenuProps {
-  sensorStocks: SensorStocks;
-  setSensorStocks: React.Dispatch<React.SetStateAction<SensorStocks>>;
-  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
-}
-
-const SidebarMenu: React.FC<SidebarMenuProps> = ({
-  sensorStocks,
-  setSensorStocks,
-  setSensorConfiguration,
-}) => {
+const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
 
   const panels = [
@@ -58,13 +47,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({
       name: "Sensor",
       icon: <SensorsIcon />,
       description: "Manage and configure sensors in your scene.",
-      panel: (
-        <SensorStockPanel
-          sensorStocks={sensorStocks}
-          setSensorStocks={setSensorStocks}
-          setSensorConfiguration={setSensorConfiguration}
-        />
-      ),
+      panel: <SensorStockPanel />,
     },
     {
       name: "Object",

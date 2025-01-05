@@ -4,13 +4,16 @@ import SensorSetBuilderMain from "./main";
 import { SnackbarProvider, closeSnackbar } from "notistack";
 import { GlobalStateProvider } from "./contexts/GlobalState";
 import { UiConfigProvider } from "./contexts/UiConfigContext";
+import { SensorProvider } from "./contexts/SensorContext";
 
 const App: React.FC = () => {
   return (
     <SnackbarProvider maxSnack={4} autoHideDuration={5000}>
       <GlobalStateProvider>
         <UiConfigProvider>
-          <SensorSetBuilderMain />
+          <SensorProvider>
+            <SensorSetBuilderMain />
+          </SensorProvider>
         </UiConfigProvider>
       </GlobalStateProvider>
     </SnackbarProvider>

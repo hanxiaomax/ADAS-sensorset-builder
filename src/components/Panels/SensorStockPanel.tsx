@@ -4,32 +4,20 @@ import SensorsOutlinedIcon from "@mui/icons-material/SensorsOutlined";
 import RadarOutlinedIcon from "@mui/icons-material/RadarOutlined";
 import CameraAltOutlinedIcon from "@mui/icons-material/CameraAltOutlined";
 import ToysOutlinedIcon from "@mui/icons-material/ToysOutlined";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import { ExpandLessOutlined, ExpandMoreOutlined } from "@mui/icons-material";
 import SensorStockItem from "../SensorStock";
 import CreateSensorDialog from "../Dialogs/CreateSensorDialog";
 import { SensorItem, SensorStocks } from "../../types/Common";
-import Sensor from "../../types/Sensor";
-import AddIcon from "@mui/icons-material/Add";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
 import { HtmlTooltip } from "../ToolTips";
+import { useSensor } from "../../contexts/SensorContext";
 
-interface SensorStackPanelProps {
-  sensorStocks: SensorStocks;
-  setSensorStocks: React.Dispatch<React.SetStateAction<SensorStocks>>;
-  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
-}
+interface SensorStackPanelProps {}
 
-const SensorStackPanel: React.FC<SensorStackPanelProps> = ({
-  sensorStocks,
-  setSensorStocks,
-  setSensorConfiguration,
-}) => {
-  const [panelOpen, setPanelOpen] = useState(false);
+const SensorStackPanel: React.FC<SensorStackPanelProps> = ({}) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const sensorTypes = ["USS", "Lidar", "Radar", "Camera"];
   const [selectedType, setSelectedType] = useState("USS");
+  const { sensorStocks, setSensorStocks } = useSensor();
 
   const categorizedSensors: { [key: string]: SensorItem[] } =
     sensorTypes.reduce((acc, type) => {
@@ -103,7 +91,6 @@ const SensorStackPanel: React.FC<SensorStackPanelProps> = ({
           key={sensor.id}
           icon={icon}
           sensor={sensor}
-          setSensorConfiguration={setSensorConfiguration}
           onEdit={handleEdit}
           onDelete={() => handleDelete(sensor.id)}
         />
