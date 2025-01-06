@@ -6,13 +6,10 @@ interface SceneStore {
   updateScene: (updates: Partial<Scene>) => void;
   updateShape: (shape: Shape) => void;
   resetScene: (initialScene: Scene) => void;
-  saveScene: () => void;
-  loadScene: () => void;
   saveSceneToFile: () => void;
   loadSceneFromFile: () => Promise<void>;
 }
 
-const SCENE_STORAGE_KEY = "vehicle-sensorset-scene";
 const SCENE_VERSION = "1.0";
 
 const validateScene = (scene: any): scene is Scene => {
@@ -49,38 +46,6 @@ const useSceneStore = create<SceneStore>((set, get) => ({
     });
   },
   resetScene: (initialScene) => set(() => ({ scene: initialScene })),
-  saveScene: () => {
-    const scene = get().scene;
-    const data = {
-      version: SCENE_VERSION,
-      scene,
-      timestamp: new Date().toISOString(),
-    };
-    localStorage.setItem(SCENE_STORAGE_KEY, JSON.stringify(data));
-  },
-  loadScene: () => {
-    const data = localStorage.getItem(SCENE_STORAGE_KEY);
-    if (!data) {
-      console.warn("No saved scene found");
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(data);
-      if (parsed.version !== SCENE_VERSION) {
-        console.warn("Scene version mismatch");
-        return;
-      }
-
-      if (validateScene(parsed.scene)) {
-        set({ scene: parsed.scene });
-      } else {
-        console.error("Invalid scene data");
-      }
-    } catch (error) {
-      console.error("Failed to load scene:", error);
-    }
-  },
   saveSceneToFile: () => {
     const scene = get().scene;
     const data = {

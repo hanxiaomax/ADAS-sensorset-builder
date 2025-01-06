@@ -5,20 +5,40 @@ import {
   ButtonGroup,
   Typography,
   IconButton,
+  Popover,
 } from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SensorsIcon from "@mui/icons-material/Sensors";
 import CloseIcon from "@mui/icons-material/Close";
+import SaveIcon from "@mui/icons-material/Save";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import SensorPanelEx from "../Panels/SensorPanelex";
 import { useSensorStore } from "../../stores/sensorStore";
+import useSceneStore from "../../stores/sceneStore";
 
 interface BottomMenuProp {}
 
 const BottomMenu: React.FC<BottomMenuProp> = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(95);
+  const [sceneMenuAnchor, setSceneMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
+  const { saveSceneToFile, loadSceneFromFile } = useSceneStore();
+
+  const handleSaveSceneToFile = () => {
+    if (window.confirm("Save current scene to file?")) {
+      saveSceneToFile();
+    }
+  };
+
+  const handleLoadSceneFromFile = async () => {
+    if (window.confirm("This will overwrite the current scene. Continue?")) {
+      await loadSceneFromFile();
+    }
+  };
 
   const panels = [
     {
@@ -112,6 +132,44 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
           },
         }}
       >
+        <Button
+          startIcon={<SaveIcon />}
+          onClick={(e) => setSceneMenuAnchor(e.currentTarget)}
+        >
+          Scene
+        </Button>
+        <Popover
+          open={Boolean(sceneMenuAnchor)}
+          anchorEl={sceneMenuAnchor}
+          onClose={() => setSceneMenuAnchor(null)}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+        >
+          <Box sx={{ p: 2 }}>
+            <Button
+              fullWidth
+              onClick={handleSaveSceneToFile}
+              startIcon={<SaveIcon />}
+            >
+              Save Scene
+            </Button>
+            <Button
+              fullWidth
+              onClick={handleLoadSceneFromFile}
+              startIcon={<FolderOpenIcon />}
+              sx={{ mt: 1 }}
+            >
+              Load Scene
+            </Button>
+          </Box>
+        </Popover>
+
         {panels.map((panel) => (
           <Button
             key={panel.name}
@@ -131,7 +189,7 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
             alignItems: "center",
             padding: "0 8px",
             fontWeight: "bold",
-            width: "40px", // 固定宽度避免布局移动
+            width: "40px",
             textAlign: "center",
           }}
         >

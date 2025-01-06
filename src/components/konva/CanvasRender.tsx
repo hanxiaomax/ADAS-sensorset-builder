@@ -240,6 +240,10 @@ const CanvasRenderer: React.FC = () => {
       }
     }
   };
+
+  const handleKonvaWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
+    handleWheel(e.evt);
+  };
   const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const stage = stageRef.current;
     if (stage) {
@@ -281,6 +285,18 @@ const CanvasRenderer: React.FC = () => {
     return () => {
       if (stage) {
         stage.container().removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (stage) {
+      stage.on("wheel", handleKonvaWheel);
+    }
+    return () => {
+      if (stage) {
+        stage.off("wheel", handleKonvaWheel);
       }
     };
   }, []);

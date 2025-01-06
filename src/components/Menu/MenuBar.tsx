@@ -38,8 +38,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
     setSensorStocks,
   } = useSensorStore();
 
-  const { saveScene, loadScene, saveSceneToFile, loadSceneFromFile } =
-    useSceneStore();
+  const { saveSceneToFile, loadSceneFromFile } = useSceneStore();
   const [open, setOpen] = useState(false);
   const [downloadAnchorEl, setDownloadAnchorEl] =
     useState<HTMLButtonElement | null>(null);
@@ -72,18 +71,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
     document.body.appendChild(stockDownloadNode);
     stockDownloadNode.click();
     stockDownloadNode.remove();
-  };
-
-  const handleSaveScene = () => {
-    if (window.confirm("Are you sure you want to save the current scene?")) {
-      saveScene();
-    }
-  };
-
-  const handleLoadScene = () => {
-    if (window.confirm("This will overwrite the current scene. Continue?")) {
-      loadScene();
-    }
   };
 
   const handleSaveSceneToFile = () => {
@@ -152,22 +139,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
             onExport={handleExport}
           />
           <Button onClick={handleAboutOpen}>About</Button>
-          <Button onClick={handleSaveScene}>
-            <SaveIcon />
-            Save Scene
-          </Button>
-          <Button onClick={handleLoadScene}>
-            <FolderOpenIcon />
-            Load Scene
-          </Button>
-          <Button onClick={handleSaveSceneToFile}>
-            <SaveIcon />
-            Save to File
-          </Button>
-          <Button onClick={handleLoadSceneFromFile}>
-            <FolderOpenIcon />
-            Load from File
-          </Button>
           <Button
             aria-describedby={downloadId}
             onClick={handleDownloadClick}
