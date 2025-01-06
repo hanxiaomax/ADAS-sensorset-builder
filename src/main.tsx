@@ -7,6 +7,7 @@ import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
+import CanvasRenderer from "./components/konva/CanvasRender";
 
 export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -42,7 +43,8 @@ export const SensorSetBuilderMain: React.FC = () => {
     >
       <MenuBar stageRef={stageRef} />
       <Grid item xs={12}>
-        <Viewer stageSize={stageSize} vehicle={vehicle} stageRef={stageRef} />
+        {/* <Viewer stageSize={stageSize} vehicle={vehicle} stageRef={stageRef} /> */}
+        <CanvasRenderer></CanvasRenderer>
       </Grid>
       <SidebarMenu />
       <BottomMenu />

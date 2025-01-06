@@ -68,7 +68,7 @@ export interface Group extends Shape {
 }
 
 export interface SceneObject extends Shape {
-  image: string;
+  image?: string;
 }
 
 export interface Layer {
