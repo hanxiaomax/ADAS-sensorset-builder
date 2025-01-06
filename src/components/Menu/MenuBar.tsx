@@ -19,7 +19,10 @@ import ProfileMenu from "./ProfileMenu";
 import DownloadPanel from "../Panels/DownloadPanel";
 import { Stage } from "konva/lib/Stage";
 import DownloadIcon from "@mui/icons-material/Download";
+import SaveIcon from "@mui/icons-material/Save";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import { useSensorStore } from "../../stores/sensorStore";
+import useSceneStore from "../../stores/sceneStore";
 import { SensorStocks } from "../../types/Common";
 import { Sensor } from "../../types/Sensor";
 
@@ -35,6 +38,8 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
     setSensorStocks,
   } = useSensorStore();
 
+  const { saveScene, loadScene, saveSceneToFile, loadSceneFromFile } =
+    useSceneStore();
   const [open, setOpen] = useState(false);
   const [downloadAnchorEl, setDownloadAnchorEl] =
     useState<HTMLButtonElement | null>(null);
@@ -67,6 +72,30 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
     document.body.appendChild(stockDownloadNode);
     stockDownloadNode.click();
     stockDownloadNode.remove();
+  };
+
+  const handleSaveScene = () => {
+    if (window.confirm("Are you sure you want to save the current scene?")) {
+      saveScene();
+    }
+  };
+
+  const handleLoadScene = () => {
+    if (window.confirm("This will overwrite the current scene. Continue?")) {
+      loadScene();
+    }
+  };
+
+  const handleSaveSceneToFile = () => {
+    if (window.confirm("Save current scene to file?")) {
+      saveSceneToFile();
+    }
+  };
+
+  const handleLoadSceneFromFile = async () => {
+    if (window.confirm("This will overwrite the current scene. Continue?")) {
+      await loadSceneFromFile();
+    }
   };
 
   const handleAboutOpen = () => {
@@ -123,6 +152,22 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
             onExport={handleExport}
           />
           <Button onClick={handleAboutOpen}>About</Button>
+          <Button onClick={handleSaveScene}>
+            <SaveIcon />
+            Save Scene
+          </Button>
+          <Button onClick={handleLoadScene}>
+            <FolderOpenIcon />
+            Load Scene
+          </Button>
+          <Button onClick={handleSaveSceneToFile}>
+            <SaveIcon />
+            Save to File
+          </Button>
+          <Button onClick={handleLoadSceneFromFile}>
+            <FolderOpenIcon />
+            Load from File
+          </Button>
           <Button
             aria-describedby={downloadId}
             onClick={handleDownloadClick}
