@@ -1,5 +1,5 @@
 {
-  "name": "ADAS-sensorset-builder",
+  "name": "adas-scene-builder",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -60,5 +60,5 @@
     "@types/uuid": "^10.0.0",
     "gh-pages": "^6.1.1"
   },
-  "homepage": "https://hanxiaomax.github.io/ADAS-sensorset-builder"
+  "homepage": "https://hanxiaomax.github.io/adas-sensorset-builder"
 }
