@@ -8,9 +8,11 @@ interface SceneStore {
   resetScene: (initialScene: Scene) => void;
   saveSceneToFile: () => void;
   loadSceneFromFile: () => Promise<void>;
+  initializeScene: () => void;
 }
 
 const SCENE_VERSION = "1.0";
+const SCENE_STORAGE_KEY = "scene-store";
 
 const validateScene = (scene: any): scene is Scene => {
   return (
@@ -23,8 +25,19 @@ const validateScene = (scene: any): scene is Scene => {
   );
 };
 
-const useSceneStore = create<SceneStore>((set, get) => ({
-  scene: {
+const getInitialScene = () => {
+  const storedScene = localStorage.getItem(SCENE_STORAGE_KEY);
+  if (storedScene) {
+    try {
+      const parsed = JSON.parse(storedScene);
+      if (validateScene(parsed)) {
+        return parsed;
+      }
+    } catch (error) {
+      console.error("Failed to parse stored scene:", error);
+    }
+  }
+  return {
     canvasProps: {
       width: 600,
       height: 400,
@@ -34,18 +47,38 @@ const useSceneStore = create<SceneStore>((set, get) => ({
     vehicles: [],
     shapes: [],
     sceneObjects: [],
+  };
+};
+
+const useSceneStore = create<SceneStore>((set, get) => ({
+  scene: getInitialScene(),
+
+  updateScene: (updates) => {
+    set((state) => {
+      const newScene = { ...state.scene, ...updates };
+      localStorage.setItem(SCENE_STORAGE_KEY, JSON.stringify(newScene));
+      return { scene: newScene };
+    });
   },
-  updateScene: (updates) =>
-    set((state) => ({ scene: { ...state.scene, ...updates } })),
+
   updateShape: (shape) => {
     set((state) => {
       const updateShapes = state.scene.shapes.map((item) =>
         item.id === shape.id ? { ...item, ...shape } : item
       );
-      return { scene: { ...state.scene, shapes: updateShapes } };
+      const newScene = { ...state.scene, shapes: updateShapes };
+      localStorage.setItem(SCENE_STORAGE_KEY, JSON.stringify(newScene));
+      return { scene: newScene };
     });
   },
-  resetScene: (initialScene) => set(() => ({ scene: initialScene })),
+
+  resetScene: (initialScene) => {
+    set(() => {
+      localStorage.setItem(SCENE_STORAGE_KEY, JSON.stringify(initialScene));
+      return { scene: initialScene };
+    });
+  },
+
   saveSceneToFile: () => {
     const scene = get().scene;
     const data = {
@@ -67,6 +100,7 @@ const useSceneStore = create<SceneStore>((set, get) => ({
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   },
+
   loadSceneFromFile: async () => {
     return new Promise((resolve) => {
       const input = document.createElement("input");
@@ -90,6 +124,10 @@ const useSceneStore = create<SceneStore>((set, get) => ({
 
               if (validateScene(parsed.scene)) {
                 set({ scene: parsed.scene });
+                localStorage.setItem(
+                  SCENE_STORAGE_KEY,
+                  JSON.stringify(parsed.scene)
+                );
                 resolve();
               } else {
                 console.error("Invalid scene data");
@@ -103,6 +141,42 @@ const useSceneStore = create<SceneStore>((set, get) => ({
       };
 
       input.click();
+    });
+  },
+
+  initializeScene: () => {
+    set((state) => {
+      const newScene = {
+        ...state.scene,
+        layers: [
+          {
+            id: "default-layer",
+            name: "Default Layer",
+            locked: false,
+            opacity: 1,
+            shapes: [],
+          },
+        ],
+        shapes: [
+          {
+            id: "default-rect",
+            type: "rect" as const,
+            x: 100,
+            y: 100,
+            width: 200,
+            height: 100,
+            fill: "#00ff00",
+            stroke: "#000000",
+            strokeWidth: 2,
+            draggable: true,
+            zIndex: 1,
+          },
+        ],
+        vehicles: [],
+        sceneObjects: [],
+      };
+      localStorage.setItem(SCENE_STORAGE_KEY, JSON.stringify(newScene));
+      return { scene: newScene };
     });
   },
 }));
