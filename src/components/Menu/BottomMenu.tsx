@@ -15,14 +15,12 @@ import CloseIcon from "@mui/icons-material/Close";
 import SaveIcon from "@mui/icons-material/Save";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import SensorPanelEx from "../Panels/SensorPanelex";
-import { useSensorStore } from "../../stores/sensorStore";
 import useSceneStore from "../../stores/sceneStore";
 
 interface BottomMenuProp {}
 
 const BottomMenu: React.FC<BottomMenuProp> = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
-  const [zoomLevel, setZoomLevel] = useState(95);
   const [sceneMenuAnchor, setSceneMenuAnchor] = useState<null | HTMLElement>(
     null
   );
@@ -179,25 +177,6 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
             {panel.name}
           </Button>
         ))}
-        <Button onClick={() => setZoomLevel((prev) => Math.max(prev - 5, 10))}>
-          <RemoveIcon />
-        </Button>
-        <Typography
-          variant="body2"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            padding: "0 8px",
-            fontWeight: "bold",
-            width: "40px",
-            textAlign: "center",
-          }}
-        >
-          {zoomLevel}%
-        </Typography>
-        <Button onClick={() => setZoomLevel((prev) => Math.min(prev + 5, 200))}>
-          <AddIcon />
-        </Button>
       </ButtonGroup>
 
       {panels.map((panel) => (
