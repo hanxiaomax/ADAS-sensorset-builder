@@ -16,6 +16,9 @@ import SaveIcon from "@mui/icons-material/Save";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import SensorPanelEx from "../Panels/SensorPanelex";
 import useSceneStore from "../../stores/sceneStore";
+import DehazeOutlinedIcon from "@mui/icons-material/DehazeOutlined";
+import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
+import ScatterPlotOutlinedIcon from "@mui/icons-material/ScatterPlotOutlined";
 
 interface BottomMenuProp {}
 
@@ -40,16 +43,22 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
 
   const panels = [
     {
+      name: "Object list",
+      icon: <ScatterPlotOutlinedIcon />,
+      description: "Manage sensors and configurations.",
+      panel: <SensorPanelEx />,
+    },
+    {
+      name: "More",
+      icon: <DehazeOutlinedIcon />,
+      description: "More",
+      panel: <SensorPanelEx />,
+    },
+    {
       name: "Feedback",
       icon: <FeedbackIcon />,
       description: "Provide feedback to improve the application.",
       panel: <Box sx={{ padding: 2 }}>Feedback Panel Content</Box>,
-    },
-    {
-      name: "Sensors",
-      icon: <SensorsIcon />,
-      description: "Manage sensors and configurations.",
-      panel: <SensorPanelEx />,
     },
   ];
 
@@ -130,44 +139,6 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
           },
         }}
       >
-        <Button
-          startIcon={<SaveIcon />}
-          onClick={(e) => setSceneMenuAnchor(e.currentTarget)}
-        >
-          Scene
-        </Button>
-        <Popover
-          open={Boolean(sceneMenuAnchor)}
-          anchorEl={sceneMenuAnchor}
-          onClose={() => setSceneMenuAnchor(null)}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "bottom",
-            horizontal: "right",
-          }}
-        >
-          <Box sx={{ p: 2 }}>
-            <Button
-              fullWidth
-              onClick={handleSaveSceneToFile}
-              startIcon={<SaveIcon />}
-            >
-              Save Scene
-            </Button>
-            <Button
-              fullWidth
-              onClick={handleLoadSceneFromFile}
-              startIcon={<FolderOpenIcon />}
-              sx={{ mt: 1 }}
-            >
-              Load Scene
-            </Button>
-          </Box>
-        </Popover>
-
         {panels.map((panel) => (
           <Button
             key={panel.name}
