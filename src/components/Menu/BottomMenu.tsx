@@ -7,6 +7,11 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  MenuList,
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  Paper,
 } from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import CloseIcon from "@mui/icons-material/Close";
@@ -14,6 +19,12 @@ import DehazeOutlinedIcon from "@mui/icons-material/DehazeOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import useSceneStore from "../../stores/sceneStore";
+import {
+  Cloud,
+  ContentCopy,
+  ContentCut,
+  ContentPaste,
+} from "@mui/icons-material";
 
 interface BottomMenuProp {}
 
@@ -63,6 +74,12 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
 
   const handlePanelClick = (panelName: string) => {
     setOpenPanel(openPanel === panelName ? null : panelName);
+    // Close any other open panels when a new one is clicked
+    panels.forEach((p) => {
+      if (p.name !== panelName && p.name !== "More") {
+        setOpenPanel(null);
+      }
+    });
   };
 
   const PanelWrapper: React.FC<{
@@ -164,24 +181,57 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
           vertical: "bottom",
           horizontal: "right",
         }}
+        sx={{ mt: -1 }}
       >
+        <MenuItem onClick={handleMenuClose}>
+          <ListItemIcon>
+            <ContentCut fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Cut</ListItemText>
+          <Typography variant="body2" color="text.secondary">
+            ⌘X
+          </Typography>
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+          <ListItemIcon>
+            <ContentCopy fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Copy</ListItemText>
+          <Typography variant="body2" color="text.secondary">
+            ⌘C
+          </Typography>
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose}>
+          <ListItemIcon>
+            <ContentPaste fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Paste</ListItemText>
+          <Typography variant="body2" color="text.secondary">
+            ⌘V
+          </Typography>
+        </MenuItem>
+        <Divider />
         <MenuItem
           onClick={() => {
-            handleSaveSceneToFile();
             handleMenuClose();
+            handleSaveSceneToFile();
           }}
         >
-          <SaveIcon sx={{ mr: 1 }} />
-          Save Scene
+          <ListItemIcon>
+            <SaveIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Save Scene</ListItemText>
         </MenuItem>
         <MenuItem
           onClick={() => {
-            handleLoadSceneFromFile();
             handleMenuClose();
+            handleLoadSceneFromFile();
           }}
         >
-          <FolderOpenIcon sx={{ mr: 1 }} />
-          Load Scene
+          <ListItemIcon>
+            <FolderOpenIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Load Scene</ListItemText>
         </MenuItem>
       </Menu>
 
