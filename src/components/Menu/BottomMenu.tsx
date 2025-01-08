@@ -5,12 +5,15 @@ import {
   ButtonGroup,
   Typography,
   IconButton,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import CloseIcon from "@mui/icons-material/Close";
 import DehazeOutlinedIcon from "@mui/icons-material/DehazeOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import FolderOpenIcon from "@mui/icons-material/FolderOpen";
 import useSceneStore from "../../stores/sceneStore";
-import MoreOptionsPanel from "../Panels/MoreOptionsPanel";
 
 interface BottomMenuProp {}
 
@@ -33,17 +36,22 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
     }
   };
 
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const panels = [
     {
       name: "More",
       icon: <DehazeOutlinedIcon />,
-      description: "Additional options",
-      panel: (
-        <MoreOptionsPanel
-          onSaveScene={handleSaveSceneToFile}
-          onLoadScene={handleLoadSceneFromFile}
-        />
-      ),
+      onClick: handleMenuClick,
     },
     {
       name: "Feedback",
@@ -133,7 +141,10 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
         {panels.map((panel) => (
           <Button
             key={panel.name}
-            onClick={() => handlePanelClick(panel.name)}
+            onClick={
+              panel.onClick ||
+              (() => panel.name && handlePanelClick(panel.name))
+            }
             startIcon={panel.icon}
           >
             {panel.name}
@@ -141,15 +152,50 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
         ))}
       </ButtonGroup>
 
-      {panels.map((panel) => (
-        <PanelWrapper
-          key={panel.name}
-          name={panel.name}
-          description={panel.description}
+      <Menu
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+      >
+        <MenuItem
+          onClick={() => {
+            handleSaveSceneToFile();
+            handleMenuClose();
+          }}
         >
-          {panel.panel}
-        </PanelWrapper>
-      ))}
+          <SaveIcon sx={{ mr: 1 }} />
+          Save Scene
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleLoadSceneFromFile();
+            handleMenuClose();
+          }}
+        >
+          <FolderOpenIcon sx={{ mr: 1 }} />
+          Load Scene
+        </MenuItem>
+      </Menu>
+
+      {panels
+        .filter((panel) => panel.name !== "More")
+        .map((panel) => (
+          <PanelWrapper
+            key={panel.name}
+            name={panel.name!}
+            description={panel.description!}
+          >
+            {panel.panel}
+          </PanelWrapper>
+        ))}
     </Box>
   );
 };
