@@ -5,20 +5,12 @@ import {
   ButtonGroup,
   Typography,
   IconButton,
-  Popover,
 } from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import SensorsIcon from "@mui/icons-material/Sensors";
 import CloseIcon from "@mui/icons-material/Close";
-import SaveIcon from "@mui/icons-material/Save";
-import FolderOpenIcon from "@mui/icons-material/FolderOpen";
-import SensorPanelEx from "../Panels/SensorPanelex";
-import useSceneStore from "../../stores/sceneStore";
 import DehazeOutlinedIcon from "@mui/icons-material/DehazeOutlined";
-import FactCheckOutlinedIcon from "@mui/icons-material/FactCheckOutlined";
-import ScatterPlotOutlinedIcon from "@mui/icons-material/ScatterPlotOutlined";
+import useSceneStore from "../../stores/sceneStore";
+import MoreOptionsPanel from "../Panels/MoreOptionsPanel";
 
 interface BottomMenuProp {}
 
@@ -43,16 +35,15 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
 
   const panels = [
     {
-      name: "Object list",
-      icon: <ScatterPlotOutlinedIcon />,
-      description: "Manage sensors and configurations.",
-      panel: <SensorPanelEx />,
-    },
-    {
       name: "More",
       icon: <DehazeOutlinedIcon />,
-      description: "More",
-      panel: <SensorPanelEx />,
+      description: "Additional options",
+      panel: (
+        <MoreOptionsPanel
+          onSaveScene={handleSaveSceneToFile}
+          onLoadScene={handleLoadSceneFromFile}
+        />
+      ),
     },
     {
       name: "Feedback",
