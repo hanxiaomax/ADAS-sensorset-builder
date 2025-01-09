@@ -105,7 +105,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
         sx={{
           position: "fixed",
           top: "10vh",
-          left: 130,
+          left: 100,
           height: "60vh",
           width: 380,
           backgroundColor: "#FFFFFF",
@@ -155,11 +155,11 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
       <Box
         sx={{
           position: "fixed",
-          left: 20,
+          left: 10,
           top: "10vh",
           bottom: "10vh",
           height: "60vh",
-          width: 100,
+          width: 80,
           backgroundColor: "#FFFFFF",
           borderRight: "1px solid #ddd",
           borderRadius: "8px 8px 8px 8px",
