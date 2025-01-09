@@ -7,33 +7,37 @@ import {
   IconButton,
   Menu,
   MenuItem,
-  MenuList,
   Divider,
   ListItemIcon,
   ListItemText,
-  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Select,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import CloseIcon from "@mui/icons-material/Close";
 import DehazeOutlinedIcon from "@mui/icons-material/DehazeOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import FolderOpenIcon from "@mui/icons-material/FolderOpen";
+import DeleteIcon from "@mui/icons-material/Delete";
+import HelpIcon from "@mui/icons-material/Help";
+import InfoIcon from "@mui/icons-material/Info";
+import ColorLensIcon from "@mui/icons-material/ColorLens";
 import useSceneStore from "../../stores/sceneStore";
-import {
-  Cloud,
-  ContentCopy,
-  ContentCut,
-  ContentPaste,
-} from "@mui/icons-material";
+import { ContentCopy, ContentCut, ContentPaste } from "@mui/icons-material";
 
 interface BottomMenuProp {}
 
 const BottomMenu: React.FC<BottomMenuProp> = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
-  const [sceneMenuAnchor, setSceneMenuAnchor] = useState<null | HTMLElement>(
-    null
-  );
-  const { saveSceneToFile, loadSceneFromFile } = useSceneStore();
+  const [helpOpen, setHelpOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [background, setBackground] = useState("#ffffff");
+  const { saveSceneToFile, loadSceneFromFile, clearScene } = useSceneStore();
 
   const handleSaveSceneToFile = () => {
     if (window.confirm("Save current scene to file?")) {
@@ -44,6 +48,12 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
   const handleLoadSceneFromFile = async () => {
     if (window.confirm("This will overwrite the current scene. Continue?")) {
       await loadSceneFromFile();
+    }
+  };
+
+  const handleClearCanvas = () => {
+    if (window.confirm("Clear the entire canvas? This cannot be undone.")) {
+      clearScene();
     }
   };
 
@@ -74,7 +84,6 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
 
   const handlePanelClick = (panelName: string) => {
     setOpenPanel(openPanel === panelName ? null : panelName);
-    // Close any other open panels when a new one is clicked
     panels.forEach((p) => {
       if (p.name !== panelName && p.name !== "More") {
         setOpenPanel(null);
@@ -183,34 +192,6 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
         }}
         sx={{ mt: -1 }}
       >
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon>
-            <ContentCut fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Cut</ListItemText>
-          <Typography variant="body2" color="text.secondary">
-            ⌘X
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon>
-            <ContentCopy fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Copy</ListItemText>
-          <Typography variant="body2" color="text.secondary">
-            ⌘C
-          </Typography>
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon>
-            <ContentPaste fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Paste</ListItemText>
-          <Typography variant="body2" color="text.secondary">
-            ⌘V
-          </Typography>
-        </MenuItem>
-        <Divider />
         <MenuItem
           onClick={() => {
             handleMenuClose();
@@ -233,7 +214,66 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
           </ListItemIcon>
           <ListItemText>Load Scene</ListItemText>
         </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            handleClearCanvas();
+          }}
+        >
+          <ListItemIcon>
+            <DeleteIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Clean Canvas</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            setHelpOpen(true);
+          }}
+        >
+          <ListItemIcon>
+            <HelpIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Help</ListItemText>
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            handleMenuClose();
+            setAboutOpen(true);
+          }}
+        >
+          <ListItemIcon>
+            <InfoIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>About</ListItemText>
+        </MenuItem>
       </Menu>
+
+      {/* Help Dialog */}
+      <Dialog open={helpOpen} onClose={() => setHelpOpen(false)}>
+        <DialogTitle>Help</DialogTitle>
+        <DialogContent>
+          <Typography>
+            This is the help content. Add your help information here.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setHelpOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* About Dialog */}
+      <Dialog open={aboutOpen} onClose={() => setAboutOpen(false)}>
+        <DialogTitle>About</DialogTitle>
+        <DialogContent>
+          <Typography>
+            This is the about content. Add your project information here.
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAboutOpen(false)}>Close</Button>
+        </DialogActions>
+      </Dialog>
 
       {panels
         .filter((panel) => panel.name !== "More")

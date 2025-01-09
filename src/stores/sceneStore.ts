@@ -9,6 +9,7 @@ interface SceneStore {
   saveSceneToFile: () => void;
   loadSceneFromFile: () => Promise<void>;
   initializeScene: () => void;
+  clearScene: () => void;
 }
 
 const SCENE_VERSION = "1.0";
@@ -177,6 +178,14 @@ const useSceneStore = create<SceneStore>((set, get) => ({
       };
       localStorage.setItem(SCENE_STORAGE_KEY, JSON.stringify(newScene));
       return { scene: newScene };
+    });
+  },
+
+  clearScene: () => {
+    set(() => {
+      const initialScene = getInitialScene();
+      localStorage.removeItem(SCENE_STORAGE_KEY);
+      return { scene: initialScene };
     });
   },
 }));
