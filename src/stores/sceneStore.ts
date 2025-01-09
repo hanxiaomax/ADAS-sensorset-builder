@@ -183,7 +183,17 @@ const useSceneStore = create<SceneStore>((set, get) => ({
 
   clearScene: () => {
     set(() => {
-      const initialScene = getInitialScene();
+      const initialScene = {
+        canvasProps: {
+          width: 600,
+          height: 400,
+          backgroundColor: "white",
+        },
+        layers: [],
+        vehicles: [],
+        shapes: [],
+        sceneObjects: [],
+      };
       localStorage.removeItem(SCENE_STORAGE_KEY);
       return { scene: initialScene };
     });
