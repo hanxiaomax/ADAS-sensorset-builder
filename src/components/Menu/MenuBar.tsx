@@ -111,7 +111,7 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
         elevation={0}
         sx={{
           backgroundColor: "#ffffff",
-          height: "20px",
+          height: "50px",
         }}
       >
         <ButtonGroup

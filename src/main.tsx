@@ -16,6 +16,7 @@ export const SensorSetBuilderMain: React.FC = () => {
   });
 
   const stageRef = useRef<Konva.Stage>(null);
+  const [boundaryVisible, setBoundaryVisible] = useState(true);
 
   const [image] = useImage(process.env.PUBLIC_URL + "/vehicle.png");
   const vehicle = new Vehicle(stageSize, image);
@@ -39,12 +40,16 @@ export const SensorSetBuilderMain: React.FC = () => {
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
+        position: "relative",
       }}
     >
       <MenuBar stageRef={stageRef} />
       <Grid item xs={12}>
         {/* <Viewer stageSize={stageSize} vehicle={vehicle} stageRef={stageRef} /> */}
-        <CanvasRenderer></CanvasRenderer>
+        <CanvasRenderer
+          boundaryVisible={boundaryVisible}
+          onBoundaryToggle={() => setBoundaryVisible(!boundaryVisible)}
+        />
       </Grid>
       <SidebarMenu />
       <BottomMenu />

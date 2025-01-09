@@ -25,7 +25,15 @@ import {
 import Konva from "konva";
 import useSceneStore from "../../stores/sceneStore";
 
-const CanvasRenderer: React.FC = () => {
+interface CanvasRendererProps {
+  boundaryVisible: boolean;
+  onBoundaryToggle: () => void;
+}
+
+const CanvasRenderer: React.FC<CanvasRendererProps> = ({
+  boundaryVisible,
+  onBoundaryToggle,
+}) => {
   const { scene, updateScene, updateShape } = useSceneStore();
   const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
   const stageRef = useRef<Konva.Stage | null>(null);
@@ -311,6 +319,20 @@ const CanvasRenderer: React.FC = () => {
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
+      {boundaryVisible && (
+        <Layer>
+          <Rect
+            x={0}
+            y={0}
+            width={window.innerWidth}
+            height={window.innerHeight}
+            stroke="red"
+            strokeWidth={2}
+            dash={[5, 5]}
+            listening={false}
+          />
+        </Layer>
+      )}
       {scene.layers.map((layer) => (
         <Layer
           key={layer.id}
