@@ -13,7 +13,6 @@ import {
   Box,
   Popover,
 } from "@mui/material";
-import GitHubIcon from "@mui/icons-material/GitHub";
 import EmailIcon from "@mui/icons-material/Email";
 import ProfileMenu from "./ProfileMenu";
 import DownloadPanel from "../Panels/DownloadPanel";
@@ -25,6 +24,7 @@ import { useSensorStore } from "../../stores/sensorStore";
 import useSceneStore from "../../stores/sceneStore";
 import { SensorStocks } from "../../types/Common";
 import { Sensor } from "../../types/Sensor";
+import GitHubIcon from "@mui/icons-material/GitHub";
 
 interface MenuBarProps {
   stageRef: React.RefObject<Stage>;
@@ -138,13 +138,21 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
             onImportSensorStock={handleSensorStockImport}
             onExport={handleExport}
           />
-          <Button onClick={handleAboutOpen}>About</Button>
+          <Button
+            onClick={handleAboutOpen}
+            sx={{
+              position: "absolute",
+              right: "12vh",
+            }}
+          >
+            About
+          </Button>
           <Button
             aria-describedby={downloadId}
             onClick={handleDownloadClick}
             sx={{
               position: "absolute",
-              right: "10px",
+              right: "0vh",
             }}
           >
             <DownloadIcon />
