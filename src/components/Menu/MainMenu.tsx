@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, MenuItem, Button } from "@mui/material";
+import { Menu, MenuItem, Button, IconButton } from "@mui/material";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import { SensorStocks } from "../../types/Common";
@@ -7,14 +7,15 @@ import Sensor from "../../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 import notifier from "../Helper/Notification";
 import { useSnackbar } from "notistack";
-
-interface ProfileMenuProps {
+import DehazeRoundedIcon from "@mui/icons-material/DehazeRounded";
+import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+interface MainMenuProps {
   onImportSensorSetConfigImport: (sensors: Sensor[]) => void;
   onImportSensorStock: (data: any) => void;
   onExport: () => void;
 }
 
-const ProfileMenu: React.FC<ProfileMenuProps> = ({
+const MainMenu: React.FC<MainMenuProps> = ({
   onImportSensorSetConfigImport,
   onImportSensorStock,
   onExport,
@@ -121,38 +122,53 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   return (
     <>
       <Button
-        aria-label="profile menu"
-        aria-controls="profile-menu"
+        aria-label="main menu"
+        aria-controls="main-menu"
         aria-haspopup="true"
         onClick={handleClick}
+        sx={{
+          left: "3vh",
+          top: "3vh",
+          backgroundColor: "#d1c1c1",
+          zIndex: 1000,
+          borderRadius: 10,
+        }}
       >
-        Import/Export
+        <DehazeRoundedIcon />
       </Button>
       <Menu
-        id="profile-menu"
+        id="main-menu"
         anchorEl={anchorEl}
         keepMounted
         open={Boolean(anchorEl)}
         onClose={handleClose}
+        MenuListProps={{
+          "aria-labelledby": "main-menu-button",
+          sx: { minWidth: 200 },
+        }}
       >
-        <MenuItem component="label">
-          <FileUploadIcon sx={{ mr: 1 }} />
+        <MenuItem component="label" sx={{ py: 1.5 }}>
+          <FileUploadIcon sx={{ mr: 1.5 }} />
           Import Sensor Set
           <input
+            id="sensor-set-upload"
             type="file"
             accept=".json"
             style={{ display: "none" }}
             onChange={(e) => handleFileUpload(e, "sensorSet")}
+            aria-labelledby="sensor-set-label"
           />
         </MenuItem>
-        <MenuItem component="label">
-          <FileUploadIcon sx={{ mr: 1 }} />
+        <MenuItem component="label" sx={{ py: 1.5 }}>
+          <FileUploadIcon sx={{ mr: 1.5 }} />
           Import Sensor Database
           <input
+            id="sensor-database-upload"
             type="file"
             accept=".json"
             style={{ display: "none" }}
             onChange={(e) => handleFileUpload(e, "sensorDatabase")}
+            aria-labelledby="sensor-database-label"
           />
         </MenuItem>
         <MenuItem onClick={handleExportClick}>
@@ -164,4 +180,4 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
   );
 };
 
-export default ProfileMenu;
+export default MainMenu;

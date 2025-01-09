@@ -319,20 +319,6 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
       onMouseUp={handleMouseUp}
       onMouseMove={handleMouseMove}
     >
-      {boundaryVisible && (
-        <Layer>
-          <Rect
-            x={0}
-            y={0}
-            width={window.innerWidth}
-            height={window.innerHeight}
-            stroke="red"
-            strokeWidth={2}
-            dash={[5, 5]}
-            listening={false}
-          />
-        </Layer>
-      )}
       {scene.layers.map((layer) => (
         <Layer
           key={layer.id}

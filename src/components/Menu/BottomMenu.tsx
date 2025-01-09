@@ -84,11 +84,6 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
 
   const handlePanelClick = (panelName: string) => {
     setOpenPanel(openPanel === panelName ? null : panelName);
-    panels.forEach((p) => {
-      if (p.name !== panelName && p.name !== "More") {
-        setOpenPanel(null);
-      }
-    });
   };
 
   const PanelWrapper: React.FC<{
@@ -156,7 +151,7 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
             textTransform: "none",
             color: "#0c7a92",
             borderColor: "#FFF",
-            backgroundColor: "#fff",
+            backgroundColor: "#FFF",
             "&:hover": {
               backgroundColor: "#0c7a92",
               color: "white",
