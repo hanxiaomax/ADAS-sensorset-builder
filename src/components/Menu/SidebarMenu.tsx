@@ -158,7 +158,7 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
           left: 10,
           top: "10vh",
           bottom: "10vh",
-          height: "60vh",
+          height: "70vh",
           width: 80,
           backgroundColor: "#FFFFFF",
           borderRight: "1px solid #ddd",

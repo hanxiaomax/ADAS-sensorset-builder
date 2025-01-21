@@ -129,9 +129,12 @@ const MainMenu: React.FC<MainMenuProps> = ({
         sx={{
           left: "3vh",
           top: "3vh",
-          backgroundColor: "#d1c1c1",
+          backgroundColor: "#f5f5f5",
           zIndex: 1000,
-          borderRadius: 10,
+          borderRadius: "8px",
+          "&:hover": {
+            backgroundColor: "#e0e0e0",
+          },
         }}
       >
         <DehazeRoundedIcon />
