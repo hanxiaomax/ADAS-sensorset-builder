@@ -174,9 +174,10 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
             alt="Author's Avatar"
             sx={{ width: 80, height: 80, mb: 2 }}
           />
-          <Typography variant="h3">ADAS Sensor Set Builder</Typography>
+          <Typography variant="h4">Yet Another ADAS Scene Builder</Typography>
           <Typography variant="overline">
-            A handy tool for ADAS Product Managers and System Engineers
+            A handy tool for ADAS Product Managers,System Engineers,Testers and
+            everyone
           </Typography>
           <Box height={50}></Box>
 
