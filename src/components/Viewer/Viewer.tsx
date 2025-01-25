@@ -34,24 +34,16 @@ import {
   renderGrid,
   renderLayerBoundary,
 } from "./ViewerHelper";
+import { useSensorStore, SensorStoreState } from "../../stores/sensorStore";
+import useGlobalConfigStore from "../../stores/globalConfigStore";
 
 interface ViewerProps {
   stageSize: StageSize;
   vehicle: Vehicle;
-  sensorConfiguration: Sensor[];
-  uiConfig: any;
-  setUiConfig: (config: any) => void;
   stageRef: React.RefObject<Konva.Stage>;
 }
 
-const Viewer: React.FC<ViewerProps> = ({
-  stageSize,
-  vehicle,
-  sensorConfiguration,
-  uiConfig,
-  setUiConfig,
-  stageRef,
-}) => {
+const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const stageCenter = {
     x: stageSize.width / 2,
     y: stageSize.height / 2,
@@ -70,8 +62,10 @@ const Viewer: React.FC<ViewerProps> = ({
   const [stagePos, setStagePos] = useState(stageCenter);
   const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
   const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
-  const [showLine, setShowLine] = useState(true); // 控制是否显示连线
-
+  const sensorConfiguration = useSensorStore(
+    (state: SensorStoreState) => state.sensorConfiguration
+  );
+  const { ussZoneConfig, layerVisibility } = useGlobalConfigStore();
   useEffect(() => {
     if (layerRef.current) {
       const layer = layerRef.current;
@@ -117,19 +111,6 @@ const Viewer: React.FC<ViewerProps> = ({
     setStagePos(newPos); // 更新图层位置
   };
 
-  const handleToggleGrid = () => {
-    setUiConfig((prev: any) => ({
-      ...prev,
-      showGrid: !prev.showGrid,
-    }));
-  };
-
-  const handelToggleDebugMode = () => {
-    setUiConfig((prev: any) => ({
-      ...prev,
-      showDebugMode: !prev.showDebugMode,
-    }));
-  };
   const handleAutoZoomToSensorCoverage = () => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -202,7 +183,7 @@ const Viewer: React.FC<ViewerProps> = ({
   const handleSensorClick = (
     sensor: Sensor,
     event: Konva.KonvaEventObject<MouseEvent>
-  ) => {
+  ): void => {
     setSelectedSensor(sensor); // 设置为选中的传感器
     setFloatingWindowPos({
       x: event.evt.clientX + 20, // 动态设置浮动窗口的位置，传感器附近
@@ -217,13 +198,13 @@ const Viewer: React.FC<ViewerProps> = ({
   };
 
   const renderDebugInfo = () => {
-    if (!uiConfig.showDebugMode) return null;
+    if (!layerVisibility.showDebugMode) return null;
 
     const selectedSensorInfo = selectedSensor;
 
     return (
       <Text
-        x={10}
+        x={100}
         y={10}
         fontSize={18}
         fontFamily="Courier New"
@@ -301,7 +282,7 @@ const Viewer: React.FC<ViewerProps> = ({
             onMouseMove={handleMouseMove}
           >
             <Layer>
-              {uiConfig.showDebugMode && renderDebugOverlay(stageSize)}
+              {layerVisibility.showDebugMode && renderDebugOverlay(stageSize)}
             </Layer>
             <Layer
               listening={false}
@@ -312,7 +293,7 @@ const Viewer: React.FC<ViewerProps> = ({
               offsetX={stageSize.width / 2}
               offsetY={stageSize.height / 2}
             >
-              {uiConfig.showGrid && renderGrid(stageSize, girdMargin)}
+              {layerVisibility.showGrid && renderGrid(stageSize, girdMargin)}
             </Layer>
             <Layer
               scaleX={scale}
@@ -326,31 +307,32 @@ const Viewer: React.FC<ViewerProps> = ({
               offsetX={stageSize.width / 2}
               offsetY={stageSize.height / 2}
             >
-              {uiConfig.showDebugMode && renderBoundingBox(sensorConfiguration)}
-              {uiConfig.showDebugMode && renderLayerBoundary(layerSize)}
+              {layerVisibility.showDebugMode &&
+                renderBoundingBox(sensorConfiguration)}
+              {layerVisibility.showDebugMode && renderLayerBoundary(layerSize)}
 
               <Group>
                 <UssZones
-                  show={uiConfig.showUssZones}
+                  show={layerVisibility.showUssZones}
                   x={vehicle.origin.x}
                   y={vehicle.origin.y}
                   carWidth={vehicle.width}
                   carLength={vehicle.length}
                   frontOverhang={vehicle.frontOverhang}
                   rearOverhang={vehicle.rearOverhang}
-                  frontZones={uiConfig.frontZones}
-                  rearZones={uiConfig.rearZones}
-                  sideZones={uiConfig.sideZones}
+                  frontZones={ussZoneConfig.frontZones}
+                  rearZones={ussZoneConfig.rearZones}
+                  sideZones={ussZoneConfig.sideZones}
                 />
                 <CarImage
-                  show={uiConfig.showCarImage}
+                  show={layerVisibility.showCarImage}
                   x={vehicle.origin.x}
                   y={vehicle.origin.y}
                   width={vehicle.width}
                   height={vehicle.length}
                   image={vehicle.image}
                 />
-                {uiConfig.showVehicleRefPoint &&
+                {layerVisibility.showVehicleRefPoint &&
                   Object.values(vehicle.refPoints).map((position, index) => (
                     <Marker key={index} position={position} fill="red" />
                   ))}
@@ -358,7 +340,6 @@ const Viewer: React.FC<ViewerProps> = ({
                   <SensorBlock
                     key={sensor.id}
                     sensor={sensor}
-                    uiConfig={uiConfig}
                     onClick={(e) => handleSensorClick(sensor, e)}
                     isSelected={selectedSensor?.id === sensor.id}
                   />
@@ -373,14 +354,11 @@ const Viewer: React.FC<ViewerProps> = ({
           <ViewerContextMenu
             contextMenuPos={contextMenuPos}
             handleCloseContextMenu={handleCloseContextMenu}
-            handleToggleGrid={handleToggleGrid}
             handleReset={handleReset}
             handleCenter={handleCenter}
             handleAutoZoom={handleAutoZoom}
             handleAutoZoomToSensorCoverage={handleAutoZoomToSensorCoverage}
             handleRotateClockwise={handleRotateClockwise}
-            handleToggleDebugMode={handelToggleDebugMode}
-            uiConfig={uiConfig}
           />
         </Box>
 

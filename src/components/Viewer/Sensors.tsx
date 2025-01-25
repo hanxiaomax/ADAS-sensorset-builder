@@ -1,22 +1,17 @@
 import React from "react";
-import { Arc, Circle, Line } from "react-konva";
-import {
-  UiConfig,
-  MountPosition,
-  SENSOR_RANGE_FACTOR,
-} from "../../types/Common";
+import { Arc, Circle } from "react-konva";
+import { MountPosition, SENSOR_RANGE_FACTOR } from "../../types/Common";
 
 import { sensorColorMap, Sensor } from "../../types/Sensor";
+import useGlobalConfigStore from "../../stores/globalConfigStore";
 
 interface SensorProp {
   sensor: Sensor;
-  uiConfig: UiConfig;
   onClick: (event: any) => void; // 点击事件处理程序
   isSelected: boolean; // 是否选中状态
 }
 
 export const SensorBlock: React.FC<SensorProp> = ({
-  uiConfig,
   sensor,
   onClick,
   isSelected,
@@ -29,17 +24,18 @@ export const SensorBlock: React.FC<SensorProp> = ({
     sensor.mountPosition.name
   ) as MountPosition;
 
-  console.log(sensor.options);
+  // console.log(sensor.options);
   const { color, opacity } = sensorColorMap[type] || {
     color: "#000",
     opacity: 1,
   };
+  const { layerVisibility } = useGlobalConfigStore();
 
   const visibility = (() => {
-    if (type.includes("uss")) return uiConfig.showUssSensors;
-    if (type.includes("lidar")) return uiConfig.showLidarSensors;
-    if (type.includes("radar")) return uiConfig.showRadarSensors;
-    if (type.includes("camera")) return uiConfig.showCameraSensors;
+    if (type.includes("uss")) return layerVisibility.showUssSensors;
+    if (type.includes("lidar")) return layerVisibility.showLidarSensors;
+    if (type.includes("radar")) return layerVisibility.showRadarSensors;
+    if (type.includes("camera")) return layerVisibility.showCameraSensors;
     return false;
   })();
 

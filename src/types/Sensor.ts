@@ -1,5 +1,4 @@
 import { MountPosition, SensorItem } from "./Common";
-
 export const sensorColorMap: {
   [key: string]: { color: string; opacity: number };
 } = {
@@ -41,6 +40,7 @@ export class Sensor {
         return data[name];
       } else {
         console.log(`Mounting point '${name}' not found in data.`);
+
         return undefined;
       }
     } else {

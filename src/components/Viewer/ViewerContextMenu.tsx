@@ -18,32 +18,29 @@ import {
   GridOn,
   BugReport,
 } from "@mui/icons-material";
+import useGlobalConfigStore from "../../stores/globalConfigStore";
 
 interface ViewerContextMenuProps {
   contextMenuPos: { mouseX: number; mouseY: number } | null;
   handleCloseContextMenu: () => void;
-  handleToggleGrid: () => void;
   handleReset: () => void;
   handleCenter: () => void;
   handleAutoZoom: () => void;
   handleAutoZoomToSensorCoverage: () => void;
   handleRotateClockwise: () => void; // 顺时针旋转回调
-  handleToggleDebugMode: () => void;
-  uiConfig: any;
 }
 
 const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
   contextMenuPos,
   handleCloseContextMenu,
-  handleToggleGrid,
   handleReset,
   handleCenter,
   handleAutoZoom,
   handleAutoZoomToSensorCoverage,
   handleRotateClockwise,
-  handleToggleDebugMode,
-  uiConfig,
 }) => {
+  const { layerVisibility, toggleLayerVisibility } = useGlobalConfigStore();
+
   return (
     <Paper sx={{ width: 320, maxWidth: "100%" }}>
       <Menu
@@ -91,7 +88,7 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
           <ListItemText>Rotate</ListItemText>
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleToggleGrid}>
+        <MenuItem onClick={() => toggleLayerVisibility("showGrid")}>
           <ListItemIcon>
             <GridOn fontSize="small" />
           </ListItemIcon>
@@ -99,13 +96,13 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
           <ListItemSecondaryAction>
             <Checkbox
               edge="end"
-              checked={uiConfig.showGrid}
-              onChange={handleToggleGrid}
+              checked={layerVisibility.showGrid}
+              onChange={() => toggleLayerVisibility("showGrid")}
             />
           </ListItemSecondaryAction>
         </MenuItem>
 
-        <MenuItem onClick={handleToggleDebugMode}>
+        <MenuItem onClick={() => toggleLayerVisibility("showDebugMode")}>
           <ListItemIcon>
             <BugReport fontSize="small" />
           </ListItemIcon>
@@ -113,8 +110,8 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
           <ListItemSecondaryAction>
             <Checkbox
               edge="end"
-              checked={uiConfig.showDebugMode}
-              onChange={handleToggleDebugMode}
+              checked={layerVisibility.showDebugMode}
+              onChange={() => toggleLayerVisibility("showDebugMode")}
             />
           </ListItemSecondaryAction>
         </MenuItem>

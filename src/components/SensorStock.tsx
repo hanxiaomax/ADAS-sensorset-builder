@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import {
   Box,
-  Badge,
-  Chip,
-  ButtonGroup,
-  Button,
   Popover,
   Card,
   CardContent,
@@ -21,53 +17,50 @@ import SensorInfoDialog from "./SensorInfoDialog";
 import { SensorItem } from "../types/Common";
 import Sensor from "../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
+import { HtmlTooltip } from "./ToolTips";
+import { useSensorStore } from "../stores/sensorStore";
+
 interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorItem;
   onDelete: (id: string) => void; // 添加删除处理函数，使用 sensor ID 进行删除
-  setSensorConfiguration: React.Dispatch<React.SetStateAction<Sensor[]>>;
   onEdit: (editedSensor: SensorItem) => void;
 }
+
+// 提取样式常量
+const iconContainerStyles = {
+  width: "60px",
+  height: "60px",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+  position: "relative",
+  borderRadius: "60px",
+  "&:hover": {
+    boxShadow: 1,
+    borderRadius: "60px",
+  },
+};
 
 const SensorStockItem: React.FC<SensorStockItemProps> = ({
   icon,
   sensor,
   onDelete,
   onEdit,
-  setSensorConfiguration,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [hover, setHover] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false); // 删除确认弹窗状态
-  const [sensorInfoOpen, setSensorInfoOpen] = useState(false);
+  const [dialogState, setDialogState] = useState({
+    install: false,
+    delete: false,
+    info: false,
+  });
 
-  const handleSensorClick = () => {
-    setSensorInfoOpen(true);
-  };
+  const setSensorConfiguration = useSensorStore(
+    (state) => state.setSensorConfiguration
+  );
 
-  const handleSensorInfoClose = () => {
-    setSensorInfoOpen(false);
-  };
-
-  const handlePopoverOpen = (
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-
-  const handleInstallClick = () => {
-    setDialogOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setDialogOpen(false);
+  const handleDialog = (type: keyof typeof dialogState, open: boolean) => {
+    setDialogState((prev) => ({ ...prev, [type]: open }));
   };
 
   const handleInstallConfirm = (
@@ -75,124 +68,70 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     selectedPosition: string,
     orientation: number
   ) => {
-    const sensorConfig = JSON.parse(
-      localStorage.getItem("sensorConfig") || "[]"
+    const newSensor = new Sensor(
+      uuidv4(),
+      selectedSensor,
+      {
+        name: selectedPosition,
+      },
+      ["highlight"]
     );
-    const position = {
-      name: selectedPosition,
-    };
-    const options = ["highlight"]; //highlight by default for new sesnor
-    const newSensor = new Sensor(uuidv4(), selectedSensor, position, options);
-    console.log(newSensor instanceof Sensor); // 应该返回 true
-    sensorConfig.push(newSensor);
-    setSensorConfiguration(sensorConfig);
-    localStorage.setItem("sensorConfig", JSON.stringify(sensorConfig));
-    setDialogOpen(false);
-  };
 
-  const handleDeleteClick = () => {
-    setDeleteDialogOpen(true);
+    setSensorConfiguration([
+      ...useSensorStore.getState().sensorConfiguration,
+      newSensor,
+    ]);
+    handleDialog("install", false);
   };
 
   const handleDeleteConfirm = () => {
-    if (onDelete) {
-      onDelete(sensor.id); // 删除使用 sensor ID
-    }
-    setDeleteDialogOpen(false);
-  };
-
-  const handleDeleteDialogClose = () => {
-    setDeleteDialogOpen(false);
+    onDelete?.(sensor.id);
+    handleDialog("delete", false);
   };
 
   return (
     <Box
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
+      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
-      <Badge
-        badgeContent={
-          sensor.attr.new ? (
-            <Chip label="New" color="primary" size="small" />
-          ) : null
-        }
-        anchorOrigin={{ vertical: "top", horizontal: "right" }}
-        overlap="circular"
-        sx={{
-          "& .MuiBadge-badge": {
-            transform: "translate(25%, -25%)",
-            borderRadius: "8px",
-          },
-        }}
-      >
-        <Box
-          sx={{
-            width: "80px",
-            height: "80px",
-            backgroundColor: "#f0f0f0",
-            borderRadius: "16px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            margin: "8px",
-            position: "relative",
-            transition: "transform 0.2s, box-shadow 0.2s",
-            "&:hover": {
-              transform: "translateY(-5px)",
-              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-            },
-          }}
-          onClick={handleSensorClick} // 点击时关闭 Popover
-          onMouseEnter={handlePopoverOpen} // 鼠标移入时打开 Popover
-          onMouseLeave={handlePopoverClose} // 鼠标移出时关闭 Popover
-        >
-          {icon}
+      <Box sx={iconContainerStyles} onClick={() => handleDialog("info", true)}>
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <HtmlTooltip
+            title={
+              <React.Fragment>
+                <Typography color="inherit">{sensor.name}</Typography>
+                <Typography
+                  fontStyle="italic"
+                  sx={{ fontSize: "12px" }}
+                  gutterBottom
+                >
+                  {sensor.desc}
+                </Typography>
+
+                <Box>
+                  <Typography sx={{ fontSize: "13px" }}>
+                    Brand: <u>{sensor.brand}</u>
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px" }}>
+                    Fov: <u>{sensor.spec.fov}</u>
+                  </Typography>
+                  <Typography sx={{ fontSize: "13px" }}>
+                    Range: <u>{sensor.spec.range}</u>
+                  </Typography>
+                </Box>
+              </React.Fragment>
+            }
+          >
+            {icon}
+          </HtmlTooltip>
         </Box>
-      </Badge>
-      {/* Use 和 Delete 按钮，仅在悬停时显示 */}
-      <ButtonGroup
-        disableElevation
-        variant="outlined"
-        size="small"
-        sx={{
-          "& .MuiButtonBase-root": {
-            backgroundColor: hover ? "#f6f6f6" : "transparent",
-            width: "80px",
-            height: "30px",
-            color: "#111111",
-            border: 0,
-            boxShadow: "none",
-            textTransform: "none",
-            display: hover ? "block" : "none",
-            "&:hover": {
-              backgroundColor: "#e0e0e0",
-            },
-          },
-        }}
-      >
-        <Button onClick={handleInstallClick}>Install</Button>
-      </ButtonGroup>
-      {/* Popover 显示详细信息卡片 */}
+      </Box>
       <Popover
-        sx={{
-          pointerEvents: "none",
-        }}
-        open={open}
+        sx={{ pointerEvents: "none" }}
+        open={Boolean(anchorEl)}
         anchorEl={anchorEl}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-        onClose={handlePopoverClose}
+        anchorOrigin={{ vertical: "top", horizontal: "left" }}
+        transformOrigin={{ vertical: "bottom", horizontal: "left" }}
+        onClose={() => setAnchorEl(null)}
         disableRestoreFocus
       >
         <Card sx={{ maxWidth: 300 }}>
@@ -242,28 +181,26 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       </Popover>
       {/* Install Config Dialog */}
       <InstallConfigDialog
-        open={dialogOpen}
+        open={dialogState.install}
         sensorItem={sensor}
-        onClose={handleDialogClose}
+        onClose={() => handleDialog("install", false)}
         onConfirm={handleInstallConfirm}
       />
-      {/* Delete Confirmation Dialog */}
       <DeleteConfirmationDialog
-        open={deleteDialogOpen}
-        onClose={handleDeleteDialogClose}
+        open={dialogState.delete}
+        onClose={() => handleDialog("delete", false)}
         onConfirm={handleDeleteConfirm}
         sensorName={sensor.name}
       />
-      {/* Sensor Info Dialog */}
       <SensorInfoDialog
-        open={sensorInfoOpen}
-        onClose={handleSensorInfoClose}
-        onInstall={handleInstallClick}
-        onRemove={handleDeleteClick}
+        open={dialogState.info}
+        onClose={() => handleDialog("info", false)}
+        onInstall={() => handleDialog("install", true)}
+        onRemove={() => handleDialog("delete", true)}
         onEdit={onEdit}
         sensor={sensor}
         icon={icon}
-      />{" "}
+      />
     </Box>
   );
 };

@@ -30,29 +30,14 @@ export interface SensorItem {
   name: string;
   desc: string;
   brand: string;
-  image: "";
+  image: string;
   spec: SensorSpec;
   attr: SensorAttr;
+  configuration?: { [key: string]: any }; // 添加可选的configuration属性
 }
 
 export interface SensorStocks {
   [key: string]: SensorItem;
-}
-
-// ui configuration interface used in control panel
-export interface UiConfig {
-  showCarImage: boolean;
-  showUssZones: boolean;
-  showUssSensors: boolean;
-  showLidarSensors: boolean;
-  showRadarSensors: boolean;
-  showCameraSensors: boolean;
-  showVehicleRefPoint: boolean;
-  frontZones: number;
-  rearZones: number;
-  sideZones: number;
-  panelVisible: boolean;
-  background: string;
 }
 
 export const SENSOR_RANGE_FACTOR = 5;
