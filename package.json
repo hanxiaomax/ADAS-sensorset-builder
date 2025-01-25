@@ -1,5 +1,5 @@
 {
-  "name": "ADAS-sensorset-builder",
+  "name": "ADAS-scene-builder",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
