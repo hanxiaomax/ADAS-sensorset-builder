@@ -36,6 +36,7 @@ import {
 } from "./ViewerHelper";
 import { useSensorStore, SensorStoreState } from "../../stores/sensorStore";
 import useGlobalConfigStore from "../../stores/globalConfigStore";
+import { useSceneStore } from "../../stores/sceneStore";
 
 interface ViewerProps {
   stageSize: StageSize;
@@ -48,32 +49,49 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     x: stageSize.width / 2,
     y: stageSize.height / 2,
   };
-  const [scale, setScale] = useState(1);
-  const [girdMargin, setGirdMargin] = useState(10000);
+  const layerRef = useRef<Konva.Layer>(null);
+  const [layerSize, setLayerSize] = useState({ width: 0, height: 0 });
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const [girdMargin] = useState(10000);
   const [contextMenuPos, setContextMenuPos] = useState<null | {
     mouseX: number;
     mouseY: number;
   }>(null);
-  const [selectedSensor, setSelectedSensor] = useState<Sensor | null>(null); // 选中的传感器
-  const [rotation, setRotation] = useState(0);
-  const layerRef = useRef<Konva.Layer>(null);
-  const [layerSize, setLayerSize] = useState({ width: 0, height: 0 });
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [stagePos, setStagePos] = useState(stageCenter);
-  const [floatingWindowPos, setFloatingWindowPos] = useState({ x: 0, y: 0 }); // 窗口的位置
-  const [showSensorInfo, setShowSensorInfo] = useState(false); // 控制浮动窗口的显示
+
+  // 从 SceneStore 获取状态和操作
+  const {
+    scale,
+    stagePos,
+    rotation,
+    selectedSensor,
+    showSensorInfo,
+    floatingWindowPos,
+    setScale,
+    setStagePos,
+    setRotation,
+    setSelectedSensor,
+    setShowSensorInfo,
+    setFloatingWindowPos,
+  } = useSceneStore();
+
   const sensorConfiguration = useSensorStore(
     (state: SensorStoreState) => state.sensorConfiguration
   );
   const { ussZoneConfig, layerVisibility } = useGlobalConfigStore();
+
   useEffect(() => {
     if (layerRef.current) {
       const layer = layerRef.current;
-      const width = layer.width(); // 获取Layer的宽度
-      const height = layer.height(); // 获取Layer的高度
+      const width = layer.width();
+      const height = layer.height();
       setLayerSize({ width, height });
     }
   }, []);
+
+  // 添加初始化 stagePos 的 useEffect
+  useEffect(() => {
+    setStagePos(stageCenter);
+  }, [stageSize]); // 当 stageSize 改变时重新计算中心位置
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -92,7 +110,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const oldScale = scale; // 使用 Layer 的 scale
+    const oldScale = scale;
     const pointer = stage.getPointerPosition();
     const zoomFactor = e.evt.deltaY > 0 ? 0.9 : 1.1;
     const newScale = oldScale * zoomFactor;
@@ -107,8 +125,8 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
       y: pointer!.y - mousePointTo.y * newScale,
     };
 
-    setScale(newScale); // 更新缩放比例
-    setStagePos(newPos); // 更新图层位置
+    setScale(newScale);
+    setStagePos(newPos);
   };
 
   const handleAutoZoomToSensorCoverage = () => {
@@ -119,14 +137,13 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
 
     const scaleX = stageSize.width / bbox.width;
     const scaleY = stageSize.height / bbox.height;
-    const newScale = Math.min(scaleX, scaleY) * 0.95; // 留一点边距
+    const newScale = Math.min(scaleX, scaleY) * 0.95;
     setScale(newScale);
     setStagePos(stageCenter);
 
-    handleCloseContextMenu(); // 关闭右键菜单
+    handleCloseContextMenu();
   };
 
-  // 自动缩放到适合的大小
   const handleAutoZoom = () => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -135,13 +152,12 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
 
     const scaleX = stageSize.width / bbox.width;
     const scaleY = stageSize.height / bbox.height;
-
-    const newScale = Math.min(scaleX, scaleY) * 0.9; // 留一点边距
+    const newScale = Math.min(scaleX, scaleY) * 0.9;
 
     setScale(newScale);
     setStagePos(stageCenter);
 
-    handleCloseContextMenu(); // 关闭右键菜单
+    handleCloseContextMenu();
   };
 
   const handleReset = () => {
@@ -153,15 +169,15 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const handleRotateClockwise = () => {
     const stage = stageRef.current;
     if (!stage) return;
-    setRotation((prevRotation) => prevRotation + 90); // 顺时针旋转90°
-    handleCloseContextMenu(); // 关闭右键菜单
+    setRotation(rotation + 90);
+    handleCloseContextMenu();
   };
 
   const handleCenter = () => {
     const stage = stageRef.current;
     if (!stage) return;
     setStagePos(stageCenter);
-    handleCloseContextMenu(); // 关闭右键菜单
+    handleCloseContextMenu();
   };
 
   const handleDragMove = (e: any) => {
@@ -171,7 +187,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     });
   };
 
-  // 添加鼠标移动事件监听
   const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
     const stage = e.target.getStage();
     if (stage) {
@@ -184,17 +199,17 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     sensor: Sensor,
     event: Konva.KonvaEventObject<MouseEvent>
   ): void => {
-    setSelectedSensor(sensor); // 设置为选中的传感器
+    setSelectedSensor(sensor);
     setFloatingWindowPos({
-      x: event.evt.clientX + 20, // 动态设置浮动窗口的位置，传感器附近
+      x: event.evt.clientX + 20,
       y: event.evt.clientY + 20,
     });
-    setShowSensorInfo(true); // 显示浮动窗口
+    setShowSensorInfo(true);
   };
 
   const handleCloseSensorInfo = () => {
     setShowSensorInfo(false);
-    setSelectedSensor(null); // 关闭时取消选中传感器
+    setSelectedSensor(null);
   };
 
   const renderDebugInfo = () => {
@@ -304,8 +319,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
               onDragMove={handleDragMove}
               ref={layerRef}
               rotation={rotation}
-              offsetX={stageSize.width / 2}
-              offsetY={stageSize.height / 2}
             >
               {layerVisibility.showDebugMode &&
                 renderBoundingBox(sensorConfiguration)}
@@ -314,8 +327,8 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
               <Group>
                 <UssZones
                   show={layerVisibility.showUssZones}
-                  x={vehicle.origin.x}
-                  y={vehicle.origin.y}
+                  x={0}
+                  y={0}
                   carWidth={vehicle.width}
                   carLength={vehicle.length}
                   frontOverhang={vehicle.frontOverhang}
@@ -326,8 +339,8 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                 />
                 <CarImage
                   show={layerVisibility.showCarImage}
-                  x={vehicle.origin.x}
-                  y={vehicle.origin.y}
+                  x={0}
+                  y={0}
                   width={vehicle.width}
                   height={vehicle.length}
                   image={vehicle.image}
@@ -346,7 +359,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                 ))}
               </Group>
             </Layer>
-
             <Layer>{renderDebugInfo()}</Layer>
           </Stage>
 

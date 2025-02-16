@@ -12,6 +12,14 @@ export interface SceneState {
   // Sensors
   sensors: Sensor[];
 
+  // Viewer related
+  scale: number;
+  stagePos: Position;
+  rotation: number;
+  selectedSensor: Sensor | null;
+  showSensorInfo: boolean;
+  floatingWindowPos: Position;
+
   // Actions
   setVehicle: (vehicle: Vehicle) => void;
   setMountingPoints: (points: { [key: string]: MountPosition }) => void;
@@ -22,6 +30,14 @@ export interface SceneState {
   addSensor: (sensor: Sensor) => void;
   removeSensor: (sensorId: string) => void;
   updateSensor: (sensorId: string, updates: Partial<Sensor>) => void;
+
+  // Viewer actions
+  setScale: (scale: number) => void;
+  setStagePos: (pos: Position) => void;
+  setRotation: (rotation: number) => void;
+  setSelectedSensor: (sensor: Sensor | null) => void;
+  setShowSensorInfo: (show: boolean) => void;
+  setFloatingWindowPos: (pos: Position) => void;
 }
 
 export const useSceneStore = create<SceneState>()(
@@ -31,6 +47,14 @@ export const useSceneStore = create<SceneState>()(
       vehicle: null,
       mountingPoints: {},
       sensors: [],
+
+      // Viewer initial state
+      scale: 1,
+      stagePos: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+      rotation: 0,
+      selectedSensor: null,
+      showSensorInfo: false,
+      floatingWindowPos: { x: 0, y: 0 },
 
       // Vehicle actions
       setVehicle: (vehicle) => set({ vehicle }),
@@ -61,6 +85,14 @@ export const useSceneStore = create<SceneState>()(
             sensor.id === sensorId ? { ...sensor, ...updates } : sensor
           ),
         })),
+
+      // Viewer actions
+      setScale: (scale) => set({ scale }),
+      setStagePos: (pos) => set({ stagePos: pos }),
+      setRotation: (rotation) => set({ rotation }),
+      setSelectedSensor: (sensor) => set({ selectedSensor: sensor }),
+      setShowSensorInfo: (show) => set({ showSensorInfo: show }),
+      setFloatingWindowPos: (pos) => set({ floatingWindowPos: pos }),
     }),
     {
       name: "scene-store",
