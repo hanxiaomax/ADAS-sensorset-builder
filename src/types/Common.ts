@@ -33,7 +33,10 @@ export interface SensorItem {
   image: string;
   spec: SensorSpec;
   attr: SensorAttr;
-  configuration?: { [key: string]: any }; // 添加可选的configuration属性
+  configuration?: { [key: string]: any };
+  width?: number;
+  height?: number;
+  fov?: number;
 }
 
 export interface SensorStocks {
