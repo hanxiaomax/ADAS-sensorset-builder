@@ -434,27 +434,55 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                   const relativeX = mountPoint.position.x - vehicle.origin.x;
                   const relativeY = mountPoint.position.y - vehicle.origin.y;
 
-                  // 创建一个新的传感器对象，使用相对坐标和挂载点的方向
-                  const adjustedSensor = new Sensor(
-                    sensor.id,
-                    sensor.sensorInfo,
-                    {
-                      name: sensor.mountPosition.name,
-                      position: {
-                        x: relativeX,
-                        y: relativeY,
-                      },
-                      orientation: mountPoint.orientation,
-                    }
-                  );
-
                   return (
-                    <SensorBlock
-                      key={sensor.id}
-                      sensor={adjustedSensor}
-                      onClick={(e) => handleSensorClick(sensor, e)}
-                      isSelected={selectedSensor?.id === sensor.id}
-                    />
+                    <Group key={`sensor-${sensor.id}`}>
+                      {/* 渲染传感器标记点 */}
+                      <Marker
+                        position={{ x: relativeX, y: relativeY }}
+                        fill="green"
+                      />
+                      {/* 渲染传感器名称 */}
+                      <Text
+                        x={relativeX + 10}
+                        y={relativeY - 10}
+                        text={sensor.sensorInfo.name}
+                        fontSize={12}
+                        fill="green"
+                        fontStyle="bold"
+                      />
+                      {/* 渲染方向指示器 */}
+                      <Group
+                        x={relativeX}
+                        y={relativeY}
+                        rotation={mountPoint.orientation}
+                      >
+                        <Line
+                          points={[0, 0, 30, 0]}
+                          stroke="green"
+                          strokeWidth={2}
+                        />
+                        <Line
+                          points={[30, 0, 25, -5, 30, 0, 25, 5]}
+                          stroke="green"
+                          strokeWidth={2}
+                        />
+                      </Group>
+                      {/* 渲染传感器覆盖区域 */}
+                      <SensorBlock
+                        sensor={
+                          new Sensor(sensor.id, sensor.sensorInfo, {
+                            name: sensor.mountPosition.name,
+                            position: {
+                              x: relativeX,
+                              y: relativeY,
+                            },
+                            orientation: mountPoint.orientation,
+                          })
+                        }
+                        onClick={(e) => handleSensorClick(sensor, e)}
+                        isSelected={selectedSensor?.id === sensor.id}
+                      />
+                    </Group>
                   );
                 })}
               </Group>
