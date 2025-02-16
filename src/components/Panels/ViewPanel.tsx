@@ -126,6 +126,15 @@ const ViewPanel: React.FC = () => {
         }
         label="Vehicle Key Point"
       />
+      <FormControlLabel
+        control={
+          <Switch
+            checked={layerVisibility.showMountingPoints}
+            onChange={() => toggleLayerVisibility("showMountingPoints")}
+          />
+        }
+        label="Mounting Points"
+      />
     </Box>
   );
 };

@@ -12,7 +12,7 @@ import {
   TableCell,
   TableRow,
 } from "@mui/material";
-import { Stage, Layer, Group, Text } from "react-konva";
+import { Stage, Layer, Group, Text, Line } from "react-konva";
 import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
@@ -364,6 +364,49 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                             fontSize={12}
                             fill="red"
                           />
+                        </Group>
+                      );
+                    }
+                  )}
+                {/* 渲染挂载点 */}
+                {layerVisibility.showMountingPoints &&
+                  Object.entries(vehicle._mountingPoints).map(
+                    ([name, point], index) => {
+                      if (!point || !point.position) return null;
+                      // 计算相对于车辆中心的位置
+                      const relativeX = point.position.x - vehicle.origin.x;
+                      const relativeY = point.position.y - vehicle.origin.y;
+                      return (
+                        <Group key={`mount-${index}`}>
+                          <Marker
+                            position={{ x: relativeX, y: relativeY }}
+                            fill="blue"
+                          />
+                          <Text
+                            x={relativeX + 10}
+                            y={relativeY - 10}
+                            text={name}
+                            fontSize={12}
+                            fill="blue"
+                            fontStyle="bold"
+                          />
+                          {/* 渲染方向指示器 */}
+                          <Group
+                            x={relativeX}
+                            y={relativeY}
+                            rotation={point.orientation}
+                          >
+                            <Line
+                              points={[0, 0, 30, 0]}
+                              stroke="blue"
+                              strokeWidth={2}
+                            />
+                            <Line
+                              points={[30, 0, 25, -5, 30, 0, 25, 5]}
+                              stroke="blue"
+                              strokeWidth={2}
+                            />
+                          </Group>
                         </Group>
                       );
                     }

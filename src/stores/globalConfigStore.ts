@@ -14,6 +14,7 @@ interface GlobalConfigStore {
     showVehicleRefPoint: boolean;
     showDebugMode: boolean;
     showGrid: boolean;
+    showMountingPoints: boolean;
   };
   ussZoneConfig: {
     frontZones: number;
@@ -47,6 +48,7 @@ const useGlobalConfigStore = create<GlobalConfigStore>((set) => ({
     showVehicleRefPoint: false,
     showDebugMode: false,
     showGrid: false,
+    showMountingPoints: false,
   },
   ussZoneConfig: {
     frontZones: 8,
