@@ -434,6 +434,19 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                   const relativeX = mountPoint.position.x - vehicle.origin.x;
                   const relativeY = mountPoint.position.y - vehicle.origin.y;
 
+                  // 创建包含正确位置信息的传感器对象
+                  const adjustedSensor = {
+                    ...sensor,
+                    mountPosition: {
+                      ...sensor.mountPosition,
+                      position: {
+                        x: relativeX,
+                        y: relativeY,
+                      },
+                      orientation: mountPoint.orientation,
+                    },
+                  };
+
                   return (
                     <Group key={`sensor-${sensor.id}`}>
                       {/* 渲染传感器标记点 */}
@@ -469,16 +482,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                       </Group>
                       {/* 渲染传感器覆盖区域 */}
                       <SensorBlock
-                        sensor={
-                          new Sensor(sensor.id, sensor.sensorInfo, {
-                            name: sensor.mountPosition.name,
-                            position: {
-                              x: relativeX,
-                              y: relativeY,
-                            },
-                            orientation: mountPoint.orientation,
-                          })
-                        }
+                        sensor={adjustedSensor}
                         onClick={(e) => handleSensorClick(sensor, e)}
                         isSelected={selectedSensor?.id === sensor.id}
                       />

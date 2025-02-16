@@ -20,11 +20,10 @@ export const SensorBlock: React.FC<SensorProp> = ({
   const fov = sensor.sensorInfo.spec.fov;
   const range = sensor.sensorInfo.spec.range * SENSOR_RANGE_FACTOR;
 
-  const mount_position = Sensor.getMountPosition(
-    sensor.mountPosition.name
-  ) as MountPosition;
+  // 直接使用传入的sensor中的位置信息
+  const position = sensor.mountPosition.position;
+  const orientation = sensor.mountPosition.orientation;
 
-  // console.log(sensor.options);
   const { color, opacity } = sensorColorMap[type] || {
     color: "#000",
     opacity: 1,
@@ -39,7 +38,13 @@ export const SensorBlock: React.FC<SensorProp> = ({
     return false;
   })();
 
-  if (!visibility || sensor.options?.includes("hide")) {
+  // 如果位置信息不完整，不渲染传感器
+  if (
+    !visibility ||
+    sensor.options?.includes("hide") ||
+    !position ||
+    orientation === undefined
+  ) {
     return null;
   }
 
@@ -49,7 +54,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
         fill: `${color}${Math.floor(opacity * 1.5 * 255)
           .toString(16)
           .padStart(2, "0")}`,
-        strokeWidth: 2, // 更粗的边框表示高亮状态
+        strokeWidth: 2,
         stroke: "black",
       };
     } else {
@@ -67,7 +72,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
       return {
         width: 15,
         height: 15,
-        fill: "#ff9c2d", // 选中时高亮的颜色
+        fill: "#ff9c2d",
       };
     } else {
       return {
@@ -77,32 +82,31 @@ export const SensorBlock: React.FC<SensorProp> = ({
       };
     }
   };
-  const style = getStyle(sensor.options || []);
 
+  const style = getStyle(sensor.options || []);
   const sensor_style = getSensorStyle(sensor.options || []);
+
   return (
     <>
       <Arc
-        x={mount_position.position!.x}
-        y={mount_position.position!.y}
+        x={position.x}
+        y={position.y}
         innerRadius={0}
         outerRadius={range}
         angle={fov}
-        rotation={mount_position.orientation! - fov / 2}
+        rotation={orientation - fov / 2}
         fill={style.fill}
         stroke={style.stroke}
         strokeWidth={0.5}
-        listening={false} // 禁止FOV响应点击事件
+        listening={false}
       />
-      {/* 渲染传感器本身，允许点击 */}
-
       <Circle
-        x={mount_position.position!.x}
-        y={mount_position.position!.y}
+        x={position.x}
+        y={position.y}
         width={sensor_style.width}
         height={sensor_style.height}
         fill={sensor_style.fill}
-        onClick={onClick} // 点击事件只在 Circle 上生效
+        onClick={onClick}
       />
     </>
   );
