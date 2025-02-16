@@ -346,9 +346,28 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                   image={vehicle.image}
                 />
                 {layerVisibility.showVehicleRefPoint &&
-                  Object.values(vehicle.refPoints).map((position, index) => (
-                    <Marker key={index} position={position} fill="red" />
-                  ))}
+                  Object.entries(vehicle.refPoints).map(
+                    ([name, position], index) => {
+                      // 计算相对于车辆中心的位置
+                      const relativeX = position.x - vehicle.origin.x;
+                      const relativeY = position.y - vehicle.origin.y;
+                      return (
+                        <Group key={index}>
+                          <Marker
+                            position={{ x: relativeX, y: relativeY }}
+                            fill="red"
+                          />
+                          <Text
+                            x={relativeX + 10}
+                            y={relativeY - 10}
+                            text={name}
+                            fontSize={12}
+                            fill="red"
+                          />
+                        </Group>
+                      );
+                    }
+                  )}
                 {sensorConfiguration.map((sensor) => (
                   <SensorBlock
                     key={sensor.id}
