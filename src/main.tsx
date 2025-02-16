@@ -19,9 +19,6 @@ export const SensorSetBuilderMain: React.FC = () => {
   const [image] = useImage(process.env.PUBLIC_URL + "/vehicle.png");
   const vehicle = new Vehicle(stageSize, image);
 
-  const mountingPointsJSON = JSON.stringify(vehicle._mountingPoints);
-  localStorage.setItem("mountingPoints", mountingPointsJSON);
-
   useEffect(() => {
     const handleResize = () => {
       setStageSize({ width: window.innerWidth, height: window.innerHeight });
