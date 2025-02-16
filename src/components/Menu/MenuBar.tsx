@@ -39,10 +39,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
   const [downloadAnchorEl, setDownloadAnchorEl] =
     useState<HTMLButtonElement | null>(null);
 
-  const handleSensorSetConfigImport = (data: Sensor[]) => {
-    setSensorConfiguration(data);
-  };
-
   const handleSensorStockImport = (data: SensorStocks) => {
     setSensorStocks(data);
   };
@@ -118,7 +114,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
           }}
         >
           <ProfileMenu
-            onImportSensorSetConfigImport={handleSensorSetConfigImport}
             onImportSensorStock={handleSensorStockImport}
             onExport={handleExport}
           />

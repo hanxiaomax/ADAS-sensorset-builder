@@ -7,19 +7,19 @@ import Sensor from "../../types/Sensor";
 import { v4 as uuidv4 } from "uuid"; // 引入uuid库
 import notifier from "../Helper/Notification";
 import { useSnackbar } from "notistack";
+import { useSceneStore } from "../../stores/sceneStore";
 
 interface ProfileMenuProps {
-  onImportSensorSetConfigImport: (sensors: Sensor[]) => void;
   onImportSensorStock: (data: any) => void;
   onExport: () => void;
 }
 
 const ProfileMenu: React.FC<ProfileMenuProps> = ({
-  onImportSensorSetConfigImport,
   onImportSensorStock,
   onExport,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { setSensors } = useSceneStore();
 
   const { enqueueSnackbar } = useSnackbar();
   React.useEffect(() => {
@@ -93,7 +93,8 @@ const ProfileMenu: React.FC<ProfileMenuProps> = ({
                   sensor.mountPosition
                 );
               });
-              onImportSensorSetConfigImport(sensorInstances);
+              // 更新 SceneStore 中的 sensors
+              setSensors(sensorInstances);
               notifier.success(
                 "Sensor Set imported and instantiated successfully!"
               );

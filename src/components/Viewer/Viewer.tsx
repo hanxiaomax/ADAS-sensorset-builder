@@ -72,6 +72,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     setSelectedSensor,
     setShowSensorInfo,
     setFloatingWindowPos,
+    sensors,
   } = useSceneStore();
 
   const sensorConfiguration = useSensorStore(
@@ -133,7 +134,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     const stage = stageRef.current;
     if (!stage) return;
 
-    const bbox = getSensorCoverageBoundingBox(sensorConfiguration);
+    const bbox = getSensorCoverageBoundingBox(sensors);
 
     const scaleX = stageSize.width / bbox.width;
     const scaleY = stageSize.height / bbox.height;
@@ -368,7 +369,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                       );
                     }
                   )}
-                {/* 渲染挂载点 */}
                 {layerVisibility.showMountingPoints &&
                   Object.entries(vehicle._mountingPoints).map(
                     ([name, point], index) => {
@@ -411,14 +411,52 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                       );
                     }
                   )}
-                {sensorConfiguration.map((sensor) => (
-                  <SensorBlock
-                    key={sensor.id}
-                    sensor={sensor}
-                    onClick={(e) => handleSensorClick(sensor, e)}
-                    isSelected={selectedSensor?.id === sensor.id}
-                  />
-                ))}
+                {/* 渲染传感器 */}
+                {sensors.map((sensor) => {
+                  const showSensor =
+                    (sensor.sensorInfo.type.toLowerCase() === "uss" &&
+                      layerVisibility.showUssSensors) ||
+                    (sensor.sensorInfo.type.toLowerCase() === "lidar" &&
+                      layerVisibility.showLidarSensors) ||
+                    (sensor.sensorInfo.type.toLowerCase() === "radar" &&
+                      layerVisibility.showRadarSensors) ||
+                    (sensor.sensorInfo.type.toLowerCase() === "camera" &&
+                      layerVisibility.showCameraSensors);
+
+                  if (!showSensor) return null;
+
+                  // 从vehicle._mountingPoints中获取实际的挂载点信息
+                  const mountPoint =
+                    vehicle._mountingPoints[sensor.mountPosition.name];
+                  if (!mountPoint?.position) return null;
+
+                  // 计算相对于车辆中心的位置
+                  const relativeX = mountPoint.position.x - vehicle.origin.x;
+                  const relativeY = mountPoint.position.y - vehicle.origin.y;
+
+                  // 创建一个新的传感器对象，使用相对坐标和挂载点的方向
+                  const adjustedSensor = new Sensor(
+                    sensor.id,
+                    sensor.sensorInfo,
+                    {
+                      name: sensor.mountPosition.name,
+                      position: {
+                        x: relativeX,
+                        y: relativeY,
+                      },
+                      orientation: mountPoint.orientation,
+                    }
+                  );
+
+                  return (
+                    <SensorBlock
+                      key={sensor.id}
+                      sensor={adjustedSensor}
+                      onClick={(e) => handleSensorClick(sensor, e)}
+                      isSelected={selectedSensor?.id === sensor.id}
+                    />
+                  );
+                })}
               </Group>
             </Layer>
             <Layer>{renderDebugInfo()}</Layer>
