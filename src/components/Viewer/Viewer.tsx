@@ -431,8 +431,16 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                   if (!mountPoint?.position) return null;
 
                   // 计算相对于车辆中心的位置
-                  const relativeX = mountPoint.position.x - vehicle.origin.x;
-                  const relativeY = mountPoint.position.y - vehicle.origin.y;
+                  const relativeX = isNaN(
+                    mountPoint.position.x - vehicle.origin.x
+                  )
+                    ? 0
+                    : mountPoint.position.x - vehicle.origin.x;
+                  const relativeY = isNaN(
+                    mountPoint.position.y - vehicle.origin.y
+                  )
+                    ? 0
+                    : mountPoint.position.y - vehicle.origin.y;
 
                   // 创建包含正确位置信息的传感器对象
                   const adjustedSensor = {
