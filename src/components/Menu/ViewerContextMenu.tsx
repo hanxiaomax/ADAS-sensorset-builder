@@ -68,37 +68,6 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
     handleCloseContextMenu();
   };
 
-  const handleAutoZoom = () => {
-    const stage = stageRef.current;
-    if (!stage || !vehicle) return;
-
-    const bbox = getBoundingBox(vehicle);
-
-    const scaleX = stageSize.width / bbox.width;
-    const scaleY = stageSize.height / bbox.height;
-    const newScale = Math.min(scaleX, scaleY) * 0.9;
-
-    setScale(newScale);
-    setStagePos(stageCenter);
-
-    handleCloseContextMenu();
-  };
-
-  const handleAutoZoomToSensorCoverage = () => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const bbox = getSensorCoverageBoundingBox(sensors);
-
-    const scaleX = stageSize.width / bbox.width;
-    const scaleY = stageSize.height / bbox.height;
-    const newScale = Math.min(scaleX, scaleY) * 0.95;
-    setScale(newScale);
-    setStagePos(stageCenter);
-
-    handleCloseContextMenu();
-  };
-
   const handleRotateClockwise = () => {
     const stage = stageRef.current;
     if (!stage) return;
@@ -130,20 +99,6 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
             <CenterFocusWeak fontSize="small" />
           </ListItemIcon>
           <ListItemText>Centering View</ListItemText>
-        </MenuItem>
-
-        <MenuItem onClick={handleAutoZoom}>
-          <ListItemIcon>
-            <DirectionsCarFilled fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Fit Vehicle</ListItemText>
-        </MenuItem>
-
-        <MenuItem onClick={handleAutoZoomToSensorCoverage}>
-          <ListItemIcon>
-            <Sensors fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Fit Sensor Range</ListItemText>
         </MenuItem>
 
         <MenuItem onClick={handleRotateClockwise}>
