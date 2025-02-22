@@ -7,7 +7,6 @@ import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
 import { useVehicleStore } from "./stores/vehicleStore";
 import { SedanVehicle } from "./types/vehicles/SedanVehicle";
-import { SuvVehicle } from "./types/vehicles/SuvVehicle";
 
 export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -64,7 +63,7 @@ export const SensorSetBuilderMain: React.FC = () => {
   }, []);
 
   if (!currentVehicle) {
-    return null; // 或者显示加载状态
+    return null;
   }
 
   return (

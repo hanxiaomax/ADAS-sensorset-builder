@@ -66,9 +66,6 @@ export abstract class Vehicle {
   ) {
     this.dimensions = this.getVehicleDimensions();
 
-    const image_margin = 20;
-    const overhang = 60 + image_margin;
-
     this.width = this.dimensions.width * scaleFactor;
     this.length = this.dimensions.length * scaleFactor;
     this.frontOverhang = this.dimensions.frontOverhang;
@@ -81,15 +78,12 @@ export abstract class Vehicle {
 
     this.image = null;
 
-    // 初始化参考点和挂载点
     this.refPoints = this.initializeRefPoints();
     this._mountingPoints = this.initializeMountingPoints();
   }
 
-  // 子类必须实现的方法
   protected abstract getVehicleDimensions(): VehicleDimensions;
 
-  // 子类可以覆盖的方法
   protected initializeRefPoints(): VehicleRefPoints {
     return {
       front_center: setPosition(this.origin.x + this.width / 2, this.origin.y),
@@ -98,10 +92,10 @@ export abstract class Vehicle {
         this.origin.y + this.length
       ),
       front_bumper_right: setPosition(
-        this.origin.x + this.width - 15,
+        this.origin.x + this.width - 25,
         this.origin.y + 30
       ),
-      front_bumper_left: setPosition(this.origin.x + 15, this.origin.y + 30),
+      front_bumper_left: setPosition(this.origin.x + 25, this.origin.y + 30),
       rear_bumper_right: setPosition(
         this.origin.x + this.width - 15,
         this.origin.y + this.length - 30
@@ -112,21 +106,21 @@ export abstract class Vehicle {
       ),
       wingside_right: setPosition(
         this.origin.x + this.width - 15,
-        this.origin.y + 100
-      ),
-      wingside_left: setPosition(this.origin.x + 15, this.origin.y + 100),
-      sidemirror_right: setPosition(
-        this.origin.x + this.width - 8,
         this.origin.y + 120
       ),
-      sidemirror_left: setPosition(this.origin.x + 8, this.origin.y + 120),
+      wingside_left: setPosition(this.origin.x + 15, this.origin.y + 120),
+      sidemirror_right: setPosition(
+        this.origin.x + this.width - 8,
+        this.origin.y + 160
+      ),
+      sidemirror_left: setPosition(this.origin.x + 8, this.origin.y + 160),
       front_roof: setPosition(
         this.origin.x + 15,
         this.origin.y + this.length - 30
       ),
       front_windsheild: setPosition(
         this.origin.x + this.width / 2,
-        this.origin.y + 130
+        this.origin.y + 160
       ),
       rear_windsheild: setPosition(
         this.origin.x + this.width / 2,
@@ -134,9 +128,9 @@ export abstract class Vehicle {
       ),
       b_pillar_right: setPosition(
         this.origin.x + this.width - 15,
-        this.origin.y + 180
+        this.origin.y + 200
       ),
-      b_pillar_left: setPosition(this.origin.x + 15, this.origin.y + 180),
+      b_pillar_left: setPosition(this.origin.x + 15, this.origin.y + 200),
       roof_top: setPosition(
         this.origin.x + this.width / 2,
         this.origin.y + this.length / 2
