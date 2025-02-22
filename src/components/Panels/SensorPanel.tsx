@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSensorStore } from "../stores/sensorStore";
+import { useSensorStore } from "../../stores/sensorStore";
 import {
   Box,
   Typography,
@@ -26,7 +26,7 @@ import {
 } from "@mui/icons-material";
 import HighlightIcon from "@mui/icons-material/Highlight";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { BomTableDialog } from "./Dialogs/BomTableDialog";
+import { BomTableDialog } from "../Dialogs/BomTableDialog";
 
 interface SensorPanelProps {
   drawerOpen?: boolean;

@@ -21,7 +21,7 @@ import { StageSize } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
-import ViewerContextMenu from "./ViewerContextMenu";
+import ViewerContextMenu from "../Menu/ViewerContextMenu";
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable"; // 用于拖动浮动窗口
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -108,6 +108,13 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const handleCloseContextMenu = () => {
     setContextMenuPos(null);
   };
+
+  useEffect(() => {
+    window.addEventListener("closeContextMenu", handleCloseContextMenu);
+    return () => {
+      window.removeEventListener("closeContextMenu", handleCloseContextMenu);
+    };
+  }, []);
 
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
@@ -486,12 +493,9 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
           {/* 独立的右键菜单 */}
           <ViewerContextMenu
             contextMenuPos={contextMenuPos}
-            handleCloseContextMenu={handleCloseContextMenu}
-            handleReset={handleReset}
-            handleCenter={handleCenter}
-            handleAutoZoom={handleAutoZoom}
-            handleAutoZoomToSensorCoverage={handleAutoZoomToSensorCoverage}
-            handleRotateClockwise={handleRotateClockwise}
+            stageRef={stageRef}
+            stageSize={stageSize}
+            stageCenter={stageCenter}
           />
         </Box>
 

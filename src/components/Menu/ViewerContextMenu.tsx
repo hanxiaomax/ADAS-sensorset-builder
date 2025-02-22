@@ -19,27 +19,92 @@ import {
   BugReport,
 } from "@mui/icons-material";
 import useGlobalConfigStore from "../../stores/globalConfigStore";
+import { useSceneStore } from "../../stores/sceneStore";
+import {
+  getBoundingBox,
+  getSensorCoverageBoundingBox,
+} from "../Viewer/ViewerHelper";
+import { Stage } from "konva/lib/Stage";
 
 interface ViewerContextMenuProps {
   contextMenuPos: { mouseX: number; mouseY: number } | null;
-  handleCloseContextMenu: () => void;
-  handleReset: () => void;
-  handleCenter: () => void;
-  handleAutoZoom: () => void;
-  handleAutoZoomToSensorCoverage: () => void;
-  handleRotateClockwise: () => void;
+  stageRef: React.RefObject<Stage>;
+  stageSize: { width: number; height: number };
+  stageCenter: { x: number; y: number };
 }
 
 const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
   contextMenuPos,
-  handleCloseContextMenu,
-  handleReset,
-  handleCenter,
-  handleAutoZoom,
-  handleAutoZoomToSensorCoverage,
-  handleRotateClockwise,
+  stageRef,
+  stageSize,
+  stageCenter,
 }) => {
   const { layerVisibility, toggleLayerVisibility } = useGlobalConfigStore();
+  const {
+    scale,
+    setScale,
+    setStagePos,
+    rotation,
+    setRotation,
+    sensors,
+    vehicle,
+  } = useSceneStore();
+
+  const handleCloseContextMenu = () => {
+    const closeEvent = new CustomEvent("closeContextMenu");
+    window.dispatchEvent(closeEvent);
+  };
+
+  const handleReset = () => {
+    setScale(1);
+    setStagePos(stageCenter);
+    handleCloseContextMenu();
+  };
+
+  const handleCenter = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    setStagePos(stageCenter);
+    handleCloseContextMenu();
+  };
+
+  const handleAutoZoom = () => {
+    const stage = stageRef.current;
+    if (!stage || !vehicle) return;
+
+    const bbox = getBoundingBox(vehicle);
+
+    const scaleX = stageSize.width / bbox.width;
+    const scaleY = stageSize.height / bbox.height;
+    const newScale = Math.min(scaleX, scaleY) * 0.9;
+
+    setScale(newScale);
+    setStagePos(stageCenter);
+
+    handleCloseContextMenu();
+  };
+
+  const handleAutoZoomToSensorCoverage = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const bbox = getSensorCoverageBoundingBox(sensors);
+
+    const scaleX = stageSize.width / bbox.width;
+    const scaleY = stageSize.height / bbox.height;
+    const newScale = Math.min(scaleX, scaleY) * 0.95;
+    setScale(newScale);
+    setStagePos(stageCenter);
+
+    handleCloseContextMenu();
+  };
+
+  const handleRotateClockwise = () => {
+    const stage = stageRef.current;
+    if (!stage) return;
+    setRotation(rotation + 90);
+    handleCloseContextMenu();
+  };
 
   return (
     <Paper sx={{ width: 320, maxWidth: "100%" }}>
