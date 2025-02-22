@@ -11,10 +11,6 @@ import {
   Tooltip,
   TableCell,
   TableRow,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
 } from "@mui/material";
 import { Stage, Layer, Group, Text, Line } from "react-konva";
 import CarImage from "./carImage";
@@ -29,9 +25,7 @@ import ViewerContextMenu from "./ViewerContextMenu";
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable"; // 用于拖动浮动窗口
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import MenuIcon from "@mui/icons-material/Menu";
-import { Settings, ImportExport, Help, GitHub } from "@mui/icons-material";
-import HamburgerMenu from "./HamburgerMenu";
+import HamburgerMenu from "../Menu/HamburgerMenu";
 
 import {
   getBoundingBox,

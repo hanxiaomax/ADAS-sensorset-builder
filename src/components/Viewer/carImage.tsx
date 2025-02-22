@@ -25,13 +25,7 @@ const CarImage: React.FC<CarImageProps> = ({
   return (
     <>
       {image && (
-        <KonvaImage
-          image={image}
-          x={x}
-          y={y}
-          width={width} // 使用传入的宽度和高度，而不是 image 的原始大小
-          height={height}
-        />
+        <KonvaImage image={image} x={x} y={y} width={width} height={height} />
       )}
     </>
   );

@@ -16,18 +16,17 @@ import DeleteConfirmationDialog from "./Dialogs/DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
 import { SensorItem } from "../types/Common";
 import Sensor from "../types/Sensor";
-import { v4 as uuidv4 } from "uuid"; // 引入uuid库
+import { v4 as uuidv4 } from "uuid";
 import { HtmlTooltip } from "./ToolTips";
 import { useSensorStore } from "../stores/sensorStore";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
   sensor: SensorItem;
-  onDelete: (id: string) => void; // 添加删除处理函数，使用 sensor ID 进行删除
+  onDelete: (id: string) => void;
   onEdit: (editedSensor: SensorItem) => void;
 }
 
-// 提取样式常量
 const iconContainerStyles = {
   width: "60px",
   height: "60px",

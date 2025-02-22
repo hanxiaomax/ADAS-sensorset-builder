@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
-  Settings,
   ImportExport,
   Help,
   GitHub,
@@ -252,12 +251,6 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
               <ImportExport fontSize="small" />
             </ListItemIcon>
             <ListItemText>Export Scene</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>
-            <ListItemIcon>
-              <Settings fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Settings</ListItemText>
           </MenuItem>
         </Menu>
       </Box>

@@ -1,14 +1,14 @@
 import React from "react";
 import { Arc, Circle } from "react-konva";
-import { MountPosition, SENSOR_RANGE_FACTOR } from "../../types/Common";
+import { SENSOR_RANGE_FACTOR } from "../../types/Common";
 
 import { sensorColorMap, Sensor } from "../../types/Sensor";
 import useGlobalConfigStore from "../../stores/globalConfigStore";
 
 interface SensorProp {
   sensor: Sensor;
-  onClick: (event: any) => void; // 点击事件处理程序
-  isSelected: boolean; // 是否选中状态
+  onClick: (event: any) => void;
+  isSelected: boolean;
 }
 
 export const SensorBlock: React.FC<SensorProp> = ({
@@ -20,7 +20,6 @@ export const SensorBlock: React.FC<SensorProp> = ({
   const fov = sensor.sensorInfo.spec.fov;
   const range = sensor.sensorInfo.spec.range * SENSOR_RANGE_FACTOR;
 
-  // 直接使用传入的sensor中的位置信息
   const position = sensor.mountPosition.position;
   const orientation = sensor.mountPosition.orientation;
 
