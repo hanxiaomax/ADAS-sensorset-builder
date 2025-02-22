@@ -19,7 +19,8 @@ import { useSensorStore } from "../../stores/sensorStore";
 interface SensorPanelExProps {}
 
 const SensorPanelEx: React.FC<SensorPanelExProps> = () => {
-  const { sensors, removeSensor } = useSceneStore();
+  const { sensors, removeSensor, selectedSensor, setSelectedSensor } =
+    useSceneStore();
   const { sensorConfiguration, setSensorConfiguration } = useSensorStore();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -35,13 +36,25 @@ const SensorPanelEx: React.FC<SensorPanelExProps> = () => {
     setPage(0);
   };
 
-  const handleDelete = (sensorId: string) => {
+  const handleDelete = (sensorId: string, event: React.MouseEvent) => {
+    // 阻止点击删除按钮时触发行点击事件
+    event.stopPropagation();
+
+    // 如果删除的是当前选中的sensor，清除选中状态
+    if (selectedSensor?.id === sensorId) {
+      setSelectedSensor(null);
+    }
+
     removeSensor(sensorId);
 
     const updatedConfig = sensorConfiguration.filter(
       (sensor) => sensor.id !== sensorId
     );
     setSensorConfiguration(updatedConfig);
+  };
+
+  const handleRowClick = (sensor: any) => {
+    setSelectedSensor(selectedSensor?.id === sensor.id ? null : sensor);
   };
 
   return (
@@ -55,6 +68,10 @@ const SensorPanelEx: React.FC<SensorPanelExProps> = () => {
         backgroundColor: "#f5f5f5",
       }}
     >
+      <Typography variant="h6" sx={{ mb: 1, fontSize: "1rem" }}>
+        Installed Sensors
+      </Typography>
+
       {sensors.length === 0 ? (
         <Typography
           variant="body2"
@@ -131,9 +148,18 @@ const SensorPanelEx: React.FC<SensorPanelExProps> = () => {
                   .map((sensor) => (
                     <TableRow
                       key={sensor.id}
+                      onClick={() => handleRowClick(sensor)}
                       sx={{
+                        cursor: "pointer",
+                        backgroundColor:
+                          selectedSensor?.id === sensor.id
+                            ? "#e3f2fd"
+                            : "white",
                         "&:hover": {
-                          backgroundColor: "#f8f8f8",
+                          backgroundColor:
+                            selectedSensor?.id === sensor.id
+                              ? "#bbdefb"
+                              : "#f8f8f8",
                         },
                       }}
                     >
@@ -149,7 +175,7 @@ const SensorPanelEx: React.FC<SensorPanelExProps> = () => {
                       <TableCell align="right" sx={{ py: 0.5 }}>
                         <IconButton
                           size="small"
-                          onClick={() => handleDelete(sensor.id)}
+                          onClick={(e) => handleDelete(sensor.id, e)}
                           sx={{
                             padding: 0.5,
                             "&:hover": {
