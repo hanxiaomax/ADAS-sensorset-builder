@@ -24,7 +24,7 @@ export const SensorSetBuilderMain: React.FC = () => {
 
   // Create vehicle instance first
   useEffect(() => {
-    const vehicle = new SuvVehicle(stageSize, SCALE_FACTOR);
+    const vehicle = new SedanVehicle(stageSize, SCALE_FACTOR);
     setCurrentVehicle(vehicle);
   }, [stageSize, setCurrentVehicle]);
 

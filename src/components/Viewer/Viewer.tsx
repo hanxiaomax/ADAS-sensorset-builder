@@ -287,22 +287,13 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
               <Group>
                 <UssZones
                   show={layerVisibility.showUssZones}
-                  x={0}
-                  y={0}
-                  carWidth={vehicle.width}
-                  carLength={vehicle.length}
-                  frontOverhang={vehicle.frontOverhang}
-                  rearOverhang={vehicle.rearOverhang}
+                  vehicle={vehicle}
                   frontZones={ussZoneConfig.frontZones}
                   rearZones={ussZoneConfig.rearZones}
                   sideZones={ussZoneConfig.sideZones}
                 />
                 <CarImage
                   show={layerVisibility.showCarImage}
-                  x={0}
-                  y={0}
-                  width={vehicle.width}
-                  height={vehicle.length}
                   vehicle={vehicle}
                 />
                 {layerVisibility.showVehicleRefPoint &&
