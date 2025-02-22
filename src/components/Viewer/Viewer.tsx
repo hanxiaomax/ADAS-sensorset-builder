@@ -303,6 +303,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                   y={0}
                   width={vehicle.width}
                   height={vehicle.length}
+                  vehicle={vehicle}
                 />
                 {layerVisibility.showVehicleRefPoint &&
                   Object.entries(vehicle.refPoints).map(

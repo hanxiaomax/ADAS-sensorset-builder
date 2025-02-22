@@ -26,37 +26,66 @@ export const SensorSetBuilderMain: React.FC = () => {
   const stageRef = useRef<Konva.Stage>(null);
   const { addVehicleImage, setCurrentVehicleImage } = useVehicleImageStore();
 
-  const [image] = useImage(process.env.PUBLIC_URL + "/vehicles/vehicle.svg");
+  // Load all vehicle images
+  const [defaultVehicleImage] = useImage(
+    process.env.PUBLIC_URL + "/vehicles/vehicle.svg"
+  );
+  const [vehicle2Image] = useImage(
+    process.env.PUBLIC_URL + "/vehicles/vehicle2.svg"
+  );
 
   useEffect(() => {
-    if (image) {
-      // Calculate the desired image dimensions based on actual vehicle size
-      const desiredWidth = VEHICLE_DIMENSIONS.width * SCALE_FACTOR;
-      const desiredHeight = VEHICLE_DIMENSIONS.length * SCALE_FACTOR;
+    const loadVehicleImage = async (
+      image: HTMLImageElement | undefined,
+      key: string
+    ) => {
+      if (image) {
+        // Calculate the desired image dimensions based on actual vehicle size
+        const desiredWidth = VEHICLE_DIMENSIONS.width * SCALE_FACTOR;
+        const desiredHeight = VEHICLE_DIMENSIONS.length * SCALE_FACTOR;
 
-      // Create a temporary canvas to resize the SVG
-      const canvas = document.createElement("canvas");
-      canvas.width = desiredWidth;
-      canvas.height = desiredHeight;
-      const ctx = canvas.getContext("2d");
+        // Create a temporary canvas to resize the SVG
+        const canvas = document.createElement("canvas");
+        canvas.width = desiredWidth;
+        canvas.height = desiredHeight;
+        const ctx = canvas.getContext("2d");
 
-      if (ctx) {
-        ctx.drawImage(image, 0, 0, desiredWidth, desiredHeight);
-        const resizedImage = new Image();
-        resizedImage.src = canvas.toDataURL();
+        if (ctx) {
+          ctx.drawImage(image, 0, 0, desiredWidth, desiredHeight);
+          const resizedImage = new Image();
+          resizedImage.src = canvas.toDataURL();
 
-        resizedImage.onload = () => {
-          addVehicleImage("default", resizedImage);
-          setCurrentVehicleImage("default");
-        };
+          await new Promise((resolve) => {
+            resizedImage.onload = resolve;
+          });
+
+          addVehicleImage(key, resizedImage);
+        }
       }
-    }
-  }, [image, addVehicleImage, setCurrentVehicleImage]);
+    };
+
+    const loadAllVehicleImages = async () => {
+      await loadVehicleImage(defaultVehicleImage, "default");
+      await loadVehicleImage(vehicle2Image, "vehicle2");
+      setCurrentVehicleImage("default"); // Set default vehicle after loading all images
+    };
+
+    loadAllVehicleImages();
+  }, [
+    defaultVehicleImage,
+    vehicle2Image,
+    addVehicleImage,
+    setCurrentVehicleImage,
+    SCALE_FACTOR,
+    VEHICLE_DIMENSIONS.width,
+    VEHICLE_DIMENSIONS.length,
+  ]);
 
   const vehicle = new Vehicle(
     stageSize,
     VEHICLE_DIMENSIONS.width * SCALE_FACTOR,
-    VEHICLE_DIMENSIONS.length * SCALE_FACTOR
+    VEHICLE_DIMENSIONS.length * SCALE_FACTOR,
+    "vehicle2" // Pass the default image key
   );
 
   useEffect(() => {
