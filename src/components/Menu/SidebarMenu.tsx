@@ -43,12 +43,6 @@ const SidebarMenu: React.FC<SidebarMenuProps> = ({}) => {
       panel: <BackdropPanel />,
     },
     {
-      name: "Shape",
-      icon: <CategoryIcon />,
-      description: "Add and customize shapes in your project.",
-      panel: <BackdropPanel />,
-    },
-    {
       name: "Vehicle",
       icon: <DirectionsCarIcon />,
       description: "Insert and configure vehicles for simulations.",

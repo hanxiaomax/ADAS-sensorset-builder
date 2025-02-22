@@ -14,7 +14,7 @@ import {
   DirectionsCarFilled,
   RestartAlt,
   Sensors,
-  RotateRight, // 引入旋转图标
+  RotateRight,
   GridOn,
   BugReport,
 } from "@mui/icons-material";
@@ -27,7 +27,7 @@ interface ViewerContextMenuProps {
   handleCenter: () => void;
   handleAutoZoom: () => void;
   handleAutoZoomToSensorCoverage: () => void;
-  handleRotateClockwise: () => void; // 顺时针旋转回调
+  handleRotateClockwise: () => void;
 }
 
 const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
