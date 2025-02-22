@@ -16,6 +16,7 @@ import {
   FormControlLabel,
   Checkbox,
   Pagination,
+  ListItemText,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
@@ -35,37 +36,41 @@ interface SensorPanelProps {
 const SensorPanel: React.FC<SensorPanelProps> = ({ drawerOpen }) => {
   const { sensorConfiguration, setSensorConfiguration } = useSensorStore();
   const [bomTableDialogOpen, setBomTableDialogOpen] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // 用于控制筛选菜单的显示
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // 记录当前筛选的类型
-  const [currentPage, setCurrentPage] = useState(1); // 当前页
-  const [itemsPerPage, setItemsPerPage] = useState(5); // 每页显示的项目数
-  const paperHeight = 90; // 每个 Paper 项目的高度（包括 margin 和 padding）
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null); // For controlling filter menu display
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Track currently filtered types
+  const [currentPage, setCurrentPage] = useState(1); // Current page
+  const [itemsPerPage, setItemsPerPage] = useState(5); // Items per page
+  const paperHeight = 90; // Height of each Paper item (including margin and padding)
+
+  const windowHeight = window.innerHeight;
+  const availableHeight = windowHeight - 200; // Subtract height for top menu, pagination, etc.
+  const newItemsPerPage = Math.floor(availableHeight / paperHeight); // Calculate how many items can be displayed per page
 
   useEffect(() => {
+    // Initialize itemsPerPage
+    setItemsPerPage(newItemsPerPage);
+
+    // Listen for window resize
     const handleResize = () => {
       const windowHeight = window.innerHeight;
-      const availableHeight = windowHeight - 200; // 减去顶部菜单、分页等的高度
-      const newItemsPerPage = Math.floor(availableHeight / paperHeight); // 计算每页能显示多少项
+      const availableHeight = windowHeight - 200;
+      const newItemsPerPage = Math.floor(availableHeight / paperHeight);
       setItemsPerPage(newItemsPerPage);
     };
 
-    // 初始化时计算 itemsPerPage
-    handleResize();
-
-    // 监听窗口大小变化
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // 处理 ToggleButton 的变化
+  // Handle ToggleButton changes
   const handleToggleChange = (
-    id: string,
+    sensorId: string,
     event: React.MouseEvent<HTMLElement>,
-    newOptions: string[] | null
+    newOptions: string[]
   ) => {
+    event.stopPropagation();
     const updatedConfig = sensorConfiguration.map((sensor) => {
-      if (sensor.id === id) {
+      if (sensor.id === sensorId) {
         return {
           ...sensor,
           options: newOptions || [],
@@ -76,47 +81,47 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ drawerOpen }) => {
     setSensorConfiguration(updatedConfig);
   };
 
-  // 删除操作
-  const handleDeleteClick = (id: string, event: React.MouseEvent) => {
+  // Handle delete operation
+  const handleDeleteClick = (sensorId: string, event: React.MouseEvent) => {
     event.stopPropagation();
     const updatedConfig = sensorConfiguration.filter(
-      (sensor) => sensor.id !== id
+      (sensor) => sensor.id !== sensorId
     );
     setSensorConfiguration(updatedConfig);
   };
 
-  // 打开筛选菜单
-  const handleFilterClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  // Open filter menu
+  const handleFilterClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // 关闭筛选菜单
+  // Close filter menu
   const handleFilterClose = () => {
     setAnchorEl(null);
   };
 
-  // 打开spec对话框
+  // Open spec dialog
   const handleDataTableClick = () => {
     setBomTableDialogOpen(true);
   };
 
-  // 处理多选
+  // Handle multiple selection
   const handleTypeChange = (type: string) => {
     if (selectedTypes.includes(type)) {
-      setSelectedTypes(selectedTypes.filter((t) => t !== type)); // 取消选中
+      setSelectedTypes(selectedTypes.filter((t) => t !== type)); // Deselect
     } else {
-      setSelectedTypes([...selectedTypes, type]); // 添加选中
+      setSelectedTypes([...selectedTypes, type]); // Add selection
     }
   };
 
-  // 筛选传感器
+  // Filter sensors
   const filteredSensors = selectedTypes.length
     ? sensorConfiguration.filter((sensor) =>
         selectedTypes.includes(sensor.sensorInfo.type)
       )
     : sensorConfiguration;
 
-  // 计算当前页显示的传感器
+  // Calculate sensors for current page
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentSensors = filteredSensors.slice(
@@ -124,307 +129,184 @@ const SensorPanel: React.FC<SensorPanelProps> = ({ drawerOpen }) => {
     indexOfLastItem
   );
 
-  // 处理分页变化
+  // Handle pagination changes
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
-    page: number
+    value: number
   ) => {
-    setCurrentPage(page);
+    setCurrentPage(value);
   };
 
   return (
-    <>
-      <Drawer
-        anchor="right"
-        open={drawerOpen}
-        variant="persistent"
-        PaperProps={{ sx: { overflow: "visible" } }}
+    <Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2,
+        }}
       >
-        <Box
-          sx={{
-            width: "20vw",
-            top: "20vh",
-            height: "80vh",
-            display: "flex",
-            flexDirection: "column",
-          }}
-        >
-          <Box
+        <Typography variant="h6">Installed Sensors</Typography>
+        <Box>
+          <IconButton
+            onClick={handleFilterClick}
             sx={{
-              padding: "10px",
-              backgroundColor: "#0c7a92",
-              color: "white",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              mr: 1,
             }}
           >
-            <Typography variant="h6">Sensor Set</Typography>
-          </Box>
+            <FilterList />
+          </IconButton>
+          <IconButton onClick={handleDataTableClick}>
+            <TableViewTwoTone />
+          </IconButton>
+        </Box>
+      </Box>
 
-          <Menu
-            id="filter-menu"
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleFilterClose}
-          >
-            <MenuItem>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedTypes.includes("uss")}
-                    onChange={() => handleTypeChange("uss")}
-                  />
-                }
-                label="USS"
-              />
-            </MenuItem>
-            <MenuItem>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedTypes.includes("lidar")}
-                    onChange={() => handleTypeChange("lidar")}
-                  />
-                }
-                label="Lidar"
-              />
-            </MenuItem>
-            <MenuItem>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedTypes.includes("camera")}
-                    onChange={() => handleTypeChange("camera")}
-                  />
-                }
-                label="Camera"
-              />
-            </MenuItem>
-            <MenuItem>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedTypes.includes("radar")}
-                    onChange={() => handleTypeChange("radar")}
-                  />
-                }
-                label="Radar"
-              />
-            </MenuItem>
-          </Menu>
-
-          <Divider />
-
-          <Box
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleFilterClose}
+      >
+        {Array.from(
+          new Set(sensorConfiguration.map((sensor) => sensor.sensorInfo.type))
+        ).map((type) => (
+          <MenuItem
+            key={type}
+            onClick={() => handleTypeChange(type)}
             sx={{
-              flexGrow: 1,
-              paddingRight: "10px",
-              paddingLeft: "10px",
-              position: "relative", // 确保卡片能够相对移动
+              backgroundColor: selectedTypes.includes(type)
+                ? "rgba(0, 0, 0, 0.04)"
+                : "transparent",
             }}
           >
-            <Box
+            <Checkbox checked={selectedTypes.includes(type)} />
+            <ListItemText primary={type} />
+          </MenuItem>
+        ))}
+      </Menu>
+
+      <Box sx={{ position: "relative" }}>
+        {filteredSensors
+          .slice(indexOfFirstItem, indexOfLastItem)
+          .map((sensor) => (
+            <Paper
+              key={sensor.id}
+              elevation={3}
               sx={{
-                display: "flex",
-                justifyContent: "flex-end", // 将内容靠右对齐
-                alignItems: "center", // 垂直居中对齐
+                p: 2,
+                mb: 2,
+                display: "block", // Ensure card takes full width
+                overflow: "visible", // Allow content to overflow on hover
+                transition: "margin-left 0.3s ease", // Use margin-left for animation
+                marginLeft: "0px", // Default position
+                "&:hover": {
+                  marginLeft: "-20px", // Move left on hover
+                },
               }}
             >
-              <IconButton
-                aria-controls="Export-menu"
-                aria-haspopup="true"
-                onClick={() => {}}
-              >
-                <GetAppTwoTone />
-              </IconButton>
-              <IconButton
-                aria-controls="bom-menu"
-                aria-haspopup="true"
-                onClick={handleDataTableClick}
-              >
-                <TableViewTwoTone />
-              </IconButton>
-              <IconButton
-                aria-controls="share-menu"
-                aria-haspopup="true"
-                onClick={() => {}}
-              >
-                <ShareTwoTone />
-              </IconButton>
-              <IconButton
-                aria-controls="filter-menu"
-                aria-haspopup="true"
-                onClick={handleFilterClick}
-              >
-                <FilterList />
-              </IconButton>
-            </Box>
-
-            {currentSensors.map((sensor) => (
               <Box
-                key={sensor.id} // 使用 uuid 作为 key
                 sx={{
-                  position: "relative",
-                  display: "block", // 确保卡片独占一行
-                  overflow: "visible", // 确保悬停时内容可以溢出
-                  transition: "margin-left 0.3s ease", // 使用 margin-left 代替 translateX
-                  marginLeft: "0px", // 默认位置
-                  "&:hover": {
-                    marginLeft: "-20px", // 悬停时向左移动
-                  },
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                <Paper
-                  elevation={3}
-                  sx={{
-                    padding: "5px",
-                    height: "80px",
-                    marginBottom: "5px",
-                    backgroundColor: "#ffffff",
-                    cursor: "pointer",
-                    display: "flex",
-                    alignItems: "center",
-                    borderRadius: "40px 0px 0px 40px", // 左侧大圆角，右侧直角
-                  }}
-                >
-                  <Box
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <Avatar
                     sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      width: 80,
-                      height: "100%",
-                      borderRadius: "50%", // 确保为圆形区域
+                      bgcolor: "#0c7a92",
+                      borderRadius: "40px 0px 0px 40px", // Rounded left side, square right side
+                      mr: 2,
                     }}
                   >
-                    <Avatar
-                      src={sensor.sensorInfo.image || undefined}
-                      alt={sensor.sensorInfo.name}
-                      sx={{
-                        width: 40,
-                        height: 40,
-                      }}
-                    >
-                      {!sensor.sensorInfo.image && sensor.sensorInfo.name![0]}
-                    </Avatar>
+                    {sensor.sensorInfo.name?.charAt(0).toUpperCase() || ""}
+                  </Avatar>
+                  <Box>
+                    <Typography variant="subtitle1">
+                      {sensor.sensorInfo.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {sensor.mountPosition?.name}
+                    </Typography>
                   </Box>
-
-                  <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs sx={{ m: "4px" }}>
-                      <Typography variant="h1" sx={{ fontSize: "18px" }}>
-                        {sensor.sensorInfo.name}
-                      </Typography>
-                      {/* <PinDrop /> */}
-                      <Typography variant="body2" sx={{ fontSize: "12px" }}>
-                        {sensor.mountPosition!.name}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
                   <IconButton
-                    onClick={(event) => handleDeleteClick(sensor.id, event)} // 使用 uuid
                     size="small"
                     sx={{
-                      position: "absolute",
-                      top: 4,
-                      right: 4,
-                      backgroundColor: "#097c74",
-                      color: "white",
-                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.3)",
-                      width: 30,
-                      height: 30,
-                      "&:hover": {
-                        backgroundColor: "#ff1744",
-                        color: "white",
-                      },
+                      mr: 1,
+                      borderRadius: "50%", // Ensure circular shape
                     }}
+                    onClick={(event) => handleDeleteClick(sensor.id, event)}
                   >
-                    <DeleteIcon sx={{ fontSize: "16px" }} />
+                    <DeleteIcon />
                   </IconButton>
-
-                  {/* 右下角的 ToggleButtonGroup 保留 */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      right: 10,
-                      bottom: 10,
-                      display: "flex",
-                      justifyContent: "right",
-                    }}
+                  <ToggleButtonGroup
+                    value={sensor.options || []}
+                    onChange={(event, newOptions) =>
+                      handleToggleChange(sensor.id, event, newOptions)
+                    }
+                    aria-label="sensor options"
+                    size="small"
+                    exclusive={false} // Allow multiple selection
                   >
-                    <ToggleButtonGroup
-                      value={sensor.options || []}
-                      onChange={
-                        (event, newOptions) =>
-                          handleToggleChange(sensor.id, event, newOptions) // 使用 uuid
-                      }
-                      aria-label="sensor options"
-                      size="small"
-                      exclusive={false} // 允许多选
+                    <ToggleButton
+                      value="highlight"
+                      aria-label="highlight"
+                      sx={{
+                        "&.Mui-selected": {
+                          backgroundColor: "#efefef", // Background color when active
+                          color: "black", // Text color when active
+                        },
+                      }}
                     >
-                      <ToggleButton
-                        value="highlight"
-                        aria-label="highlight"
-                        sx={{
-                          width: 22,
-                          height: 22,
-                          "&.Mui-selected": {
-                            backgroundColor: "#efefef", // 激活时的背景色
-                            color: "black", // 激活时的文字颜色
-                          },
-                        }}
-                      >
-                        <HighlightIcon sx={{ fontSize: "16px" }} />
-                      </ToggleButton>
-
-                      <ToggleButton
-                        value="hide"
-                        aria-label="hide"
-                        sx={{
-                          width: 22,
-                          height: 22,
-                          "&.Mui-selected": {
-                            backgroundColor: "#efefef", // 激活时的背景色
-                            color: "black", // 激活时的文字颜色
-                          },
-                        }}
-                      >
-                        <VisibilityOffIcon sx={{ fontSize: "16px" }} />
-                      </ToggleButton>
-                    </ToggleButtonGroup>
-                  </Box>
-                </Paper>
+                      <HighlightIcon />
+                    </ToggleButton>
+                    <ToggleButton
+                      value="hide"
+                      aria-label="hide"
+                      sx={{
+                        "&.Mui-selected": {
+                          backgroundColor: "#efefef", // Background color when active
+                          color: "black", // Text color when active
+                        },
+                      }}
+                    >
+                      <VisibilityOffIcon />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Box>
               </Box>
-            ))}
-          </Box>
+            </Paper>
+          ))}
+      </Box>
 
-          {/* 添加分页 */}
-          <Box sx={{ p: 2, display: "flex", justifyContent: "center" }}>
-            <Pagination
-              count={Math.ceil(filteredSensors.length / itemsPerPage)}
-              page={currentPage}
-              onChange={handlePageChange}
-              sx={{
-                "& .MuiPaginationItem-root": {
-                  margin: "0 1px", // 调整页码按钮的左右间距，使它们更加紧凑
-                  padding: "2px 3px", // 调整按钮内部的填充
-                },
-                "& .Mui-selected": {
-                  backgroundColor: "#0c7a92", // 选中页码按钮的背景颜色
-                  color: "white", // 选中页码按钮的文字颜色
-                },
-              }}
-            />
-          </Box>
-        </Box>
-      </Drawer>
+      <Pagination
+        count={Math.ceil(filteredSensors.length / itemsPerPage)}
+        page={currentPage}
+        onChange={handlePageChange}
+        sx={{
+          mt: 2,
+          display: "flex",
+          justifyContent: "center",
+          "& .MuiPaginationItem-root": {
+            margin: "0 1px", // Adjust left and right margin for pagination buttons
+            padding: "2px 3px", // Adjust internal padding
+          },
+          "& .Mui-selected": {
+            backgroundColor: "#0c7a92", // Background color for selected page button
+            color: "white", // Text color for selected page button
+          },
+        }}
+      />
+
       <BomTableDialog
         open={bomTableDialogOpen}
         setBomTableDialogOpen={setBomTableDialogOpen}
         sensors={sensorConfiguration}
       />
-    </>
+    </Box>
   );
 };
 

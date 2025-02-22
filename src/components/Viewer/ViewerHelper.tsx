@@ -77,12 +77,10 @@ export const getSensorCoverageBoundingBox = (sensors: Sensor[]) => {
   let maxY = -Infinity;
 
   sensors.forEach((sensor) => {
-    const mount_position = Sensor.getMountPosition(
-      sensor.mountPosition.name
-    ) as MountPosition;
+    if (!sensor.mountPosition?.position) return;
 
-    const sensorX = mount_position.position!.x;
-    const sensorY = mount_position.position!.y;
+    const sensorX = sensor.mountPosition.position.x;
+    const sensorY = sensor.mountPosition.position.y;
     const sensorRange =
       sensor.sensorInfo.spec?.range * SENSOR_RANGE_FACTOR || 0;
 
@@ -96,6 +94,21 @@ export const getSensorCoverageBoundingBox = (sensors: Sensor[]) => {
     if (sensorMaxX > maxX) maxX = sensorMaxX;
     if (sensorMaxY > maxY) maxY = sensorMaxY;
   });
+
+  // 如果没有有效的传感器，返回一个默认的边界框
+  if (
+    minX === Infinity ||
+    minY === Infinity ||
+    maxX === -Infinity ||
+    maxY === -Infinity
+  ) {
+    return {
+      origin: { x: 0, y: 0 },
+      center: { x: 0, y: 0 },
+      width: 0,
+      height: 0,
+    };
+  }
 
   const centerX = (minX + maxX) / 2;
   const centerY = (minY + maxY) / 2;

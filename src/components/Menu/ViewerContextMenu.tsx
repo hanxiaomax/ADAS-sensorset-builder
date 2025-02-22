@@ -11,9 +11,7 @@ import {
 } from "@mui/material";
 import {
   CenterFocusWeak,
-  DirectionsCarFilled,
   RestartAlt,
-  Sensors,
   RotateRight,
   GridOn,
   BugReport,
@@ -86,6 +84,12 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
             ? { top: contextMenuPos.mouseY, left: contextMenuPos.mouseX }
             : undefined
         }
+        PaperProps={{
+          sx: {
+            width: 320,
+            maxWidth: "100%",
+          },
+        }}
       >
         <MenuItem onClick={handleReset}>
           <ListItemIcon>

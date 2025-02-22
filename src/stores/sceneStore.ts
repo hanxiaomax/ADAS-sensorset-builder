@@ -84,11 +84,11 @@ export const useSceneStore = create<SceneState>()(
   )
 );
 
-// 数据迁移函数
+// Data migration function
 export const migrateDataToSceneStore = () => {
   const store = useSceneStore.getState();
 
-  // 迁移车辆数据
+  // Migrate vehicle data
   const vehicleData = localStorage.getItem("vehicle");
   if (vehicleData) {
     try {
@@ -99,7 +99,7 @@ export const migrateDataToSceneStore = () => {
     }
   }
 
-  // 迁移传感器数据
+  // Migrate sensor data
   const sensorsData = localStorage.getItem("sensors");
   if (sensorsData) {
     try {

@@ -23,7 +23,7 @@ import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
 import ViewerContextMenu from "../Menu/ViewerContextMenu";
 import CloseIcon from "@mui/icons-material/Close";
-import Draggable from "react-draggable"; // 用于拖动浮动窗口
+import Draggable from "react-draggable"; // For dragging floating windows
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import HamburgerMenu from "../Menu/HamburgerMenu";
 
@@ -61,7 +61,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  // 从 SceneStore 获取状态和操作
+  // Get state and actions from SceneStore
   const {
     scale,
     stagePos,
@@ -287,28 +287,19 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
               <Group>
                 <UssZones
                   show={layerVisibility.showUssZones}
-                  x={0}
-                  y={0}
-                  carWidth={vehicle.width}
-                  carLength={vehicle.length}
-                  frontOverhang={vehicle.frontOverhang}
-                  rearOverhang={vehicle.rearOverhang}
+                  vehicle={vehicle}
                   frontZones={ussZoneConfig.frontZones}
                   rearZones={ussZoneConfig.rearZones}
                   sideZones={ussZoneConfig.sideZones}
                 />
                 <CarImage
                   show={layerVisibility.showCarImage}
-                  x={0}
-                  y={0}
-                  width={vehicle.width}
-                  height={vehicle.length}
-                  image={vehicle.image}
+                  vehicle={vehicle}
                 />
                 {layerVisibility.showVehicleRefPoint &&
                   Object.entries(vehicle.refPoints).map(
                     ([name, position], index) => {
-                      // 计算相对于车辆中心的位置
+                      // Calculate position relative to vehicle center
                       const relativeX = position.x - vehicle.origin.x;
                       const relativeY = position.y - vehicle.origin.y;
                       return (
@@ -329,7 +320,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                     }
                   )}
                 {layerVisibility.showMountingPoints &&
-                  Object.entries(vehicle._mountingPoints).map(
+                  Object.entries(vehicle.getRelativeMountingPoints()).map(
                     ([name, point], index) => {
                       if (!point || !point.position) return null;
                       const relativeX = point.position.x - vehicle.origin.x;
@@ -368,7 +359,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                       );
                     }
                   )}
-                {/* 渲染传感器 */}
+                {/* Render sensors */}
                 {sensors.map((sensor) => {
                   const showSensor =
                     (sensor.sensorInfo.type.toLowerCase() === "uss" &&
@@ -382,12 +373,13 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
 
                   if (!showSensor) return null;
 
-                  // 从vehicle._mountingPoints中获取实际的挂载点信息
-                  const mountPoint =
-                    vehicle._mountingPoints[sensor.mountPosition.name];
+                  // Get actual mounting point information from vehicle._mountingPoints
+                  const mountPoint = vehicle.getMountingPoint(
+                    sensor.mountPosition.name
+                  );
                   if (!mountPoint?.position) return null;
 
-                  // 计算相对于车辆中心的位置
+                  // Calculate position relative to vehicle center
                   const relativeX = isNaN(
                     mountPoint.position.x - vehicle.origin.x
                   )
@@ -399,7 +391,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                     ? 0
                     : mountPoint.position.y - vehicle.origin.y;
 
-                  // 创建包含正确位置信息的传感器对象
+                  // Create sensor object with correct position information
                   const adjustedSensor = {
                     ...sensor,
                     mountPosition: {
@@ -414,7 +406,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
 
                   return (
                     <Group key={`sensor-${sensor.id}`}>
-                      {/* 只渲染传感器覆盖区域 */}
+                      {/* Render sensor coverage area */}
                       <SensorBlock
                         sensor={adjustedSensor}
                         onClick={(e) => handleSensorClick(sensor, e)}

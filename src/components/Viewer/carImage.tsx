@@ -1,23 +1,15 @@
 import React from "react";
 import { Layer, Image as KonvaImage } from "react-konva";
+import { Vehicle } from "../../types/Vehicle";
 
 interface CarImageProps {
   show: boolean;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  image: HTMLImageElement | undefined;
+  vehicle: Vehicle;
 }
 
-const CarImage: React.FC<CarImageProps> = ({
-  show,
-  x,
-  y,
-  width,
-  height,
-  image,
-}) => {
+const CarImage: React.FC<CarImageProps> = ({ show, vehicle }) => {
+  const image = vehicle.getImage();
+
   if (!show) {
     return null;
   }
@@ -25,7 +17,13 @@ const CarImage: React.FC<CarImageProps> = ({
   return (
     <>
       {image && (
-        <KonvaImage image={image} x={x} y={y} width={width} height={height} />
+        <KonvaImage
+          image={image}
+          x={0}
+          y={0}
+          width={vehicle.width}
+          height={vehicle.length}
+        />
       )}
     </>
   );

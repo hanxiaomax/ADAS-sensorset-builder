@@ -1,14 +1,10 @@
 import React from "react";
 import { Layer, Rect, Arc } from "react-konva";
+import { Vehicle } from "../../types/Vehicle";
 
 interface UssZonesProps {
   show: boolean;
-  x: number;
-  y: number;
-  carWidth: number;
-  carLength: number;
-  frontOverhang: number;
-  rearOverhang: number;
+  vehicle: Vehicle;
   frontZones: number;
   rearZones: number;
   sideZones: number;
@@ -16,20 +12,15 @@ interface UssZonesProps {
 
 const UssZones: React.FC<UssZonesProps> = ({
   show,
-  x,
-  y,
-  carWidth,
-  carLength,
-  frontOverhang,
-  rearOverhang,
+  vehicle,
   frontZones,
   rearZones,
   sideZones,
 }) => {
-  const overhang = frontOverhang + rearOverhang;
-  const sideMaxHeight = carLength - overhang;
+  const overhang = vehicle.frontOverhang + vehicle.rearOverhang;
+  const sideMaxHeight = vehicle.length - overhang;
   const zoneHeight = sideMaxHeight / sideZones;
-  const frontRearRadius = 140;
+  const frontRearRadius = 160;
   const areaColor = "rgba(12, 122, 146, 0.8)";
   const lineColor = "#ecffff";
   const lineWidth = 2;
@@ -41,12 +32,12 @@ const UssZones: React.FC<UssZonesProps> = ({
   }
   return (
     <>
-      {/* 绘制左右两侧分区 */}
+      {/* Draw side zones */}
       {Array.from({ length: sideZones }).map((_, index) => (
         <React.Fragment key={index}>
           <Rect
-            x={x - sideZoneWidth + sideoffset}
-            y={y + index * zoneHeight + overhang / 2}
+            x={-sideZoneWidth + sideoffset}
+            y={index * zoneHeight + overhang / 2}
             width={sideZoneWidth}
             height={zoneHeight}
             fill={areaColor}
@@ -54,8 +45,8 @@ const UssZones: React.FC<UssZonesProps> = ({
             strokeWidth={lineWidth}
           />
           <Rect
-            x={x + sideZoneWidth * 2 - sideoffset}
-            y={y + index * zoneHeight + overhang / 2}
+            x={vehicle.width - sideZoneWidth / 2 + sideoffset}
+            y={index * zoneHeight + overhang / 2}
             width={sideZoneWidth}
             height={zoneHeight}
             fill={areaColor}
@@ -64,15 +55,15 @@ const UssZones: React.FC<UssZonesProps> = ({
           />
         </React.Fragment>
       ))}
-      {/* 绘制前方分区 */}
+      {/* Draw front zones */}
       {Array.from({ length: frontZones }).map((_, index) => {
         const startAngle = 180 + (index * 180) / frontZones;
         const endAngle = 180 + ((index + 1) * 180) / frontZones;
         return (
           <Arc
             key={`front-${index}`}
-            x={x + carWidth / 2}
-            y={y + frontOverhang}
+            x={vehicle.width / 2}
+            y={vehicle.frontOverhang}
             innerRadius={0}
             outerRadius={frontRearRadius}
             angle={endAngle - startAngle}
@@ -83,15 +74,15 @@ const UssZones: React.FC<UssZonesProps> = ({
           />
         );
       })}
-      {/* 绘制后方分区 */}
+      {/* Draw rear zones */}
       {Array.from({ length: rearZones }).map((_, index) => {
         const startAngle = (index * 180) / rearZones;
         const endAngle = ((index + 1) * 180) / rearZones;
         return (
           <Arc
             key={`rear-${index}`}
-            x={x + carWidth / 2}
-            y={y + carLength - rearOverhang}
+            x={vehicle.width / 2}
+            y={vehicle.length - vehicle.rearOverhang}
             innerRadius={0}
             outerRadius={frontRearRadius}
             angle={endAngle - startAngle}

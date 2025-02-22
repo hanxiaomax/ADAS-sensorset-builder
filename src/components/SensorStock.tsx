@@ -15,10 +15,11 @@ import InstallConfigDialog from "./Dialogs/InstallConfigDialog";
 import DeleteConfirmationDialog from "./Dialogs/DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
 import { SensorItem } from "../types/Common";
-import Sensor from "../types/Sensor";
+import { Sensor } from "../types/Sensor";
 import { v4 as uuidv4 } from "uuid";
 import { HtmlTooltip } from "./ToolTips";
-import { useSensorStore } from "../stores/sensorStore";
+import { useSceneStore } from "../stores/sceneStore";
+import { useVehicleStore } from "../stores/vehicleStore";
 
 interface SensorStockItemProps {
   icon: React.ReactElement;
@@ -54,9 +55,8 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     info: false,
   });
 
-  const setSensorConfiguration = useSensorStore(
-    (state) => state.setSensorConfiguration
-  );
+  const { addSensor } = useSceneStore();
+  const { currentVehicle } = useVehicleStore();
 
   const handleDialog = (type: keyof typeof dialogState, open: boolean) => {
     setDialogState((prev) => ({ ...prev, [type]: open }));
@@ -72,14 +72,14 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       selectedSensor,
       {
         name: selectedPosition,
+        position: currentVehicle?.getRelativeMountingPoint(selectedPosition)
+          ?.position || { x: 0, y: 0 },
+        orientation: orientation,
       },
       ["highlight"]
     );
 
-    setSensorConfiguration([
-      ...useSensorStore.getState().sensorConfiguration,
-      newSensor,
-    ]);
+    addSensor(newSensor);
     handleDialog("install", false);
   };
 
@@ -182,6 +182,7 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
       <InstallConfigDialog
         open={dialogState.install}
         sensorItem={sensor}
+        vehicle={currentVehicle!}
         onClose={() => handleDialog("install", false)}
         onConfirm={handleInstallConfirm}
       />

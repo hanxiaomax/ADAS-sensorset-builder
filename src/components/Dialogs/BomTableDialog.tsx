@@ -5,7 +5,7 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import DataTable from "../DataTable";
+import { DataTable } from "../DataTable";
 import Sensor from "../../types/Sensor";
 
 interface BomTableDialogProp {
@@ -29,15 +29,15 @@ export const BomTableDialog: React.FC<BomTableDialogProp> = ({
     >
       <DialogTitle>Sensor BOM</DialogTitle>
       <DialogContent>
-        {/* 将选中的行通过setSelectedRows传递给DataTable */}
+        {/* Pass sensor data to DataTable */}
         <DataTable
-          sensorData={sensors} // 传递 sensorConfig 数据
+          sensorData={sensors}
           setSelectedRows={() => {}}
           enablePagination={false}
         />
       </DialogContent>
       <DialogActions>
-        {/* 生成图片的按钮 */}
+        {/* Button for generating table image */}
         {/* <Button onClick={() => {}} variant="contained" color="primary">
           Generate Selected Table Image
         </Button> */}

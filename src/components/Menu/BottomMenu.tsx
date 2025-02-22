@@ -5,25 +5,76 @@ import {
   ButtonGroup,
   Typography,
   IconButton,
+  Avatar,
+  Link,
 } from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
-
 import SensorsIcon from "@mui/icons-material/Sensors";
 import CloseIcon from "@mui/icons-material/Close";
 import SensorPanelEx from "../Panels/SensorPanelex";
+import { GitHub, Email } from "@mui/icons-material";
 
 interface BottomMenuProp {}
 
 const BottomMenu: React.FC<BottomMenuProp> = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
-  const [zoomLevel, setZoomLevel] = useState(95);
 
   const panels = [
     {
       name: "Feedback",
       icon: <FeedbackIcon />,
       description: "Provide feedback to improve the application.",
-      panel: <Box sx={{ padding: 2 }}>Feedback Panel Content</Box>,
+      panel: (
+        <Box sx={{ padding: 2 }}>
+          <Box sx={{ mb: 4 }}>
+            <Avatar
+              src="https://avatars.githubusercontent.com/u/3370445?v=4"
+              alt="Author's Avatar"
+              sx={{ width: 80, height: 80, mb: 2 }}
+            />
+            <Typography variant="h4" sx={{ mb: 1 }}>
+              Yet Another ADAS Scene Builder
+            </Typography>
+            <Typography variant="overline" sx={{ display: "block", mb: 3 }}>
+              A handy tool for ADAS Product Managers, System Engineers, Testers
+              and everyone
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+            <Box display="flex" alignItems="center">
+              <GitHub sx={{ mr: 1 }} />
+              <Typography variant="body2">
+                <Link
+                  href="https://github.com/hanxiaomax"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  Lingfeng AI
+                </Link>
+              </Typography>
+            </Box>
+
+            <Box display="flex" alignItems="center">
+              <Email sx={{ mr: 1 }} />
+              <Typography variant="body2">hanxiaomax@qq.com</Typography>
+            </Box>
+
+            <Box display="flex" alignItems="center">
+              <GitHub sx={{ mr: 1 }} />
+              <Typography variant="body2">
+                <Link
+                  href="https://github.com/hanxiaomax/ADAS-sensorset-builder"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  GitHub Project
+                </Link>
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+      ),
     },
     {
       name: "Installed Sensors",

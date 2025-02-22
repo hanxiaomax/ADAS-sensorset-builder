@@ -2,10 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import { Grid } from "@mui/material";
 import useImage from "use-image";
 import Viewer from "./components/Viewer/Viewer";
-import { Vehicle } from "./types/Vehicle";
 import Konva from "konva";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
+import { useVehicleStore } from "./stores/vehicleStore";
+import { SedanVehicle } from "./types/vehicles/SedanVehicle";
 
 export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -13,10 +14,45 @@ export const SensorSetBuilderMain: React.FC = () => {
     height: window.innerHeight,
   });
 
-  const stageRef = useRef<Konva.Stage>(null);
+  // Scale factor to convert meters to pixels (e.g., 100 pixels per meter)
+  const SCALE_FACTOR = 100;
 
-  const [image] = useImage(process.env.PUBLIC_URL + "/vehicle.png");
-  const vehicle = new Vehicle(stageSize, image);
+  const stageRef = useRef<Konva.Stage>(null);
+  const { setCurrentVehicle, updateVehicleImage, currentVehicle } =
+    useVehicleStore();
+
+  // Create vehicle instance first
+  useEffect(() => {
+    const vehicle = new SedanVehicle(stageSize, SCALE_FACTOR);
+    setCurrentVehicle(vehicle);
+  }, [stageSize, setCurrentVehicle]);
+
+  // Load vehicle image after vehicle instance is created
+  const [vehicleImage] = useImage(currentVehicle?.imagePath || "");
+
+  useEffect(() => {
+    if (vehicleImage && currentVehicle) {
+      // Calculate the desired image dimensions based on actual vehicle size
+      const desiredWidth = currentVehicle.width;
+      const desiredHeight = currentVehicle.length;
+
+      // Create a temporary canvas to resize the SVG
+      const canvas = document.createElement("canvas");
+      canvas.width = desiredWidth;
+      canvas.height = desiredHeight;
+      const ctx = canvas.getContext("2d");
+
+      if (ctx) {
+        ctx.drawImage(vehicleImage, 0, 0, desiredWidth, desiredHeight);
+        const resizedImage = new Image();
+        resizedImage.src = canvas.toDataURL();
+
+        resizedImage.onload = () => {
+          updateVehicleImage(resizedImage);
+        };
+      }
+    }
+  }, [vehicleImage, currentVehicle, updateVehicleImage]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -25,6 +61,10 @@ export const SensorSetBuilderMain: React.FC = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  if (!currentVehicle) {
+    return null;
+  }
 
   return (
     <Grid
@@ -37,7 +77,11 @@ export const SensorSetBuilderMain: React.FC = () => {
       }}
     >
       <Grid item xs={12}>
-        <Viewer stageSize={stageSize} vehicle={vehicle} stageRef={stageRef} />
+        <Viewer
+          stageSize={stageSize}
+          vehicle={currentVehicle}
+          stageRef={stageRef}
+        />
       </Grid>
       <SidebarMenu />
       <BottomMenu />

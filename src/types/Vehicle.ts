@@ -1,9 +1,7 @@
 import { Position, MountPosition } from "./Common";
+
 function setPosition(x: number, y: number): Position {
-  return {
-    x: x,
-    y: y,
-  };
+  return { x, y };
 }
 
 function setMountingPosition(
@@ -41,7 +39,14 @@ export interface Mounts {
   [key: string]: MountPosition;
 }
 
-export class Vehicle {
+export interface VehicleDimensions {
+  length: number; // in meters
+  width: number; // in meters
+  frontOverhang: number; // in pixels
+  rearOverhang: number; // in pixels
+}
+
+export abstract class Vehicle {
   width: number;
   length: number;
   frontOverhang: number;
@@ -50,38 +55,106 @@ export class Vehicle {
   refPoints: VehicleRefPoints;
   orientation_front: number = -90;
   orientation_rear: number = 90;
-  image: HTMLImageElement | undefined;
-  _mountingPoints: Mounts;
+  protected _mountingPoints: Mounts;
+  abstract readonly imagePath: string;
+  image: HTMLImageElement | null;
+  protected dimensions: VehicleDimensions;
 
   constructor(
     stageSize: { width: number; height: number },
-    image: HTMLImageElement | undefined
+    scaleFactor: number
   ) {
-    this.image = image;
-    const image_margin = 20;
-    const overhang = 60 + image_margin;
-    const origin: Position = {
-      x: (stageSize.width - image?.width!) / 2,
-      y: (stageSize.height - image?.height!) / 2,
+    this.dimensions = this.getVehicleDimensions();
+
+    this.width = this.dimensions.width * scaleFactor;
+    this.length = this.dimensions.length * scaleFactor;
+    this.frontOverhang = this.dimensions.frontOverhang;
+    this.rearOverhang = this.dimensions.rearOverhang;
+
+    this.origin = {
+      x: (stageSize.width - this.width) / 2,
+      y: (stageSize.height - this.length) / 2,
     };
 
-    this.image = image;
-    this.width = image?.width!;
-    this.length = image?.height!;
-    this.frontOverhang = overhang / 2;
-    this.rearOverhang = overhang / 2;
-    this.origin = origin;
-    this.refPoints = {
+    this.image = null;
+
+    this.refPoints = this.initializeRefPoints();
+    this._mountingPoints = this.initializeMountingPoints();
+  }
+
+  // 获取所有挂载点
+  getMountingPoints(): Mounts {
+    return this._mountingPoints;
+  }
+
+  // 获取特定挂载点
+  getMountingPoint(name: string): MountPosition | undefined {
+    return this._mountingPoints[name];
+  }
+
+  // 获取所有挂载点名称
+  getMountingPointNames(): string[] {
+    return Object.keys(this._mountingPoints);
+  }
+
+  // 获取相对于车辆原点的挂载点位置
+  getRelativeMountingPoint(name: string): MountPosition | undefined {
+    const mountPoint = this._mountingPoints[name];
+    if (!mountPoint?.position) return undefined;
+
+    return {
+      name: mountPoint.name,
+      position: {
+        x: mountPoint.position.x - this.origin.x,
+        y: mountPoint.position.y - this.origin.y,
+      },
+      orientation: mountPoint.orientation,
+    };
+  }
+
+  // 获取所有相对于车辆原点的挂载点位置
+  getRelativeMountingPoints(): Mounts {
+    const relativePoints: Mounts = {};
+    Object.entries(this._mountingPoints).forEach(([name, point]) => {
+      if (point?.position) {
+        relativePoints[name] = {
+          name: point.name,
+          position: {
+            x: point.position.x - this.origin.x,
+            y: point.position.y - this.origin.y,
+          },
+          orientation: point.orientation,
+        };
+      }
+    });
+    return relativePoints;
+  }
+
+  // 按类型获取挂载点（例如：前部、后部、侧面等）
+  getMountingPointsByType(type: "front" | "rear" | "side" | "roof"): string[] {
+    return this.getMountingPointNames().filter((name) => {
+      if (type === "front") return name.startsWith("front_");
+      if (type === "rear") return name.startsWith("rear_");
+      if (type === "side") return name.includes("side");
+      if (type === "roof") return name.includes("roof");
+      return false;
+    });
+  }
+
+  protected abstract getVehicleDimensions(): VehicleDimensions;
+
+  protected initializeRefPoints(): VehicleRefPoints {
+    return {
       front_center: setPosition(this.origin.x + this.width / 2, this.origin.y),
       rear_center: setPosition(
         this.origin.x + this.width / 2,
         this.origin.y + this.length
       ),
       front_bumper_right: setPosition(
-        this.origin.x + this.width - 15,
+        this.origin.x + this.width - 25,
         this.origin.y + 30
       ),
-      front_bumper_left: setPosition(this.origin.x + 15, this.origin.y + 30),
+      front_bumper_left: setPosition(this.origin.x + 25, this.origin.y + 30),
       rear_bumper_right: setPosition(
         this.origin.x + this.width - 15,
         this.origin.y + this.length - 30
@@ -92,21 +165,21 @@ export class Vehicle {
       ),
       wingside_right: setPosition(
         this.origin.x + this.width - 15,
-        this.origin.y + 100
-      ),
-      wingside_left: setPosition(this.origin.x + 15, this.origin.y + 100),
-      sidemirror_right: setPosition(
-        this.origin.x + this.width - 8,
         this.origin.y + 120
       ),
-      sidemirror_left: setPosition(this.origin.x + 8, this.origin.y + 120),
+      wingside_left: setPosition(this.origin.x + 15, this.origin.y + 120),
+      sidemirror_right: setPosition(
+        this.origin.x + this.width - 8,
+        this.origin.y + 160
+      ),
+      sidemirror_left: setPosition(this.origin.x + 8, this.origin.y + 160),
       front_roof: setPosition(
         this.origin.x + 15,
         this.origin.y + this.length - 30
       ),
       front_windsheild: setPosition(
         this.origin.x + this.width / 2,
-        this.origin.y + 130
+        this.origin.y + 160
       ),
       rear_windsheild: setPosition(
         this.origin.x + this.width / 2,
@@ -114,16 +187,18 @@ export class Vehicle {
       ),
       b_pillar_right: setPosition(
         this.origin.x + this.width - 15,
-        this.origin.y + 180
+        this.origin.y + 200
       ),
-      b_pillar_left: setPosition(this.origin.x + 15, this.origin.y + 180),
+      b_pillar_left: setPosition(this.origin.x + 15, this.origin.y + 200),
       roof_top: setPosition(
         this.origin.x + this.width / 2,
         this.origin.y + this.length / 2
       ),
     };
+  }
 
-    this._mountingPoints = {
+  protected initializeMountingPoints(): Mounts {
+    return {
       front_middle_right1: setMountingPosition(
         this.refPoints.front_center.x + 20,
         this.refPoints.front_center.y + 5,
@@ -134,7 +209,6 @@ export class Vehicle {
         this.refPoints.front_center.y + 13,
         this.orientation_front + 20
       ),
-
       front_middle_left1: setMountingPosition(
         this.refPoints.front_center.x - 20,
         this.refPoints.front_center.y + 5,
@@ -190,7 +264,6 @@ export class Vehicle {
         this.refPoints.roof_top.y,
         this.orientation_front
       ),
-
       front_left_corner: setMountingPosition(
         this.refPoints.front_bumper_left.x,
         this.refPoints.front_bumper_left.y,
@@ -242,5 +315,13 @@ export class Vehicle {
         0
       ),
     };
+  }
+
+  setImage(image: HTMLImageElement) {
+    this.image = image;
+  }
+
+  getImage(): HTMLImageElement | null {
+    return this.image;
   }
 }

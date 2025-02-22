@@ -1,4 +1,5 @@
-import { MountPosition, SensorItem } from "./Common";
+import { MountPosition, Position, SensorItem } from "./Common";
+
 export const sensorColorMap: {
   [key: string]: { color: string; opacity: number };
 } = {
@@ -7,14 +8,16 @@ export const sensorColorMap: {
   radar: { color: "#00973d", opacity: 0.3 },
   camera: { color: "#57b1b9", opacity: 0.2 },
   tele_camera: { color: "#f1dae0", opacity: 0.5 },
-  // 可以添加更多类型
+  // Add more types as needed
 };
+
+export type SensorType = "camera" | "radar" | "lidar" | "ultrasonic" | "other"; // Add more types as needed
 
 export class Sensor {
   id: string;
   sensorInfo: SensorItem;
   mountPosition: MountPosition;
-  options: string[]; // 存储传感器的额外选项，如 "highlight" 或 "hide"
+  options: string[];
 
   constructor(
     id: string,
@@ -27,27 +30,6 @@ export class Sensor {
     this.mountPosition = mountPosition;
     this.options = options;
   }
-
-  //箭头函数可以自绑定当前上下文的this
-  static getMountPosition = (name: string): MountPosition | undefined => {
-    const mountingPointsData = localStorage.getItem("mountingPoints");
-
-    if (mountingPointsData) {
-      const data: Record<string, MountPosition> =
-        JSON.parse(mountingPointsData);
-
-      if (data[name]) {
-        return data[name];
-      } else {
-        console.log(`Mounting point '${name}' not found in data.`);
-
-        return undefined;
-      }
-    } else {
-      console.log("No mounting points data found in localStorage.");
-      return undefined;
-    }
-  };
 }
 
 export default Sensor;
