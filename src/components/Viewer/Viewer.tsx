@@ -21,7 +21,7 @@ import { StageSize } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
-import ViewerContextMenu from "./ViewerContextMenu";
+import ViewerContextMenu from "../Menu/ViewerContextMenu";
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable"; // 用于拖动浮动窗口
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
@@ -92,10 +92,9 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     }
   }, []);
 
-  // 添加初始化 stagePos 的 useEffect
   useEffect(() => {
     setStagePos(stageCenter);
-  }, [stageSize]); // 当 stageSize 改变时重新计算中心位置
+  }, [stageSize]);
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -108,6 +107,13 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const handleCloseContextMenu = () => {
     setContextMenuPos(null);
   };
+
+  useEffect(() => {
+    window.addEventListener("closeContextMenu", handleCloseContextMenu);
+    return () => {
+      window.removeEventListener("closeContextMenu", handleCloseContextMenu);
+    };
+  }, []);
 
   const handleWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     e.evt.preventDefault();
@@ -131,57 +137,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
 
     setScale(newScale);
     setStagePos(newPos);
-  };
-
-  const handleAutoZoomToSensorCoverage = () => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const bbox = getSensorCoverageBoundingBox(sensors);
-
-    const scaleX = stageSize.width / bbox.width;
-    const scaleY = stageSize.height / bbox.height;
-    const newScale = Math.min(scaleX, scaleY) * 0.95;
-    setScale(newScale);
-    setStagePos(stageCenter);
-
-    handleCloseContextMenu();
-  };
-
-  const handleAutoZoom = () => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const bbox = getBoundingBox(vehicle);
-
-    const scaleX = stageSize.width / bbox.width;
-    const scaleY = stageSize.height / bbox.height;
-    const newScale = Math.min(scaleX, scaleY) * 0.9;
-
-    setScale(newScale);
-    setStagePos(stageCenter);
-
-    handleCloseContextMenu();
-  };
-
-  const handleReset = () => {
-    setScale(1);
-    setStagePos(stageCenter);
-    handleCloseContextMenu();
-  };
-
-  const handleRotateClockwise = () => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    setRotation(rotation + 90);
-    handleCloseContextMenu();
-  };
-
-  const handleCenter = () => {
-    const stage = stageRef.current;
-    if (!stage) return;
-    setStagePos(stageCenter);
-    handleCloseContextMenu();
   };
 
   const handleDragMove = (e: any) => {
@@ -214,14 +169,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
   const handleCloseSensorInfo = () => {
     setShowSensorInfo(false);
     setSelectedSensor(null);
-  };
-
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
   };
 
   const renderDebugInfo = () => {
@@ -385,7 +332,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                   Object.entries(vehicle._mountingPoints).map(
                     ([name, point], index) => {
                       if (!point || !point.position) return null;
-                      // 计算相对于车辆中心的位置
                       const relativeX = point.position.x - vehicle.origin.x;
                       const relativeY = point.position.y - vehicle.origin.y;
                       return (
@@ -402,7 +348,6 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                             fill="blue"
                             fontStyle="bold"
                           />
-                          {/* 渲染方向指示器 */}
                           <Group
                             x={relativeX}
                             y={relativeY}
@@ -483,15 +428,11 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
             <Layer>{renderDebugInfo()}</Layer>
           </Stage>
 
-          {/* 独立的右键菜单 */}
           <ViewerContextMenu
             contextMenuPos={contextMenuPos}
-            handleCloseContextMenu={handleCloseContextMenu}
-            handleReset={handleReset}
-            handleCenter={handleCenter}
-            handleAutoZoom={handleAutoZoom}
-            handleAutoZoomToSensorCoverage={handleAutoZoomToSensorCoverage}
-            handleRotateClockwise={handleRotateClockwise}
+            stageRef={stageRef}
+            stageSize={stageSize}
+            stageCenter={stageCenter}
           />
         </Box>
 

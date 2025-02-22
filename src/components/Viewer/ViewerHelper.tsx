@@ -13,7 +13,6 @@ export const renderDebugOverlay = (stageSize: StageSize) => {
 
   return (
     <>
-      {/* 边界矩形 */}
       <Rect
         x={0}
         y={0}
@@ -21,26 +20,23 @@ export const renderDebugOverlay = (stageSize: StageSize) => {
         height={stageSize.height}
         stroke="blue"
         strokeWidth={2}
-        dash={[10, 5]} // 边界线设置为虚线
+        dash={[10, 5]}
       />
 
-      {/* 中心点 */}
       <Circle x={centerX} y={centerY} radius={5} fill="red" />
 
-      {/* X轴 (虚线) */}
       <Line
         points={[0, centerY, stageSize.width, centerY]}
         stroke="green"
         strokeWidth={1}
-        dash={[10, 5]} // X轴设置为虚线
+        dash={[10, 5]}
       />
 
-      {/* Y轴 (虚线) */}
       <Line
         points={[centerX, 0, centerX, stageSize.height]}
         stroke="green"
         strokeWidth={1}
-        dash={[10, 5]} // Y轴设置为虚线
+        dash={[10, 5]}
       />
     </>
   );
@@ -101,7 +97,6 @@ export const getSensorCoverageBoundingBox = (sensors: Sensor[]) => {
     if (sensorMaxY > maxY) maxY = sensorMaxY;
   });
 
-  // 计算包围框的中心点
   const centerX = (minX + maxX) / 2;
   const centerY = (minY + maxY) / 2;
   const width = maxX - minX;
@@ -117,7 +112,6 @@ export const getSensorCoverageBoundingBox = (sensors: Sensor[]) => {
   return bbox;
 };
 
-// 计算车辆和传感器的边界框
 export const getBoundingBox = (vehicle: Vehicle) => {
   let minX = vehicle.origin.x;
   let minY = vehicle.origin.y;

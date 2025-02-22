@@ -1,13 +1,12 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Vehicle } from "../types/Vehicle";
-import { MountPosition, Position } from "../types/Common";
+import { Position } from "../types/Common";
 import Sensor from "../types/Sensor";
 
 export interface SceneState {
   // Vehicle related
   vehicle: Vehicle | null;
-  mountingPoints: { [key: string]: MountPosition };
 
   // Sensors
   sensors: Sensor[];
@@ -22,9 +21,6 @@ export interface SceneState {
 
   // Actions
   setVehicle: (vehicle: Vehicle) => void;
-  setMountingPoints: (points: { [key: string]: MountPosition }) => void;
-  addMountingPoint: (name: string, point: MountPosition) => void;
-  removeMountingPoint: (name: string) => void;
 
   setSensors: (sensors: Sensor[]) => void;
   addSensor: (sensor: Sensor) => void;
@@ -45,7 +41,6 @@ export const useSceneStore = create<SceneState>()(
     (set, get) => ({
       // Initial state
       vehicle: null,
-      mountingPoints: {},
       sensors: [],
 
       // Viewer initial state
@@ -58,18 +53,6 @@ export const useSceneStore = create<SceneState>()(
 
       // Vehicle actions
       setVehicle: (vehicle) => set({ vehicle }),
-
-      // Mounting points actions
-      setMountingPoints: (points) => set({ mountingPoints: points }),
-      addMountingPoint: (name, point) =>
-        set((state) => ({
-          mountingPoints: { ...state.mountingPoints, [name]: point },
-        })),
-      removeMountingPoint: (name) =>
-        set((state) => {
-          const { [name]: removed, ...rest } = state.mountingPoints;
-          return { mountingPoints: rest };
-        }),
 
       // Sensor actions
       setSensors: (sensors) => set({ sensors }),
@@ -113,17 +96,6 @@ export const migrateDataToSceneStore = () => {
       store.setVehicle(vehicle);
     } catch (e) {
       console.error("Failed to migrate vehicle data:", e);
-    }
-  }
-
-  // 迁移挂载点数据
-  const mountingPointsData = localStorage.getItem("mountingPoints");
-  if (mountingPointsData) {
-    try {
-      const mountingPoints = JSON.parse(mountingPointsData);
-      store.setMountingPoints(mountingPoints);
-    } catch (e) {
-      console.error("Failed to migrate mounting points data:", e);
     }
   }
 
