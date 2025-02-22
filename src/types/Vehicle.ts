@@ -1,9 +1,7 @@
 import { Position, MountPosition } from "./Common";
+
 function setPosition(x: number, y: number): Position {
-  return {
-    x: x,
-    y: y,
-  };
+  return { x, y };
 }
 
 function setMountingPosition(
@@ -41,7 +39,14 @@ export interface Mounts {
   [key: string]: MountPosition;
 }
 
-export class Vehicle {
+export interface VehicleDimensions {
+  length: number; // in meters
+  width: number; // in meters
+  frontOverhang: number; // in pixels
+  rearOverhang: number; // in pixels
+}
+
+export abstract class Vehicle {
   width: number;
   length: number;
   frontOverhang: number;
@@ -51,30 +56,42 @@ export class Vehicle {
   orientation_front: number = -90;
   orientation_rear: number = 90;
   _mountingPoints: Mounts;
-  imagePath: string;
+  abstract readonly imagePath: string;
   image: HTMLImageElement | null;
+  protected dimensions: VehicleDimensions;
 
   constructor(
     stageSize: { width: number; height: number },
-    vehicleWidth: number,
-    vehicleLength: number,
-    imagePath: string
+    scaleFactor: number
   ) {
+    this.dimensions = this.getVehicleDimensions();
+
     const image_margin = 20;
     const overhang = 60 + image_margin;
-    const origin: Position = {
-      x: (stageSize.width - vehicleWidth) / 2,
-      y: (stageSize.height - vehicleLength) / 2,
+
+    this.width = this.dimensions.width * scaleFactor;
+    this.length = this.dimensions.length * scaleFactor;
+    this.frontOverhang = this.dimensions.frontOverhang;
+    this.rearOverhang = this.dimensions.rearOverhang;
+
+    this.origin = {
+      x: (stageSize.width - this.width) / 2,
+      y: (stageSize.height - this.length) / 2,
     };
 
-    this.width = vehicleWidth;
-    this.length = vehicleLength;
-    this.frontOverhang = overhang / 2;
-    this.rearOverhang = overhang / 2;
-    this.origin = origin;
-    this.imagePath = imagePath;
     this.image = null;
-    this.refPoints = {
+
+    // 初始化参考点和挂载点
+    this.refPoints = this.initializeRefPoints();
+    this._mountingPoints = this.initializeMountingPoints();
+  }
+
+  // 子类必须实现的方法
+  protected abstract getVehicleDimensions(): VehicleDimensions;
+
+  // 子类可以覆盖的方法
+  protected initializeRefPoints(): VehicleRefPoints {
+    return {
       front_center: setPosition(this.origin.x + this.width / 2, this.origin.y),
       rear_center: setPosition(
         this.origin.x + this.width / 2,
@@ -125,8 +142,10 @@ export class Vehicle {
         this.origin.y + this.length / 2
       ),
     };
+  }
 
-    this._mountingPoints = {
+  protected initializeMountingPoints(): Mounts {
+    return {
       front_middle_right1: setMountingPosition(
         this.refPoints.front_center.x + 20,
         this.refPoints.front_center.y + 5,
@@ -137,7 +156,6 @@ export class Vehicle {
         this.refPoints.front_center.y + 13,
         this.orientation_front + 20
       ),
-
       front_middle_left1: setMountingPosition(
         this.refPoints.front_center.x - 20,
         this.refPoints.front_center.y + 5,
@@ -193,7 +211,6 @@ export class Vehicle {
         this.refPoints.roof_top.y,
         this.orientation_front
       ),
-
       front_left_corner: setMountingPosition(
         this.refPoints.front_bumper_left.x,
         this.refPoints.front_bumper_left.y,

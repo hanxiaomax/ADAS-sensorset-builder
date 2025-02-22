@@ -2,23 +2,18 @@ import React, { useState, useEffect, useRef } from "react";
 import { Grid } from "@mui/material";
 import useImage from "use-image";
 import Viewer from "./components/Viewer/Viewer";
-import { Vehicle } from "./types/Vehicle";
 import Konva from "konva";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
 import { useVehicleStore } from "./stores/vehicleStore";
+import { SedanVehicle } from "./types/vehicles/SedanVehicle";
+import { SuvVehicle } from "./types/vehicles/SuvVehicle";
 
 export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
     width: window.innerWidth,
     height: window.innerHeight,
   });
-
-  // Define actual vehicle dimensions in meters
-  const VEHICLE_DIMENSIONS = {
-    length: 4.5, // 车长 4.5 meters
-    width: 1.8, // 车宽 1.8 meters
-  };
 
   // Scale factor to convert meters to pixels (e.g., 100 pixels per meter)
   const SCALE_FACTOR = 100;
@@ -29,12 +24,7 @@ export const SensorSetBuilderMain: React.FC = () => {
 
   // Create vehicle instance first
   useEffect(() => {
-    const vehicle = new Vehicle(
-      stageSize,
-      VEHICLE_DIMENSIONS.width * SCALE_FACTOR,
-      VEHICLE_DIMENSIONS.length * SCALE_FACTOR,
-      process.env.PUBLIC_URL + "/vehicles/vehicle2.svg"
-    );
+    const vehicle = new SuvVehicle(stageSize, SCALE_FACTOR);
     setCurrentVehicle(vehicle);
   }, [stageSize, setCurrentVehicle]);
 
@@ -44,8 +34,8 @@ export const SensorSetBuilderMain: React.FC = () => {
   useEffect(() => {
     if (vehicleImage && currentVehicle) {
       // Calculate the desired image dimensions based on actual vehicle size
-      const desiredWidth = VEHICLE_DIMENSIONS.width * SCALE_FACTOR;
-      const desiredHeight = VEHICLE_DIMENSIONS.length * SCALE_FACTOR;
+      const desiredWidth = currentVehicle.width;
+      const desiredHeight = currentVehicle.length;
 
       // Create a temporary canvas to resize the SVG
       const canvas = document.createElement("canvas");
@@ -63,14 +53,7 @@ export const SensorSetBuilderMain: React.FC = () => {
         };
       }
     }
-  }, [
-    vehicleImage,
-    currentVehicle,
-    updateVehicleImage,
-    SCALE_FACTOR,
-    VEHICLE_DIMENSIONS.width,
-    VEHICLE_DIMENSIONS.length,
-  ]);
+  }, [vehicleImage, currentVehicle, updateVehicleImage]);
 
   useEffect(() => {
     const handleResize = () => {
