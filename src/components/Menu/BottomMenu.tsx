@@ -26,9 +26,9 @@ const BottomMenu: React.FC<BottomMenuProp> = () => {
       panel: <Box sx={{ padding: 2 }}>Feedback Panel Content</Box>,
     },
     {
-      name: "Sensors",
+      name: "Installed Sensors",
       icon: <SensorsIcon />,
-      description: "Manage sensors and configurations.",
+      description: "Manage sensors Installed Sensors",
       panel: <SensorPanelEx />,
     },
   ];
