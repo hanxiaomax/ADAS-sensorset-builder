@@ -28,12 +28,7 @@ interface MenuBarProps {
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
-  const {
-    sensorConfiguration,
-    setSensorConfiguration,
-    sensorStocks,
-    setSensorStocks,
-  } = useSensorStore();
+  const { sensorStocks, setSensorStocks } = useSensorStore();
 
   const [open, setOpen] = useState(false);
   const [downloadAnchorEl, setDownloadAnchorEl] =
@@ -44,22 +39,12 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
   };
 
   const handleExport = () => {
-    const dataStr =
-      "data:text/json;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(sensorConfiguration, null, 2));
-    const downloadAnchorNode = document.createElement("a");
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "sensor_config.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-
     const stockDataStr =
       "data:text/json;charset=utf-8," +
       encodeURIComponent(JSON.stringify(sensorStocks, null, 2));
     const stockDownloadNode = document.createElement("a");
     stockDownloadNode.setAttribute("href", stockDataStr);
-    stockDownloadNode.setAttribute("download", "sensor_data.json");
+    stockDownloadNode.setAttribute("download", "sensor_database.json");
     document.body.appendChild(stockDownloadNode);
     stockDownloadNode.click();
     stockDownloadNode.remove();
