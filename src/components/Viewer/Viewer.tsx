@@ -11,6 +11,10 @@ import {
   Tooltip,
   TableCell,
   TableRow,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import { Stage, Layer, Group, Text, Line } from "react-konva";
 import CarImage from "./carImage";
@@ -25,6 +29,8 @@ import ViewerContextMenu from "./ViewerContextMenu";
 import CloseIcon from "@mui/icons-material/Close";
 import Draggable from "react-draggable"; // 用于拖动浮动窗口
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Settings, ImportExport, Help, GitHub } from "@mui/icons-material";
 
 import {
   getBoundingBox,
@@ -57,6 +63,8 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     mouseX: number;
     mouseY: number;
   }>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
 
   // 从 SceneStore 获取状态和操作
   const {
@@ -213,6 +221,14 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     setSelectedSensor(null);
   };
 
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   const renderDebugInfo = () => {
     if (!layerVisibility.showDebugMode) return null;
 
@@ -267,10 +283,126 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
     );
   };
 
+  const renderHamburgerMenu = () => {
+    const handleImport = () => {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json";
+
+      input.onchange = (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const sceneData = JSON.parse(event.target?.result as string);
+            useSceneStore.setState(sceneData);
+          } catch (error) {
+            console.error("Error loading scene:", error);
+            alert("Failed to load scene configuration file");
+          }
+        };
+        reader.readAsText(file);
+      };
+
+      input.click();
+      handleMenuClose();
+    };
+
+    const handleExport = () => {
+      const sceneData = {
+        scale,
+        stagePos,
+        rotation,
+        sensors,
+        selectedSensor,
+      };
+
+      const blob = new Blob([JSON.stringify(sceneData, null, 2)], {
+        type: "application/json",
+      });
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "scene_config.json";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      handleMenuClose();
+    };
+
+    return (
+      <Box
+        sx={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          zIndex: 1100,
+        }}
+      >
+        <IconButton
+          onClick={handleMenuClick}
+          size="large"
+          sx={{
+            backgroundColor: "white",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+            },
+            boxShadow: 2,
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          <MenuItem onClick={handleMenuClose}>
+            <ListItemIcon>
+              <Settings fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Settings</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleImport}>
+            <ListItemIcon>
+              <ImportExport fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Import Scene</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleExport}>
+            <ListItemIcon>
+              <ImportExport fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Export Scene</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <ListItemIcon>
+              <Help fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Help</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <ListItemIcon>
+              <GitHub fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>GitHub</ListItemText>
+          </MenuItem>
+        </Menu>
+      </Box>
+    );
+  };
+
   return (
     <Grid
       container
-      sx={{ width: "80vw", height: "100vh", margin: "auto", mt: 4, mb: 2 }}
+      sx={{ width: "100vw", height: "100vh", margin: "auto" }}
       onContextMenu={handleContextMenu}
     >
       <Grid item xs={12} container justifyContent="center" alignItems="center">
@@ -285,6 +417,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
             position: "relative",
           }}
         >
+          {renderHamburgerMenu()}
           <Stage
             width={stageSize.width}
             height={stageSize.height}
