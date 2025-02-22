@@ -6,17 +6,43 @@ import {
   Box,
   ListItemIcon,
   ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Avatar,
+  Typography,
+  Link,
+  Button,
+  Popover,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Settings, ImportExport, Help, GitHub } from "@mui/icons-material";
+import {
+  Settings,
+  ImportExport,
+  Help,
+  GitHub,
+  Download,
+  Email,
+} from "@mui/icons-material";
 import { useSceneStore } from "../../stores/sceneStore";
 import { useSensorStore } from "../../stores/sensorStore";
 import { SensorStocks } from "../../types/Common";
 import notifier from "../Helper/Notification";
 import { useSnackbar } from "notistack";
+import DownloadPanel from "../Panels/DownloadPanel";
+import { Stage } from "konva/lib/Stage";
 
-const HamburgerMenu: React.FC = () => {
+interface HamburgerMenuProps {
+  stageRef: React.RefObject<Stage>;
+}
+
+const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [downloadAnchorEl, setDownloadAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
   const open = Boolean(anchorEl);
 
   const { scale, stagePos, rotation, sensors, selectedSensor } =
@@ -34,6 +60,24 @@ const HamburgerMenu: React.FC = () => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleAboutOpen = () => {
+    setAboutOpen(true);
+    handleMenuClose();
+  };
+
+  const handleAboutClose = () => {
+    setAboutOpen(false);
+  };
+
+  const handleDownloadClick = (event: React.MouseEvent<HTMLElement>) => {
+    setDownloadAnchorEl(event.currentTarget);
+    handleMenuClose();
+  };
+
+  const handleDownloadClose = () => {
+    setDownloadAnchorEl(null);
   };
 
   // 验证SensorStocks的结构
@@ -140,79 +184,152 @@ const HamburgerMenu: React.FC = () => {
     handleMenuClose();
   };
 
+  const isDownloadOpen = Boolean(downloadAnchorEl);
+  const downloadId = isDownloadOpen ? "download-popover" : undefined;
+
   return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: 16,
-        right: 16,
-        zIndex: 1100,
-      }}
-    >
-      <IconButton
-        onClick={handleMenuClick}
-        size="large"
+    <>
+      <Box
         sx={{
-          backgroundColor: "white",
-          "&:hover": {
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-          },
-          boxShadow: 2,
+          position: "absolute",
+          top: 16,
+          right: 16,
+          zIndex: 1100,
         }}
       >
-        <MenuIcon />
-      </IconButton>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleMenuClose}
-        transformOrigin={{ horizontal: "right", vertical: "top" }}
-        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        <IconButton
+          onClick={handleMenuClick}
+          size="large"
+          sx={{
+            backgroundColor: "white",
+            "&:hover": {
+              backgroundColor: "rgba(255, 255, 255, 0.9)",
+            },
+            boxShadow: 2,
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleMenuClose}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          <MenuItem onClick={handleAboutOpen}>
+            <ListItemIcon>
+              <Help fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>About</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleDownloadClick}>
+            <ListItemIcon>
+              <Download fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Download</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleImportSensorDatabase}>
+            <ListItemIcon>
+              <ImportExport fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Import Sensor Database</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleExportSensorDatabase}>
+            <ListItemIcon>
+              <ImportExport fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Export Sensor Database</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleImportScene}>
+            <ListItemIcon>
+              <ImportExport fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Import Scene</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleExportScene}>
+            <ListItemIcon>
+              <ImportExport fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Export Scene</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleMenuClose}>
+            <ListItemIcon>
+              <Settings fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>Settings</ListItemText>
+          </MenuItem>
+        </Menu>
+      </Box>
+
+      <Dialog open={aboutOpen} onClose={handleAboutClose}>
+        <DialogTitle>About</DialogTitle>
+        <DialogContent>
+          <Avatar
+            src="https://avatars.githubusercontent.com/u/3370445?v=4"
+            alt="Author's Avatar"
+            sx={{ width: 80, height: 80, mb: 2 }}
+          />
+          <Typography variant="h4">Yet Another ADAS Scene Builder</Typography>
+          <Typography variant="overline">
+            A handy tool for ADAS Product Managers,System Engineers,Testers and
+            everyone
+          </Typography>
+          <Box height={50}></Box>
+
+          <Box display="flex" alignItems="center" mb={1}>
+            <GitHub sx={{ mr: 1 }} />
+            <Typography variant="body2">
+              <Link
+                href="https://github.com/hanxiaomax"
+                target="_blank"
+                rel="noopener"
+              >
+                Lingfeng AI
+              </Link>
+            </Typography>
+          </Box>
+
+          <Box display="flex" alignItems="center" mb={1}>
+            <Email sx={{ mr: 1 }} />
+            <Typography variant="body2">hanxiaomax@qq.com</Typography>
+          </Box>
+
+          <Box display="flex" alignItems="center" mb={1}>
+            <GitHub sx={{ mr: 1 }} />
+            <Typography variant="body2">
+              <Link
+                href="https://github.com/hanxiaomax/ADAS-sensorset-builder"
+                target="_blank"
+                rel="noopener"
+              >
+                GitHub Project
+              </Link>
+            </Typography>
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleAboutClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Popover
+        id={downloadId}
+        open={isDownloadOpen}
+        anchorEl={downloadAnchorEl}
+        onClose={handleDownloadClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
       >
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Settings</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleImportSensorDatabase}>
-          <ListItemIcon>
-            <ImportExport fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Import Sensor Database</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleExportSensorDatabase}>
-          <ListItemIcon>
-            <ImportExport fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Export Sensor Database</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleImportScene}>
-          <ListItemIcon>
-            <ImportExport fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Import Scene</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleExportScene}>
-          <ListItemIcon>
-            <ImportExport fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Export Scene</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon>
-            <Help fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>Help</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose}>
-          <ListItemIcon>
-            <GitHub fontSize="small" />
-          </ListItemIcon>
-          <ListItemText>GitHub</ListItemText>
-        </MenuItem>
-      </Menu>
-    </Box>
+        <DownloadPanel stageRef={stageRef} />
+      </Popover>
+    </>
   );
 };
 

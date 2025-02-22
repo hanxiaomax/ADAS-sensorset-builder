@@ -3,7 +3,6 @@ import { Grid } from "@mui/material";
 import useImage from "use-image";
 import Viewer from "./components/Viewer/Viewer";
 import { Vehicle } from "./types/Vehicle";
-import MenuBar from "./components/Menu/MenuBar";
 import Konva from "konva";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
@@ -37,7 +36,6 @@ export const SensorSetBuilderMain: React.FC = () => {
         overflow: "hidden",
       }}
     >
-      <MenuBar stageRef={stageRef} />
       <Grid item xs={12}>
         <Viewer stageSize={stageSize} vehicle={vehicle} stageRef={stageRef} />
       </Grid>

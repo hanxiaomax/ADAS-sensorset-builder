@@ -302,7 +302,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
             position: "relative",
           }}
         >
-          <HamburgerMenu />
+          <HamburgerMenu stageRef={stageRef} />
           <Stage
             width={stageSize.width}
             height={stageSize.height}
