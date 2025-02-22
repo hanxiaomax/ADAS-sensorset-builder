@@ -15,56 +15,41 @@ export class SuvVehicle extends Vehicle {
 
   protected getVehicleDimensions(): VehicleDimensions {
     return {
-      length: 4.8, // SUV长度 4.8 meters
-      width: 1.9, // SUV宽度 1.9 meters
-      frontOverhang: 45, // 前悬 45 pixels
-      rearOverhang: 45, // 后悬 45 pixels
+      length: 4.8, // Length in meters
+      width: 1.9, // Width in meters
+      frontOverhang: 45, // Front overhang in pixels
+      rearOverhang: 45, // Rear overhang in pixels
     };
   }
 
-  // SUV有不同的参考点位置
+  // SUV has different reference point positions
   protected initializeRefPoints(): VehicleRefPoints {
-    const baseRefPoints = super.initializeRefPoints();
-    return {
-      ...baseRefPoints,
-      // 修改一些特定于SUV的参考点
-      roof_top: setPosition(
-        this.origin.x + this.width / 2,
-        this.origin.y + this.length / 2 - 30 // SUV车顶位置更高
-      ),
-      front_windsheild: setPosition(
-        this.origin.x + this.width / 2,
-        this.origin.y + 150 // SUV前挡风玻璃位置调整
-      ),
-      rear_windsheild: setPosition(
-        this.origin.x + this.width / 2,
-        this.origin.y + this.length - 90 // SUV后挡风玻璃位置调整
-      ),
-    };
+    const refPoints = super.initializeRefPoints();
+
+    // Modify specific reference points for SUV
+    refPoints.roof_top = setPosition(
+      this.origin.x + this.width / 2,
+      this.origin.y + this.length / 2 - 30 // Higher roof position for SUV
+    );
+
+    refPoints.front_windsheild = setPosition(
+      this.origin.x + this.width / 2,
+      this.origin.y + 150 // Adjusted windshield position for SUV
+    );
+
+    refPoints.rear_windsheild = setPosition(
+      this.origin.x + this.width / 2,
+      this.origin.y + this.length - 90 // Adjusted rear window position for SUV
+    );
+
+    return refPoints;
   }
 
-  // SUV可能有一些额外的或不同的挂载点
+  // SUV may have additional or different mounting points
   protected initializeMountingPoints(): Mounts {
-    const baseMountingPoints = super.initializeMountingPoints();
-    return {
-      ...baseMountingPoints,
-      // 添加SUV特有的挂载点
-      roof_rack_front: {
-        name: "roof_rack_front",
-        position: setPosition(
-          this.origin.x + this.width / 2,
-          this.origin.y + this.length / 3
-        ),
-        orientation: this.orientation_front,
-      },
-      roof_rack_rear: {
-        name: "roof_rack_rear",
-        position: setPosition(
-          this.origin.x + this.width / 2,
-          this.origin.y + (this.length * 2) / 3
-        ),
-        orientation: this.orientation_rear,
-      },
-    };
+    const mountingPoints = super.initializeMountingPoints();
+
+    // Add SUV-specific mounting points
+    return mountingPoints;
   }
 }

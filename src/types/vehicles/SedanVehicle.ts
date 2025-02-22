@@ -5,26 +5,26 @@ export class SedanVehicle extends Vehicle {
 
   protected getVehicleDimensions(): VehicleDimensions {
     return {
-      length: 4.5, // 轿车长度 4.5 meters
-      width: 2, // 轿车宽度 1.8 meters
-      frontOverhang: 40, // 前悬 40 pixels
-      rearOverhang: 40, // 后悬 40 pixels
+      length: 4.5, // Length in meters
+      width: 2, // Width in meters
+      frontOverhang: 40, // Front overhang in pixels
+      rearOverhang: 40, // Rear overhang in pixels
     };
   }
 
-  // 如果需要自定义参考点，可以覆盖initializeRefPoints方法
+  // Override initializeRefPoints method to customize reference points if needed
   // protected initializeRefPoints(): VehicleRefPoints {
   //   return {
   //     ...super.initializeRefPoints(),
-  //     // 自定义或修改某些参考点
+  //     // Customize or modify specific reference points
   //   };
   // }
 
-  // 如果需要自定义挂载点，可以覆盖initializeMountingPoints方法
+  // Override initializeMountingPoints method to customize mounting points if needed
   // protected initializeMountingPoints(): Mounts {
   //   return {
   //     ...super.initializeMountingPoints(),
-  //     // 自定义或修改某些挂载点
+  //     // Customize or modify specific mounting points
   //   };
   // }
 }

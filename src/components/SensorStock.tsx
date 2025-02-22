@@ -15,7 +15,7 @@ import InstallConfigDialog from "./Dialogs/InstallConfigDialog";
 import DeleteConfirmationDialog from "./Dialogs/DeleteConfirmationDialog";
 import SensorInfoDialog from "./SensorInfoDialog";
 import { SensorItem } from "../types/Common";
-import Sensor from "../types/Sensor";
+import { Sensor } from "../types/Sensor";
 import { v4 as uuidv4 } from "uuid";
 import { HtmlTooltip } from "./ToolTips";
 import { useSceneStore } from "../stores/sceneStore";

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { SensorItem } from "../../types/Common";
 import { Vehicle } from "../../types/Vehicle";
+import { SelectChangeEvent } from "@mui/material/Select";
 
 interface InstallConfigDialogProps {
   open: boolean;
@@ -41,35 +42,61 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
   const [selectedPosition, setSelectedPosition] = useState("");
   const [orientation, setOrientation] = useState<number>(0);
   const [positionError, setPositionError] = useState(false);
+  const [mountingPointsByType, setMountingPointsByType] = useState<
+    Record<string, string[]>
+  >({});
+  const [mountingPoint, setMountingPoint] = useState<string>("");
+  const [defaultOrientation, setDefaultOrientation] = useState<number>(0);
 
-  // 获取并组织挂载点数据
-  const mountingPointGroups = {
-    front: vehicle.getMountingPointsByType("front"),
-    rear: vehicle.getMountingPointsByType("rear"),
-    side: vehicle.getMountingPointsByType("side"),
-    roof: vehicle.getMountingPointsByType("roof"),
+  useEffect(() => {
+    // Get and organize mounting point data
+    const mountingPoints = vehicle.getMountingPoints();
+    const groupedMountingPoints = Object.entries(mountingPoints).reduce(
+      (acc, [name, point]) => {
+        const type = point.type || "other";
+        if (!acc[type]) {
+          acc[type] = [];
+        }
+        acc[type].push(name);
+        return acc;
+      },
+      {} as Record<string, string[]>
+    );
+    setMountingPointsByType(groupedMountingPoints);
+  }, [vehicle]);
+
+  useEffect(() => {
+    // Get default orientation of selected mounting point
+    if (mountingPoint) {
+      const point = vehicle.getMountingPoint(mountingPoint);
+      if (point?.orientation !== undefined) {
+        setDefaultOrientation(point.orientation);
+      }
+    }
+  }, [mountingPoint, vehicle]);
+
+  const handlePositionChange = (event: SelectChangeEvent) => {
+    const selectedPoint = event.target.value;
+    setMountingPoint(selectedPoint);
+    // Set default orientation of selected mounting point
+    const point = vehicle.getMountingPoint(selectedPoint);
+    if (point?.orientation !== undefined) {
+      setDefaultOrientation(point.orientation);
+    }
+    setOrientation(0); // Reset to 0 as we'll add mounting point's default orientation when saving
   };
 
   const handleSave = () => {
-    if (!selectedPosition) {
-      setPositionError(true);
-    } else {
-      // 获取选中挂载点的默认方向
-      const mountPoint = vehicle.getMountingPoint(selectedPosition);
-      const finalOrientation = orientation + (mountPoint?.orientation || 0);
-      onConfirm(sensorItem, selectedPosition, finalOrientation);
-      onClose();
+    if (!mountingPoint) {
+      return;
     }
-  };
 
-  const handlePositionChange = (value: string) => {
-    setSelectedPosition(value);
-    setPositionError(false);
-    // 设置选中挂载点的默认方向
-    const mountPoint = vehicle.getMountingPoint(value);
-    if (mountPoint) {
-      setOrientation(0); // 重置为0，因为我们会在保存时加上挂载点的默认方向
-    }
+    // Get actual orientation of selected mounting point (including default orientation)
+    const point = vehicle.getMountingPoint(mountingPoint);
+    const actualOrientation = (point?.orientation || 0) + (orientation || 0);
+
+    onConfirm(sensorItem, mountingPoint, actualOrientation);
+    onClose();
   };
 
   const handleSliderChange = (event: Event, value: number | number[]) => {
@@ -106,57 +133,61 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
             </InputLabel>
             <Select
               labelId="install-position-label"
-              value={selectedPosition}
-              onChange={(e) => handlePositionChange(e.target.value as string)}
+              value={mountingPoint}
+              onChange={handlePositionChange}
               label="Install Position"
             >
-              {/* 前部挂载点 */}
-              {mountingPointGroups.front.length > 0 && [
-                <ListSubheader key="front-header">
-                  Front Mounting Points
-                </ListSubheader>,
-                ...mountingPointGroups.front.map((point) => (
-                  <MenuItem key={point} value={point}>
-                    {point}
-                  </MenuItem>
-                )),
-              ]}
+              {/* Front mounting points */}
+              {mountingPointsByType.front &&
+                mountingPointsByType.front.length > 0 && [
+                  <ListSubheader key="front-header">
+                    Front Mounting Points
+                  </ListSubheader>,
+                  ...mountingPointsByType.front.map((point) => (
+                    <MenuItem key={point} value={point}>
+                      {point}
+                    </MenuItem>
+                  )),
+                ]}
 
-              {/* 后部挂载点 */}
-              {mountingPointGroups.rear.length > 0 && [
-                <ListSubheader key="rear-header">
-                  Rear Mounting Points
-                </ListSubheader>,
-                ...mountingPointGroups.rear.map((point) => (
-                  <MenuItem key={point} value={point}>
-                    {point}
-                  </MenuItem>
-                )),
-              ]}
+              {/* Rear mounting points */}
+              {mountingPointsByType.rear &&
+                mountingPointsByType.rear.length > 0 && [
+                  <ListSubheader key="rear-header">
+                    Rear Mounting Points
+                  </ListSubheader>,
+                  ...mountingPointsByType.rear.map((point) => (
+                    <MenuItem key={point} value={point}>
+                      {point}
+                    </MenuItem>
+                  )),
+                ]}
 
-              {/* 侧面挂载点 */}
-              {mountingPointGroups.side.length > 0 && [
-                <ListSubheader key="side-header">
-                  Side Mounting Points
-                </ListSubheader>,
-                ...mountingPointGroups.side.map((point) => (
-                  <MenuItem key={point} value={point}>
-                    {point}
-                  </MenuItem>
-                )),
-              ]}
+              {/* Side mounting points */}
+              {mountingPointsByType.side &&
+                mountingPointsByType.side.length > 0 && [
+                  <ListSubheader key="side-header">
+                    Side Mounting Points
+                  </ListSubheader>,
+                  ...mountingPointsByType.side.map((point) => (
+                    <MenuItem key={point} value={point}>
+                      {point}
+                    </MenuItem>
+                  )),
+                ]}
 
-              {/* 车顶挂载点 */}
-              {mountingPointGroups.roof.length > 0 && [
-                <ListSubheader key="roof-header">
-                  Roof Mounting Points
-                </ListSubheader>,
-                ...mountingPointGroups.roof.map((point) => (
-                  <MenuItem key={point} value={point}>
-                    {point}
-                  </MenuItem>
-                )),
-              ]}
+              {/* Roof mounting points */}
+              {mountingPointsByType.roof &&
+                mountingPointsByType.roof.length > 0 && [
+                  <ListSubheader key="roof-header">
+                    Roof Mounting Points
+                  </ListSubheader>,
+                  ...mountingPointsByType.roof.map((point) => (
+                    <MenuItem key={point} value={point}>
+                      {point}
+                    </MenuItem>
+                  )),
+                ]}
             </Select>
             {positionError && (
               <FormHelperText error>
@@ -170,7 +201,7 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
             Additional Orientation Adjustment (degrees)
           </Typography>
           <Typography variant="caption" color="textSecondary" display="block">
-            Default orientation: {mountPoint?.orientation || 0}°
+            Default orientation: {defaultOrientation}°
           </Typography>
           <Typography
             variant="caption"

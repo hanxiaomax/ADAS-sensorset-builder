@@ -12,36 +12,34 @@ import {
   Checkbox,
 } from "@mui/material";
 import Sensor from "../types/Sensor";
+import { useState } from "react";
 
 interface DataTableProps {
-  sensorData: Sensor[]; // 传递传感器数据
+  sensorData: Sensor[]; // Pass sensor data
   setSelectedRows: (rows: Sensor[]) => void;
-  enablePagination: boolean; // 新增参数，控制是否分页
+  enablePagination: boolean; // Control pagination
 }
 
-export default function DataTable({
+export const DataTable: React.FC<DataTableProps> = ({
   sensorData,
   setSelectedRows,
-  enablePagination, // 接受新的参数
-}: DataTableProps) {
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  enablePagination,
+}) => {
+  const [selected, setSelected] = useState<string[]>([]);
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = sensorData.map((sensor) => sensor.id);
-      setSelected(newSelected);
-      setSelectedRows(sensorData); // 设置所有行为选中行
-      return;
+      setSelected(sensorData.map((n) => n.id));
+      setSelectedRows(sensorData); // Set all rows as selected
+    } else {
+      setSelected([]);
+      setSelectedRows([]); // Clear selected rows
     }
-    setSelected([]);
-    setSelectedRows([]); // 清空选中行
   };
 
   const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
     const selectedIndex = selected.indexOf(id);
-    let newSelected: readonly string[] = [];
+    let newSelected: string[] = [];
 
     if (selectedIndex === -1) {
       newSelected = newSelected.concat(selected, id);
@@ -57,13 +55,17 @@ export default function DataTable({
     }
 
     setSelected(newSelected);
-
-    // 将选中的行数据传递到 ToolMenu
-    const selectedRows = sensorData.filter((row) =>
-      newSelected.includes(row.id)
+    // Pass selected row data to ToolMenu
+    setSelectedRows(
+      sensorData.filter((sensor) => newSelected.includes(sensor.id))
     );
-    setSelectedRows(selectedRows);
   };
+
+  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+
+  // Determine whether to paginate based on enablePagination
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -76,12 +78,10 @@ export default function DataTable({
     setPage(0);
   };
 
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
-
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - sensorData.length) : 0;
 
-  // 根据 enablePagination 的值来决定是否分页
+  // Determine visible rows based on pagination status
   const visibleRows = enablePagination
     ? sensorData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
     : sensorData;
@@ -263,7 +263,7 @@ export default function DataTable({
             </TableBody>
           </Table>
         </TableContainer>
-        {/* 仅在启用分页时显示分页组件 */}
+        {/* Show pagination component only when pagination is enabled */}
         {enablePagination && (
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
@@ -278,4 +278,4 @@ export default function DataTable({
       </Paper>
     </Box>
   );
-}
+};

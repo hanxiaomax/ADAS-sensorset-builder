@@ -6,6 +6,7 @@ export interface MountPosition {
   name: string;
   position?: Position;
   orientation?: number;
+  type?: "front" | "rear" | "side" | "roof" | "other";
 }
 
 export interface SensorSpec {

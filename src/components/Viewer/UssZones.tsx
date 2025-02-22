@@ -32,7 +32,7 @@ const UssZones: React.FC<UssZonesProps> = ({
   }
   return (
     <>
-      {/* 绘制左右两侧分区 */}
+      {/* Draw side zones */}
       {Array.from({ length: sideZones }).map((_, index) => (
         <React.Fragment key={index}>
           <Rect
@@ -55,7 +55,7 @@ const UssZones: React.FC<UssZonesProps> = ({
           />
         </React.Fragment>
       ))}
-      {/* 绘制前方分区 */}
+      {/* Draw front zones */}
       {Array.from({ length: frontZones }).map((_, index) => {
         const startAngle = 180 + (index * 180) / frontZones;
         const endAngle = 180 + ((index + 1) * 180) / frontZones;
@@ -74,7 +74,7 @@ const UssZones: React.FC<UssZonesProps> = ({
           />
         );
       })}
-      {/* 绘制后方分区 */}
+      {/* Draw rear zones */}
       {Array.from({ length: rearZones }).map((_, index) => {
         const startAngle = (index * 180) / rearZones;
         const endAngle = ((index + 1) * 180) / rearZones;
