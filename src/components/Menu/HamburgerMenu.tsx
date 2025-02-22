@@ -15,6 +15,7 @@ import {
   Link,
   Button,
   Popover,
+  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import {
@@ -215,19 +216,20 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
           onClose={handleMenuClose}
           transformOrigin={{ horizontal: "right", vertical: "top" }}
           anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+          PaperProps={{
+            sx: {
+              width: 280,
+              maxWidth: "100%",
+            },
+          }}
         >
-          <MenuItem onClick={handleAboutOpen}>
-            <ListItemIcon>
-              <Help fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>About</ListItemText>
-          </MenuItem>
           <MenuItem onClick={handleDownloadClick}>
             <ListItemIcon>
               <Download fontSize="small" />
             </ListItemIcon>
             <ListItemText>Download</ListItemText>
           </MenuItem>
+          <Divider />
           <MenuItem onClick={handleImportSensorDatabase}>
             <ListItemIcon>
               <ImportExport fontSize="small" />
@@ -240,6 +242,7 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
             </ListItemIcon>
             <ListItemText>Export Sensor Database</ListItemText>
           </MenuItem>
+          <Divider />
           <MenuItem onClick={handleImportScene}>
             <ListItemIcon>
               <ImportExport fontSize="small" />
@@ -251,6 +254,13 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
               <ImportExport fontSize="small" />
             </ListItemIcon>
             <ListItemText>Export Scene</ListItemText>
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={handleAboutOpen}>
+            <ListItemIcon>
+              <Help fontSize="small" />
+            </ListItemIcon>
+            <ListItemText>About</ListItemText>
           </MenuItem>
         </Menu>
       </Box>
