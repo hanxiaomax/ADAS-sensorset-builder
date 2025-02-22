@@ -15,40 +15,18 @@ import {
 } from "@mui/material";
 import GitHubIcon from "@mui/icons-material/GitHub";
 import EmailIcon from "@mui/icons-material/Email";
-import ProfileMenu from "./ProfileMenu";
 import DownloadPanel from "../Panels/DownloadPanel";
 import { Stage } from "konva/lib/Stage";
 import DownloadIcon from "@mui/icons-material/Download";
-import { useSensorStore } from "../../stores/sensorStore";
-import { SensorStocks } from "../../types/Common";
-import { Sensor } from "../../types/Sensor";
 
 interface MenuBarProps {
   stageRef: React.RefObject<Stage>;
 }
 
 const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
-  const { sensorStocks, setSensorStocks } = useSensorStore();
-
   const [open, setOpen] = useState(false);
   const [downloadAnchorEl, setDownloadAnchorEl] =
     useState<HTMLButtonElement | null>(null);
-
-  const handleSensorStockImport = (data: SensorStocks) => {
-    setSensorStocks(data);
-  };
-
-  const handleExport = () => {
-    const stockDataStr =
-      "data:text/json;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(sensorStocks, null, 2));
-    const stockDownloadNode = document.createElement("a");
-    stockDownloadNode.setAttribute("href", stockDataStr);
-    stockDownloadNode.setAttribute("download", "sensor_database.json");
-    document.body.appendChild(stockDownloadNode);
-    stockDownloadNode.click();
-    stockDownloadNode.remove();
-  };
 
   const handleAboutOpen = () => {
     setOpen(true);
@@ -98,10 +76,6 @@ const MenuBar: React.FC<MenuBarProps> = ({ stageRef }) => {
             },
           }}
         >
-          <ProfileMenu
-            onImportSensorStock={handleSensorStockImport}
-            onExport={handleExport}
-          />
           <Button onClick={handleAboutOpen}>About</Button>
           <Button
             aria-describedby={downloadId}

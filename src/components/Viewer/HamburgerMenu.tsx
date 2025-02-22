@@ -10,6 +10,10 @@ import {
 import MenuIcon from "@mui/icons-material/Menu";
 import { Settings, ImportExport, Help, GitHub } from "@mui/icons-material";
 import { useSceneStore } from "../../stores/sceneStore";
+import { useSensorStore } from "../../stores/sensorStore";
+import { SensorStocks } from "../../types/Common";
+import notifier from "../Helper/Notification";
+import { useSnackbar } from "notistack";
 
 const HamburgerMenu: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -17,6 +21,12 @@ const HamburgerMenu: React.FC = () => {
 
   const { scale, stagePos, rotation, sensors, selectedSensor } =
     useSceneStore();
+  const { sensorStocks, setSensorStocks } = useSensorStore();
+  const { enqueueSnackbar } = useSnackbar();
+
+  React.useEffect(() => {
+    notifier.init(enqueueSnackbar);
+  }, [enqueueSnackbar]);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -26,7 +36,59 @@ const HamburgerMenu: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleImport = () => {
+  // 验证SensorStocks的结构
+  const isValidSensorStock = (data: any): data is SensorStocks => {
+    return (
+      typeof data === "object" && data !== null && Object.keys(data).length > 0
+    );
+  };
+
+  const handleImportSensorDatabase = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = ".json";
+
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target?.result as string);
+          if (isValidSensorStock(data)) {
+            setSensorStocks(data);
+            notifier.success("Sensor Database imported successfully!");
+          } else {
+            throw new Error("Invalid Sensor Database format.");
+          }
+        } catch (error) {
+          const errorMessage = (error as Error).message.replace("Error: ", "");
+          notifier.error(errorMessage);
+        }
+      };
+      reader.readAsText(file);
+    };
+
+    input.click();
+    handleMenuClose();
+  };
+
+  const handleExportSensorDatabase = () => {
+    const stockDataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(sensorStocks, null, 2));
+    const stockDownloadNode = document.createElement("a");
+    stockDownloadNode.setAttribute("href", stockDataStr);
+    stockDownloadNode.setAttribute("download", "sensor_database.json");
+    document.body.appendChild(stockDownloadNode);
+    stockDownloadNode.click();
+    stockDownloadNode.remove();
+    notifier.success("Sensor Database exported successfully!");
+    handleMenuClose();
+  };
+
+  const handleImportScene = () => {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = ".json";
@@ -40,9 +102,10 @@ const HamburgerMenu: React.FC = () => {
         try {
           const sceneData = JSON.parse(event.target?.result as string);
           useSceneStore.setState(sceneData);
+          notifier.success("Scene imported successfully!");
         } catch (error) {
           console.error("Error loading scene:", error);
-          alert("Failed to load scene configuration file");
+          notifier.error("Failed to load scene configuration file");
         }
       };
       reader.readAsText(file);
@@ -52,7 +115,7 @@ const HamburgerMenu: React.FC = () => {
     handleMenuClose();
   };
 
-  const handleExport = () => {
+  const handleExportScene = () => {
     const sceneData = {
       scale,
       stagePos,
@@ -73,7 +136,7 @@ const HamburgerMenu: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-
+    notifier.success("Scene exported successfully!");
     handleMenuClose();
   };
 
@@ -112,13 +175,25 @@ const HamburgerMenu: React.FC = () => {
           </ListItemIcon>
           <ListItemText>Settings</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleImport}>
+        <MenuItem onClick={handleImportSensorDatabase}>
+          <ListItemIcon>
+            <ImportExport fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Import Sensor Database</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleExportSensorDatabase}>
+          <ListItemIcon>
+            <ImportExport fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Export Sensor Database</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleImportScene}>
           <ListItemIcon>
             <ImportExport fontSize="small" />
           </ListItemIcon>
           <ListItemText>Import Scene</ListItemText>
         </MenuItem>
-        <MenuItem onClick={handleExport}>
+        <MenuItem onClick={handleExportScene}>
           <ListItemIcon>
             <ImportExport fontSize="small" />
           </ListItemIcon>
