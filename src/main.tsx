@@ -26,7 +26,7 @@ export const SensorSetBuilderMain: React.FC = () => {
   const stageRef = useRef<Konva.Stage>(null);
   const { addVehicleImage, setCurrentVehicleImage } = useVehicleImageStore();
 
-  const [image] = useImage(process.env.PUBLIC_URL + "/vehicle.png");
+  const [image] = useImage(process.env.PUBLIC_URL + "/vehicles/vehicle.svg");
 
   useEffect(() => {
     if (image) {
