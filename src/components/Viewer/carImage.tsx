@@ -1,6 +1,5 @@
 import React from "react";
 import { Layer, Image as KonvaImage } from "react-konva";
-import { useVehicleImageStore } from "../../stores/vehicleImageStore";
 import { Vehicle } from "../../types/Vehicle";
 
 interface CarImageProps {
@@ -20,8 +19,7 @@ const CarImage: React.FC<CarImageProps> = ({
   height,
   vehicle,
 }) => {
-  const { vehicleImages } = useVehicleImageStore();
-  const image = vehicleImages[vehicle.imageKey];
+  const image = vehicle.getImage();
 
   if (!show) {
     return null;

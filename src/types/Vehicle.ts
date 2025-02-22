@@ -51,13 +51,14 @@ export class Vehicle {
   orientation_front: number = -90;
   orientation_rear: number = 90;
   _mountingPoints: Mounts;
-  imageKey: string;
+  imagePath: string;
+  image: HTMLImageElement | null;
 
   constructor(
     stageSize: { width: number; height: number },
     vehicleWidth: number,
     vehicleLength: number,
-    imageKey: string = "default"
+    imagePath: string
   ) {
     const image_margin = 20;
     const overhang = 60 + image_margin;
@@ -71,7 +72,8 @@ export class Vehicle {
     this.frontOverhang = overhang / 2;
     this.rearOverhang = overhang / 2;
     this.origin = origin;
-    this.imageKey = imageKey;
+    this.imagePath = imagePath;
+    this.image = null;
     this.refPoints = {
       front_center: setPosition(this.origin.x + this.width / 2, this.origin.y),
       rear_center: setPosition(
@@ -243,5 +245,13 @@ export class Vehicle {
         0
       ),
     };
+  }
+
+  setImage(image: HTMLImageElement) {
+    this.image = image;
+  }
+
+  getImage(): HTMLImageElement | null {
+    return this.image;
   }
 }
