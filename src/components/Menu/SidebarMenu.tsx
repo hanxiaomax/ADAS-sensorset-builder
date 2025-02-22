@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import WallpaperIcon from "@mui/icons-material/Wallpaper";
-import CategoryIcon from "@mui/icons-material/Category";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import TextFieldsIcon from "@mui/icons-material/TextFields";

@@ -16,7 +16,6 @@ interface BottomMenuProp {}
 
 const BottomMenu: React.FC<BottomMenuProp> = () => {
   const [openPanel, setOpenPanel] = useState<string | null>(null);
-  const [zoomLevel, setZoomLevel] = useState(95);
 
   const panels = [
     {

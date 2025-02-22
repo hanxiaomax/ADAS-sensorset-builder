@@ -11,9 +11,7 @@ import {
 } from "@mui/material";
 import {
   CenterFocusWeak,
-  DirectionsCarFilled,
   RestartAlt,
-  Sensors,
   RotateRight,
   GridOn,
   BugReport,

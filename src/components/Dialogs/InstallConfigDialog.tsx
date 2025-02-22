@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -14,12 +14,15 @@ import {
   Slider,
   TextField,
   FormHelperText,
+  ListSubheader,
 } from "@mui/material";
 import { SensorItem } from "../../types/Common";
+import { Vehicle } from "../../types/Vehicle";
 
 interface InstallConfigDialogProps {
   open: boolean;
   sensorItem: SensorItem;
+  vehicle: Vehicle;
   onClose: () => void;
   onConfirm: (
     selectedSensor: SensorItem,
@@ -31,28 +34,41 @@ interface InstallConfigDialogProps {
 const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
   open,
   sensorItem,
+  vehicle,
   onClose,
   onConfirm,
 }) => {
   const [selectedPosition, setSelectedPosition] = useState("");
-  const [orientation, setOrientation] = useState<number>(0); // 默认值设置为0度
-  const [mountingPoints, setMountingPoints] = useState<string[]>([]);
-  const [positionError, setPositionError] = useState(false); // 用于管理是否显示位置选择错误
+  const [orientation, setOrientation] = useState<number>(0);
+  const [positionError, setPositionError] = useState(false);
 
-  useEffect(() => {
-    const mountingPointsData = localStorage.getItem("mountingPoints");
-    if (mountingPointsData) {
-      const data = JSON.parse(mountingPointsData);
-      setMountingPoints(Object.keys(data));
-    }
-  }, []);
+  // 获取并组织挂载点数据
+  const mountingPointGroups = {
+    front: vehicle.getMountingPointsByType("front"),
+    rear: vehicle.getMountingPointsByType("rear"),
+    side: vehicle.getMountingPointsByType("side"),
+    roof: vehicle.getMountingPointsByType("roof"),
+  };
 
   const handleSave = () => {
     if (!selectedPosition) {
-      setPositionError(true); // 如果未选择位置，则显示错误提示
+      setPositionError(true);
     } else {
-      onConfirm(sensorItem, selectedPosition, orientation);
+      // 获取选中挂载点的默认方向
+      const mountPoint = vehicle.getMountingPoint(selectedPosition);
+      const finalOrientation = orientation + (mountPoint?.orientation || 0);
+      onConfirm(sensorItem, selectedPosition, finalOrientation);
       onClose();
+    }
+  };
+
+  const handlePositionChange = (value: string) => {
+    setSelectedPosition(value);
+    setPositionError(false);
+    // 设置选中挂载点的默认方向
+    const mountPoint = vehicle.getMountingPoint(value);
+    if (mountPoint) {
+      setOrientation(0); // 重置为0，因为我们会在保存时加上挂载点的默认方向
     }
   };
 
@@ -75,33 +91,74 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
     { value: 180, label: "180°" },
   ];
 
+  // 获取当前选中挂载点的实际方向（包括默认方向）
+  const mountPoint = vehicle.getMountingPoint(selectedPosition);
+  const actualOrientation = orientation + (mountPoint?.orientation || 0);
+
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>Please Choose Installation Position</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 2, mb: 2 }}>
           <FormControl fullWidth error={positionError}>
-            {" "}
-            {/* 根据 positionError 显示错误 */}
             <InputLabel id="install-position-label">
               Install Position
             </InputLabel>
             <Select
               labelId="install-position-label"
               value={selectedPosition}
-              onChange={(e) => {
-                setSelectedPosition(e.target.value as string);
-                setPositionError(false); // 当用户选择时，隐藏错误提示
-              }}
+              onChange={(e) => handlePositionChange(e.target.value as string)}
               label="Install Position"
             >
-              {mountingPoints.map((point) => (
-                <MenuItem key={point} value={point}>
-                  {point}
-                </MenuItem>
-              ))}
+              {/* 前部挂载点 */}
+              {mountingPointGroups.front.length > 0 && [
+                <ListSubheader key="front-header">
+                  Front Mounting Points
+                </ListSubheader>,
+                ...mountingPointGroups.front.map((point) => (
+                  <MenuItem key={point} value={point}>
+                    {point}
+                  </MenuItem>
+                )),
+              ]}
+
+              {/* 后部挂载点 */}
+              {mountingPointGroups.rear.length > 0 && [
+                <ListSubheader key="rear-header">
+                  Rear Mounting Points
+                </ListSubheader>,
+                ...mountingPointGroups.rear.map((point) => (
+                  <MenuItem key={point} value={point}>
+                    {point}
+                  </MenuItem>
+                )),
+              ]}
+
+              {/* 侧面挂载点 */}
+              {mountingPointGroups.side.length > 0 && [
+                <ListSubheader key="side-header">
+                  Side Mounting Points
+                </ListSubheader>,
+                ...mountingPointGroups.side.map((point) => (
+                  <MenuItem key={point} value={point}>
+                    {point}
+                  </MenuItem>
+                )),
+              ]}
+
+              {/* 车顶挂载点 */}
+              {mountingPointGroups.roof.length > 0 && [
+                <ListSubheader key="roof-header">
+                  Roof Mounting Points
+                </ListSubheader>,
+                ...mountingPointGroups.roof.map((point) => (
+                  <MenuItem key={point} value={point}>
+                    {point}
+                  </MenuItem>
+                )),
+              ]}
             </Select>
-            {positionError && ( // 如果未选择位置，显示错误提示
+            {positionError && (
               <FormHelperText error>
                 Please select an installation position.
               </FormHelperText>
@@ -110,7 +167,18 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
         </Box>
         <Box sx={{ mt: 2, mb: 2 }}>
           <Typography variant="subtitle1" gutterBottom>
-            Orientation (degrees)
+            Additional Orientation Adjustment (degrees)
+          </Typography>
+          <Typography variant="caption" color="textSecondary" display="block">
+            Default orientation: {mountPoint?.orientation || 0}°
+          </Typography>
+          <Typography
+            variant="caption"
+            color="textSecondary"
+            display="block"
+            sx={{ mb: 2 }}
+          >
+            Final orientation: {actualOrientation}°
           </Typography>
           <Slider
             value={orientation}
@@ -141,7 +209,7 @@ const InstallConfigDialog: React.FC<InstallConfigDialogProps> = ({
             value={orientation}
             onChange={handleInputChange}
             margin="dense"
-            label="Orientation"
+            label="Additional Orientation"
             type="number"
             fullWidth
             variant="standard"

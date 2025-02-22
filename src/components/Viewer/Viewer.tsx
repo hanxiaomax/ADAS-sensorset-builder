@@ -320,7 +320,7 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                     }
                   )}
                 {layerVisibility.showMountingPoints &&
-                  Object.entries(vehicle._mountingPoints).map(
+                  Object.entries(vehicle.getRelativeMountingPoints()).map(
                     ([name, point], index) => {
                       if (!point || !point.position) return null;
                       const relativeX = point.position.x - vehicle.origin.x;
@@ -374,8 +374,9 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
                   if (!showSensor) return null;
 
                   // 从vehicle._mountingPoints中获取实际的挂载点信息
-                  const mountPoint =
-                    vehicle._mountingPoints[sensor.mountPosition.name];
+                  const mountPoint = vehicle.getMountingPoint(
+                    sensor.mountPosition.name
+                  );
                   if (!mountPoint?.position) return null;
 
                   // 计算相对于车辆中心的位置

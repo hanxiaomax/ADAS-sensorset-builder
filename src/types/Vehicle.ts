@@ -55,7 +55,7 @@ export abstract class Vehicle {
   refPoints: VehicleRefPoints;
   orientation_front: number = -90;
   orientation_rear: number = 90;
-  _mountingPoints: Mounts;
+  protected _mountingPoints: Mounts;
   abstract readonly imagePath: string;
   image: HTMLImageElement | null;
   protected dimensions: VehicleDimensions;
@@ -80,6 +80,65 @@ export abstract class Vehicle {
 
     this.refPoints = this.initializeRefPoints();
     this._mountingPoints = this.initializeMountingPoints();
+  }
+
+  // 获取所有挂载点
+  getMountingPoints(): Mounts {
+    return this._mountingPoints;
+  }
+
+  // 获取特定挂载点
+  getMountingPoint(name: string): MountPosition | undefined {
+    return this._mountingPoints[name];
+  }
+
+  // 获取所有挂载点名称
+  getMountingPointNames(): string[] {
+    return Object.keys(this._mountingPoints);
+  }
+
+  // 获取相对于车辆原点的挂载点位置
+  getRelativeMountingPoint(name: string): MountPosition | undefined {
+    const mountPoint = this._mountingPoints[name];
+    if (!mountPoint?.position) return undefined;
+
+    return {
+      name: mountPoint.name,
+      position: {
+        x: mountPoint.position.x - this.origin.x,
+        y: mountPoint.position.y - this.origin.y,
+      },
+      orientation: mountPoint.orientation,
+    };
+  }
+
+  // 获取所有相对于车辆原点的挂载点位置
+  getRelativeMountingPoints(): Mounts {
+    const relativePoints: Mounts = {};
+    Object.entries(this._mountingPoints).forEach(([name, point]) => {
+      if (point?.position) {
+        relativePoints[name] = {
+          name: point.name,
+          position: {
+            x: point.position.x - this.origin.x,
+            y: point.position.y - this.origin.y,
+          },
+          orientation: point.orientation,
+        };
+      }
+    });
+    return relativePoints;
+  }
+
+  // 按类型获取挂载点（例如：前部、后部、侧面等）
+  getMountingPointsByType(type: "front" | "rear" | "side" | "roof"): string[] {
+    return this.getMountingPointNames().filter((name) => {
+      if (type === "front") return name.startsWith("front_");
+      if (type === "rear") return name.startsWith("rear_");
+      if (type === "side") return name.includes("side");
+      if (type === "roof") return name.includes("roof");
+      return false;
+    });
   }
 
   protected abstract getVehicleDimensions(): VehicleDimensions;
