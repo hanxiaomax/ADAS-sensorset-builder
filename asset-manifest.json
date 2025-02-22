@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/adas-scene-builder/static/css/main.e6c13ad2.css",
+    "main.js": "/adas-scene-builder/static/js/main.3c1ef9cc.js",
+    "static/js/453.5f128a9e.chunk.js": "/adas-scene-builder/static/js/453.5f128a9e.chunk.js",
+    "index.html": "/adas-scene-builder/index.html",
+    "main.e6c13ad2.css.map": "/adas-scene-builder/static/css/main.e6c13ad2.css.map",
+    "main.3c1ef9cc.js.map": "/adas-scene-builder/static/js/main.3c1ef9cc.js.map",
+    "453.5f128a9e.chunk.js.map": "/adas-scene-builder/static/js/453.5f128a9e.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.3c1ef9cc.js"
+  ]
+}
