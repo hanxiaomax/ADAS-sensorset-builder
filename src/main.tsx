@@ -6,6 +6,7 @@ import { Vehicle } from "./types/Vehicle";
 import Konva from "konva";
 import SidebarMenu from "./components/Menu/SidebarMenu";
 import BottomMenu from "./components/Menu/BottomMenu";
+import { useVehicleImageStore } from "./stores/vehicleImageStore";
 
 export const SensorSetBuilderMain: React.FC = () => {
   const [stageSize, setStageSize] = useState({
@@ -14,9 +15,22 @@ export const SensorSetBuilderMain: React.FC = () => {
   });
 
   const stageRef = useRef<Konva.Stage>(null);
+  const { addVehicleImage, setCurrentVehicleImage } = useVehicleImageStore();
 
   const [image] = useImage(process.env.PUBLIC_URL + "/vehicle.png");
-  const vehicle = new Vehicle(stageSize, image);
+
+  useEffect(() => {
+    if (image) {
+      addVehicleImage("default", image);
+      setCurrentVehicleImage("default");
+    }
+  }, [image, addVehicleImage, setCurrentVehicleImage]);
+
+  const vehicle = new Vehicle(
+    stageSize,
+    image?.width || 800,
+    image?.height || 600
+  );
 
   useEffect(() => {
     const handleResize = () => {

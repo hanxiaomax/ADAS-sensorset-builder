@@ -50,24 +50,22 @@ export class Vehicle {
   refPoints: VehicleRefPoints;
   orientation_front: number = -90;
   orientation_rear: number = 90;
-  image: HTMLImageElement | undefined;
   _mountingPoints: Mounts;
 
   constructor(
     stageSize: { width: number; height: number },
-    image: HTMLImageElement | undefined
+    vehicleWidth: number,
+    vehicleLength: number
   ) {
-    this.image = image;
     const image_margin = 20;
     const overhang = 60 + image_margin;
     const origin: Position = {
-      x: (stageSize.width - image?.width!) / 2,
-      y: (stageSize.height - image?.height!) / 2,
+      x: (stageSize.width - vehicleWidth) / 2,
+      y: (stageSize.height - vehicleLength) / 2,
     };
 
-    this.image = image;
-    this.width = image?.width!;
-    this.length = image?.height!;
+    this.width = vehicleWidth;
+    this.length = vehicleLength;
     this.frontOverhang = overhang / 2;
     this.rearOverhang = overhang / 2;
     this.origin = origin;
