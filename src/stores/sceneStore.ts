@@ -3,79 +3,157 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { Vehicle } from "../types/Vehicle";
 import { Position } from "../types/Common";
 import Sensor from "../types/Sensor";
+import {
+  SceneInfo,
+  ViewState,
+  SelectionState,
+  SceneObject,
+} from "../types/Scene";
+import { generateId } from "../utils/idGenerator";
 
 export interface SceneState {
-  // Vehicle related
+  // 场景基本信息
+  sceneInfo: SceneInfo;
+
+  // 车辆信息（不包含传感器）
   vehicle: Vehicle | null;
 
-  // Sensors
+  // 传感器列表
   sensors: Sensor[];
 
-  // Viewer related
-  scale: number;
-  stagePos: Position;
-  rotation: number;
-  selectedSensor: Sensor | null;
-  showSensorInfo: boolean;
-  floatingWindowPos: Position;
+  // 场景中的其他对象（未来扩展用）
+  objects: SceneObject[];
 
-  // Actions
+  // 视图状态
+  viewState: ViewState;
+
+  // 选中状态
+  selectionState: SelectionState;
+
+  // 操作方法
+  // 场景操作
+  setSceneInfo: (info: Partial<SceneInfo>) => void;
+
+  // 车辆操作
   setVehicle: (vehicle: Vehicle) => void;
 
+  // 传感器操作
   setSensors: (sensors: Sensor[]) => void;
   addSensor: (sensor: Sensor) => void;
   removeSensor: (sensorId: string) => void;
   updateSensor: (sensorId: string, updates: Partial<Sensor>) => void;
 
-  // Viewer actions
-  setScale: (scale: number) => void;
-  setStagePos: (pos: Position) => void;
-  setRotation: (rotation: number) => void;
-  setSelectedSensor: (sensor: Sensor | null) => void;
-  setShowSensorInfo: (show: boolean) => void;
-  setFloatingWindowPos: (pos: Position) => void;
+  // 对象操作（未来扩展用）
+  addObject: (object: SceneObject) => void;
+  removeObject: (objectId: string) => void;
+  updateObject: (objectId: string, updates: Partial<SceneObject>) => void;
+
+  // 视图操作
+  updateViewState: (updates: Partial<ViewState>) => void;
+
+  // 选中操作
+  updateSelectionState: (updates: Partial<SelectionState>) => void;
 }
 
 export const useSceneStore = create<SceneState>()(
   persist(
     (set, get) => ({
-      // Initial state
+      // 场景基本信息
+      sceneInfo: {
+        id: generateId("scene"),
+        name: "默认场景",
+        description: "",
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+
+      // 车辆信息
       vehicle: null,
+
+      // 传感器列表
       sensors: [],
 
-      // Viewer initial state
-      scale: 1,
-      stagePos: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
-      rotation: 0,
-      selectedSensor: null,
-      showSensorInfo: false,
-      floatingWindowPos: { x: 0, y: 0 },
+      // 其他对象
+      objects: [],
 
-      // Vehicle actions
-      setVehicle: (vehicle) => set({ vehicle }),
+      // 视图状态
+      viewState: {
+        scale: 1,
+        stagePos: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+        rotation: 0,
+        showGrid: true,
+        showRulers: false,
+      },
 
-      // Sensor actions
-      setSensors: (sensors) => set({ sensors }),
-      addSensor: (sensor) =>
-        set((state) => ({ sensors: [...state.sensors, sensor] })),
-      removeSensor: (sensorId) =>
+      // 选中状态
+      selectionState: {
+        selectedSensorId: null,
+        selectedObjectId: null,
+        showSensorInfo: false,
+        floatingWindowPos: { x: 0, y: 0 },
+      },
+
+      // 场景操作
+      setSceneInfo: (info: Partial<SceneInfo>) =>
+        set((state) => ({
+          sceneInfo: { ...state.sceneInfo, ...info, updatedAt: Date.now() },
+        })),
+
+      // 车辆操作
+      setVehicle: (vehicle: Vehicle) => set({ vehicle }),
+
+      // 传感器操作
+      setSensors: (sensors: Sensor[]) => set({ sensors }),
+      addSensor: (sensor: Sensor) =>
+        set((state) => ({
+          sensors: [...state.sensors, sensor],
+        })),
+      removeSensor: (sensorId: string) =>
         set((state) => ({
           sensors: state.sensors.filter((s) => s.id !== sensorId),
+          selectionState:
+            state.selectionState.selectedSensorId === sensorId
+              ? { ...state.selectionState, selectedSensorId: null }
+              : state.selectionState,
         })),
-      updateSensor: (sensorId, updates) =>
+      updateSensor: (sensorId: string, updates: Partial<Sensor>) =>
         set((state) => ({
           sensors: state.sensors.map((sensor) =>
             sensor.id === sensorId ? { ...sensor, ...updates } : sensor
           ),
         })),
 
-      // Viewer actions
-      setScale: (scale) => set({ scale }),
-      setStagePos: (pos) => set({ stagePos: pos }),
-      setRotation: (rotation) => set({ rotation }),
-      setSelectedSensor: (sensor) => set({ selectedSensor: sensor }),
-      setShowSensorInfo: (show) => set({ showSensorInfo: show }),
-      setFloatingWindowPos: (pos) => set({ floatingWindowPos: pos }),
+      // 对象操作
+      addObject: (object: SceneObject) =>
+        set((state) => ({
+          objects: [...state.objects, object],
+        })),
+      removeObject: (objectId: string) =>
+        set((state) => ({
+          objects: state.objects.filter((obj) => obj.id !== objectId),
+          selectionState:
+            state.selectionState.selectedObjectId === objectId
+              ? { ...state.selectionState, selectedObjectId: null }
+              : state.selectionState,
+        })),
+      updateObject: (objectId: string, updates: Partial<SceneObject>) =>
+        set((state) => ({
+          objects: state.objects.map((obj) =>
+            obj.id === objectId ? { ...obj, ...updates } : obj
+          ),
+        })),
+
+      // 视图操作
+      updateViewState: (updates: Partial<ViewState>) =>
+        set((state) => ({
+          viewState: { ...state.viewState, ...updates },
+        })),
+
+      // 选中操作
+      updateSelectionState: (updates: Partial<SelectionState>) =>
+        set((state) => ({
+          selectionState: { ...state.selectionState, ...updates },
+        })),
     }),
     {
       name: "scene-store",
@@ -83,40 +161,3 @@ export const useSceneStore = create<SceneState>()(
     }
   )
 );
-
-// Data migration function
-export const migrateDataToSceneStore = () => {
-  const store = useSceneStore.getState();
-
-  // Migrate vehicle data
-  const vehicleData = localStorage.getItem("vehicle");
-  if (vehicleData) {
-    try {
-      const vehicle = JSON.parse(vehicleData);
-      store.setVehicle(vehicle);
-    } catch (e) {
-      console.error("Failed to migrate vehicle data:", e);
-    }
-  }
-
-  // Migrate sensor data
-  const sensorsData = localStorage.getItem("sensors");
-  if (sensorsData) {
-    try {
-      const sensors = JSON.parse(sensorsData);
-      store.setSensors(
-        sensors.map(
-          (sensorData: any) =>
-            new Sensor(
-              sensorData.id,
-              sensorData.sensorInfo,
-              sensorData.mountPosition,
-              sensorData.options
-            )
-        )
-      );
-    } catch (e) {
-      console.error("Failed to migrate sensors data:", e);
-    }
-  }
-};

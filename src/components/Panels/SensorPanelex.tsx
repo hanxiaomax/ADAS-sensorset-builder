@@ -15,12 +15,25 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useSceneStore } from "../../stores/sceneStore";
 import { useSensorStore } from "../../stores/sensorStore";
+import Sensor from "../../types/Sensor";
 
 interface SensorPanelExProps {}
 
 const SensorPanelEx: React.FC<SensorPanelExProps> = () => {
-  const { sensors, removeSensor, selectedSensor, setSelectedSensor } =
+  const { sensors, removeSensor, selectionState, updateSelectionState } =
     useSceneStore();
+  const selectedSensorId = selectionState.selectedSensorId;
+  const selectedSensor = selectedSensorId
+    ? sensors.find((s) => s.id === selectedSensorId)
+    : null;
+
+  // 创建更新函数
+  const setSelectedSensor = (sensor: Sensor | null) => {
+    updateSelectionState({
+      selectedSensorId: sensor ? sensor.id : null,
+    });
+  };
+
   const { sensorConfiguration, setSensorConfiguration } = useSensorStore();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);

@@ -67,16 +67,21 @@ const SensorStockItem: React.FC<SensorStockItemProps> = ({
     selectedPosition: string,
     orientation: number
   ) => {
+    const mountPosition = {
+      name: selectedPosition,
+      position: currentVehicle?.getRelativeMountingPoint(selectedPosition)
+        ?.position || { x: 0, y: 0 },
+      orientation: orientation,
+    };
+
     const newSensor = new Sensor(
       uuidv4(),
       selectedSensor,
-      {
-        name: selectedPosition,
-        position: currentVehicle?.getRelativeMountingPoint(selectedPosition)
-          ?.position || { x: 0, y: 0 },
-        orientation: orientation,
-      },
-      ["highlight"]
+      selectedPosition,
+      mountPosition,
+      { highlight: true },
+      true,
+      true
     );
 
     addSensor(newSensor);

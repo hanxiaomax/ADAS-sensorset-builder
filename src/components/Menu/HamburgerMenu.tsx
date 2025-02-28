@@ -45,8 +45,12 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
   );
   const open = Boolean(anchorEl);
 
-  const { scale, stagePos, rotation, sensors, selectedSensor } =
-    useSceneStore();
+  const { viewState, sensors, selectionState } = useSceneStore();
+  const { scale, stagePos, rotation } = viewState;
+  const { selectedSensorId } = selectionState;
+  const selectedSensor = selectedSensorId
+    ? sensors.find((s) => s.id === selectedSensorId)
+    : null;
   const { sensorStocks, setSensorStocks } = useSensorStore();
   const { enqueueSnackbar } = useSnackbar();
 

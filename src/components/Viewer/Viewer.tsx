@@ -17,7 +17,7 @@ import CarImage from "./carImage";
 import UssZones from "./UssZones";
 import { SensorBlock } from "./Sensors";
 import Marker from "../utils";
-import { StageSize } from "../../types/Common";
+import { StageSize, Position } from "../../types/Common";
 import Sensor from "../../types/Sensor";
 import { Vehicle } from "../../types/Vehicle";
 import Konva from "konva";
@@ -63,20 +63,43 @@ const Viewer: React.FC<ViewerProps> = ({ stageSize, vehicle, stageRef }) => {
 
   // Get state and actions from SceneStore
   const {
-    scale,
-    stagePos,
-    rotation,
-    selectedSensor,
-    showSensorInfo,
-    floatingWindowPos,
-    setScale,
-    setStagePos,
-    setRotation,
-    setSelectedSensor,
-    setShowSensorInfo,
-    setFloatingWindowPos,
+    viewState,
+    updateViewState,
+    selectionState,
+    updateSelectionState,
     sensors,
   } = useSceneStore();
+
+  // 解构视图状态
+  const { scale, stagePos, rotation } = viewState;
+
+  // 解构选中状态
+  const { selectedSensorId, showSensorInfo, floatingWindowPos } =
+    selectionState;
+
+  // 获取选中的传感器对象
+  const selectedSensor = selectedSensorId
+    ? sensors.find((s) => s.id === selectedSensorId)
+    : null;
+
+  // 创建更新函数
+  const setScale = (newScale: number) => updateViewState({ scale: newScale });
+  const setStagePos = (newPos: Position) =>
+    updateViewState({ stagePos: newPos });
+  const setRotation = (newRotation: number) =>
+    updateViewState({ rotation: newRotation });
+
+  const setSelectedSensor = (sensor: Sensor | null) => {
+    updateSelectionState({ selectedSensorId: sensor ? sensor.id : null });
+  };
+
+  const setShowSensorInfo = (show: boolean) => {
+    updateSelectionState({ showSensorInfo: show });
+  };
+
+  const setFloatingWindowPos = (pos: Position) => {
+    updateSelectionState({ floatingWindowPos: pos });
+  };
 
   const sensorConfiguration = useSensorStore(
     (state: SensorStoreState) => state.sensorConfiguration
