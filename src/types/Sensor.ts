@@ -16,19 +16,28 @@ export type SensorType = "camera" | "radar" | "lidar" | "ultrasonic" | "other"; 
 export class Sensor {
   id: string;
   sensorInfo: SensorItem;
+  mountPointId: string; // 引用车辆上的挂载点ID
   mountPosition: MountPosition;
-  options: string[];
+  options: Record<string, any>;
+  enabled: boolean;
+  visible: boolean;
 
   constructor(
     id: string,
     sensorInfo: SensorItem,
+    mountPointId: string,
     mountPosition: MountPosition,
-    options: string[] = []
+    options: Record<string, any> = {},
+    enabled: boolean = true,
+    visible: boolean = true
   ) {
     this.id = id;
     this.sensorInfo = sensorInfo;
+    this.mountPointId = mountPointId;
     this.mountPosition = mountPosition;
     this.options = options;
+    this.enabled = enabled;
+    this.visible = visible;
   }
 }
 

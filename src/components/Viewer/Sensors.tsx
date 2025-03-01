@@ -47,31 +47,46 @@ export const SensorBlock: React.FC<SensorProp> = ({
     return null;
   }
 
-  const getStyle = (options: string[]) => {
-    if (options.includes("highlight")) {
+  const getStyle = (options: Record<string, any>) => {
+    const color = sensorColorMap[sensor.sensorInfo.type]?.color || "#000000";
+    const opacity = sensorColorMap[sensor.sensorInfo.type]?.opacity || 0.2;
+
+    if (isSelected) {
       return {
-        fill: `${color}${Math.floor(opacity * 1.5 * 255)
-          .toString(16)
-          .padStart(2, "0")}`,
+        opacity: 0.8,
+        fill: `${color}`,
+        stroke: "#ff0000",
         strokeWidth: 2,
-        stroke: "black",
+      };
+    } else if (options.highlight) {
+      return {
+        opacity: 0.6,
+        fill: `${color}`,
+        stroke: "#ffff00",
+        strokeWidth: 1,
       };
     } else {
       return {
-        fill: `${color}${Math.floor(opacity * 255)
-          .toString(16)
-          .padStart(2, "0")}`,
-        strokeWidth: 0,
+        opacity: opacity,
+        fill: `${color}`,
       };
     }
   };
 
-  const getSensorStyle = (options: string[]) => {
+  const getSensorStyle = (options: Record<string, any>) => {
+    const color = sensorColorMap[sensor.sensorInfo.type]?.color || "#000000";
+
     if (isSelected) {
       return {
         width: 15,
         height: 15,
-        fill: "#ff9c2d",
+        fill: "#ff0000",
+      };
+    } else if (options.highlight) {
+      return {
+        width: 12,
+        height: 12,
+        fill: "#ffff00",
       };
     } else {
       return {
@@ -82,8 +97,8 @@ export const SensorBlock: React.FC<SensorProp> = ({
     }
   };
 
-  const style = getStyle(sensor.options || []);
-  const sensor_style = getSensorStyle(sensor.options || []);
+  const style = getStyle(sensor.options || {});
+  const sensor_style = getSensorStyle(sensor.options || {});
 
   return (
     <>
@@ -97,6 +112,7 @@ export const SensorBlock: React.FC<SensorProp> = ({
         fill={style.fill}
         stroke={style.stroke}
         strokeWidth={0.5}
+        opacity={style.opacity}
         listening={false}
       />
       <Circle

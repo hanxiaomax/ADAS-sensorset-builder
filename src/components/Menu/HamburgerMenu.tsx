@@ -27,7 +27,6 @@ import {
 } from "@mui/icons-material";
 import { useSceneStore } from "../../stores/sceneStore";
 import { useSensorStore } from "../../stores/sensorStore";
-import { SensorStocks } from "../../types/Common";
 import notifier from "../Helper/Notification";
 import { useSnackbar } from "notistack";
 import DownloadPanel from "../Panels/DownloadPanel";
@@ -45,9 +44,12 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
   );
   const open = Boolean(anchorEl);
 
-  const { scale, stagePos, rotation, sensors, selectedSensor } =
-    useSceneStore();
-  const { sensorStocks, setSensorStocks } = useSensorStore();
+  const { viewState, sensors, selectionState } = useSceneStore();
+  const { scale, stagePos, rotation } = viewState;
+  const { selectedSensorId } = selectionState;
+  const selectedSensor = selectedSensorId
+    ? sensors.find((s) => s.id === selectedSensorId)
+    : null;
   const { enqueueSnackbar } = useSnackbar();
 
   React.useEffect(() => {
@@ -78,58 +80,6 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
 
   const handleDownloadClose = () => {
     setDownloadAnchorEl(null);
-  };
-
-  // 验证SensorStocks的结构
-  const isValidSensorStock = (data: any): data is SensorStocks => {
-    return (
-      typeof data === "object" && data !== null && Object.keys(data).length > 0
-    );
-  };
-
-  const handleImportSensorDatabase = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = ".json";
-
-    input.onchange = (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const data = JSON.parse(event.target?.result as string);
-          if (isValidSensorStock(data)) {
-            setSensorStocks(data);
-            notifier.success("Sensor Database imported successfully!");
-          } else {
-            throw new Error("Invalid Sensor Database format.");
-          }
-        } catch (error) {
-          const errorMessage = (error as Error).message.replace("Error: ", "");
-          notifier.error(errorMessage);
-        }
-      };
-      reader.readAsText(file);
-    };
-
-    input.click();
-    handleMenuClose();
-  };
-
-  const handleExportSensorDatabase = () => {
-    const stockDataStr =
-      "data:text/json;charset=utf-8," +
-      encodeURIComponent(JSON.stringify(sensorStocks, null, 2));
-    const stockDownloadNode = document.createElement("a");
-    stockDownloadNode.setAttribute("href", stockDataStr);
-    stockDownloadNode.setAttribute("download", "sensor_database.json");
-    document.body.appendChild(stockDownloadNode);
-    stockDownloadNode.click();
-    stockDownloadNode.remove();
-    notifier.success("Sensor Database exported successfully!");
-    handleMenuClose();
   };
 
   const handleImportScene = () => {
@@ -228,19 +178,6 @@ const HamburgerMenu: React.FC<HamburgerMenuProps> = ({ stageRef }) => {
               <Download fontSize="small" />
             </ListItemIcon>
             <ListItemText>Download</ListItemText>
-          </MenuItem>
-          <Divider />
-          <MenuItem onClick={handleImportSensorDatabase}>
-            <ListItemIcon>
-              <ImportExport fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Import Sensor Database</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={handleExportSensorDatabase}>
-            <ListItemIcon>
-              <ImportExport fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>Export Sensor Database</ListItemText>
           </MenuItem>
           <Divider />
           <MenuItem onClick={handleImportScene}>

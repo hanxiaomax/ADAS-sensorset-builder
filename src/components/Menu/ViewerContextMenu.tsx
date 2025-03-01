@@ -23,6 +23,7 @@ import {
   getSensorCoverageBoundingBox,
 } from "../Viewer/ViewerHelper";
 import { Stage } from "konva/lib/Stage";
+import { Position } from "../../types/Common";
 
 interface ViewerContextMenuProps {
   contextMenuPos: { mouseX: number; mouseY: number } | null;
@@ -38,15 +39,15 @@ const ViewerContextMenu: React.FC<ViewerContextMenuProps> = ({
   stageCenter,
 }) => {
   const { layerVisibility, toggleLayerVisibility } = useGlobalConfigStore();
-  const {
-    scale,
-    setScale,
-    setStagePos,
-    rotation,
-    setRotation,
-    sensors,
-    vehicle,
-  } = useSceneStore();
+  const { viewState, updateViewState, sensors, vehicle } = useSceneStore();
+
+  const { scale, stagePos, rotation } = viewState;
+
+  const setScale = (newScale: number) => updateViewState({ scale: newScale });
+  const setStagePos = (newPos: Position) =>
+    updateViewState({ stagePos: newPos });
+  const setRotation = (newRotation: number) =>
+    updateViewState({ rotation: newRotation });
 
   const handleCloseContextMenu = () => {
     const closeEvent = new CustomEvent("closeContextMenu");
